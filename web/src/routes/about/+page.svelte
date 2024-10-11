@@ -23,7 +23,7 @@
         class="btn btn-primary"
         rel="external"
         target="_blank"
-        href="https://github.com/mattdavis90/ledplayr">
+        href="https://github.com/LEDPlayr/ledplayr">
         <PhGithubLogoBold /> View on Github
       </a>
     </div>
