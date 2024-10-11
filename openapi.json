@@ -1,0 +1,1939 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ledplayr",
+    "description": "",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/channel/output/universeOutputs": {
+      "get": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Retrieve outputs.json",
+        "description": "Download the outputs in JSON format",
+        "operationId": "get_outputs",
+        "responses": {
+          "200": {
+            "description": "Ouputs downloaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Channels"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Outputs not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Upload outputs.json",
+        "description": "Upload the outputs in JSON format",
+        "operationId": "upload_outputs",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Channels"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Outputs uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/configfile/virtualdisplaymap": {
+      "get": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Retrieve VirtualDisplayMap",
+        "description": "Download the VirtualDisplayMap",
+        "operationId": "get_display",
+        "responses": {
+          "200": {
+            "description": "VirtualDisplayMap downloaded successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "VirtualDisplayMap not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Upload VirtualDisplayMap",
+        "description": "Upload the VirtualDisplayMap",
+        "operationId": "upload_display",
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "VDM uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/models": {
+      "get": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Retrieve models.json",
+        "description": "Download the models in JSON format",
+        "operationId": "get_models",
+        "responses": {
+          "200": {
+            "description": "Models downloaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Model"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Models not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Upload models.json",
+        "description": "Upload the models in JSON format",
+        "operationId": "upload_models",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Models"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Models uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playlist": {
+      "post": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "New playlist",
+        "description": "Create a new playlist",
+        "operationId": "new_playlist",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Playlist"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The playlist was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete playlist supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playlist/{playlist}": {
+      "get": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Get a playlist",
+        "description": "Read back a playlist",
+        "operationId": "get_playlist",
+        "parameters": [
+          {
+            "name": "playlist",
+            "in": "path",
+            "description": "The name of the playlist",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested playlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Playlist"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The playlist wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Update a playlist",
+        "description": "Create or update the given playlist",
+        "operationId": "update_playlist",
+        "parameters": [
+          {
+            "name": "playlist",
+            "in": "path",
+            "description": "The name of the playlist",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Playlist"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested playlist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete playlist supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "Delete a playlist",
+        "description": "Delete the given playlist",
+        "operationId": "del_playlist",
+        "parameters": [
+          {
+            "name": "playlist",
+            "in": "path",
+            "description": "The name of the playlist",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested playlist was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The playlist wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playlists": {
+      "get": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "List playlists",
+        "description": "List the name of all playlists",
+        "operationId": "list_playlists",
+        "responses": {
+          "200": {
+            "description": "List of available playlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playlists/numbered": {
+      "get": {
+        "tags": [
+          "Playlists"
+        ],
+        "summary": "List playlists with ID",
+        "description": "List the playlists with their ID",
+        "operationId": "list_playlists_numbered",
+        "responses": {
+          "200": {
+            "description": "List of available playlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NumberedPlaylist"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schedule": {
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "New schedule",
+        "description": "Create a new schedule",
+        "operationId": "new_schedule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Schedule"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The schedule was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete schedule supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schedule/{schedule}": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Get a schedule",
+        "description": "Read back a schedule",
+        "operationId": "get_schedule",
+        "parameters": [
+          {
+            "name": "schedule",
+            "in": "path",
+            "description": "The name of the schedule",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The schedule wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Update a schedule",
+        "description": "Create or update the given schedule",
+        "operationId": "update_schedule",
+        "parameters": [
+          {
+            "name": "schedule",
+            "in": "path",
+            "description": "The name of the schedule",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Schedule"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested schedule was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete schedule supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "Delete a schedule",
+        "description": "Delete the given schedule",
+        "operationId": "del_schedule",
+        "parameters": [
+          {
+            "name": "schedule",
+            "in": "path",
+            "description": "The name of the schedule",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested schedule was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The schedule wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduler": {
+      "get": {
+        "tags": [
+          "Scheduler"
+        ],
+        "summary": "Get the scheduler status",
+        "operationId": "get_scheduler_status",
+        "responses": {
+          "200": {
+            "description": "Status of the scheduler",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchedulerStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduler/start": {
+      "get": {
+        "tags": [
+          "Scheduler"
+        ],
+        "summary": "Start the scheduler",
+        "operationId": "start_scheduler",
+        "responses": {
+          "200": {
+            "description": "Scheduler started ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduler/stop": {
+      "get": {
+        "tags": [
+          "Scheduler"
+        ],
+        "summary": "Stop the scheduler",
+        "operationId": "stop_scheduler",
+        "responses": {
+          "200": {
+            "description": "Scheduler stopped ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schedules": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "summary": "List schedules",
+        "description": "List the name of all schedules",
+        "operationId": "list_schedules",
+        "responses": {
+          "200": {
+            "description": "List of available schedules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sequence/{filename}": {
+      "get": {
+        "tags": [
+          "Sequences"
+        ],
+        "summary": "Get a sequence",
+        "description": "Download a sequence file",
+        "operationId": "get_sequence",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "description": "The sequence to download",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested sequence",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The sequence wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Sequences"
+        ],
+        "summary": "Delete a sequence",
+        "description": "Remove a sequence file",
+        "operationId": "del_sequence",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "description": "The sequence to download",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The sequence was removed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sequence/{filename}/meta": {
+      "get": {
+        "tags": [
+          "Sequences"
+        ],
+        "summary": "Get a sequence's metadata",
+        "description": "Get the metadata belonging to a sequence",
+        "operationId": "get_sequence_meta",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "description": "The sequence to download",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested sequence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SequenceMeta"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The sequence wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sequences": {
+      "get": {
+        "tags": [
+          "Sequences"
+        ],
+        "summary": "List all sequences",
+        "description": "List all sequence files",
+        "operationId": "list_sequences",
+        "responses": {
+          "200": {
+            "description": "The requested sequence",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/system/info": {
+      "get": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Get system info.",
+        "description": "Get the high-level system information. This endpoint is used\nto simulate FPP and make us discoverable by other software such\nas xLights. Some values are hard-coded to ensure compatibility.",
+        "operationId": "system_info",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "tags": [
+          "Upload"
+        ],
+        "summary": "Upload a file",
+        "description": "Accepts fseq sequences or media files such as\nimages and videos. The uploaded file is automatically\nsorted into the relevant upload directory so a call to\n`moveFile` isn't required and will be ignore.",
+        "operationId": "file_upload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/FileUpload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unrecognized file type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fppxml.php": {
+      "get": {
+        "tags": [
+          "FPP Compatibility"
+        ],
+        "summary": "Run an FPP Command",
+        "description": "This method isn't really implemented. The only command you\ncan issue is `moveFile` and all that really does is check\nwhether a file exists or not - it doesn't move it because\nthat's handled at upload time.",
+        "operationId": "fpp_command",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "description": "The FFP command",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "moveFile"
+          },
+          {
+            "name": "file",
+            "in": "query",
+            "description": "The file to move",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "file.fseq"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unrecognized command",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChannelOutput": {
+        "type": "object",
+        "required": [
+          "type",
+          "startChannel",
+          "enabled",
+          "timeout",
+          "channelCount",
+          "universes"
+        ],
+        "properties": {
+          "channelCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "startChannel": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "timeout": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "type": {
+            "type": "string"
+          },
+          "universes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Universe"
+            }
+          }
+        }
+      },
+      "Channels": {
+        "type": "object",
+        "required": [
+          "channelOutputs"
+        ],
+        "properties": {
+          "channelOutputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelOutput"
+            }
+          }
+        }
+      },
+      "DiskUtilization": {
+        "type": "object",
+        "required": [
+          "Media",
+          "Root"
+        ],
+        "properties": {
+          "Media": {
+            "$ref": "#/components/schemas/FreeTotal"
+          },
+          "Root": {
+            "$ref": "#/components/schemas/FreeTotal"
+          }
+        }
+      },
+      "FileUpload": {
+        "type": "object",
+        "required": [
+          "myfile"
+        ],
+        "properties": {
+          "myfile": {
+            "type": "string",
+            "format": "binary",
+            "description": "File or files to upload"
+          }
+        }
+      },
+      "FreeTotal": {
+        "type": "object",
+        "required": [
+          "Free",
+          "Total"
+        ],
+        "properties": {
+          "Free": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "Total": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "Model": {
+        "type": "object",
+        "required": [
+          "Name",
+          "xLights",
+          "ChannelCount",
+          "Orientation",
+          "StartChannel",
+          "StringCount",
+          "ChannelCountPerNode",
+          "StrandsPerString",
+          "StartCorner",
+          "Type"
+        ],
+        "properties": {
+          "ChannelCount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 6,
+            "minimum": 0
+          },
+          "ChannelCountPerNode": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3,
+            "minimum": 0
+          },
+          "Name": {
+            "type": "string",
+            "example": "Single_line"
+          },
+          "Orientation": {
+            "type": "string",
+            "example": "horizontal"
+          },
+          "StartChannel": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "minimum": 0
+          },
+          "StartCorner": {
+            "type": "string",
+            "example": "BL"
+          },
+          "StrandsPerString": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "minimum": 0
+          },
+          "StringCount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1,
+            "minimum": 0
+          },
+          "Type": {
+            "type": "string",
+            "example": "Channel"
+          },
+          "xLights": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "Models": {
+        "type": "object",
+        "required": [
+          "models"
+        ],
+        "properties": {
+          "models": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Model"
+            }
+          }
+        }
+      },
+      "NumberedPlaylist": {
+        "type": "object",
+        "required": [
+          "name",
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "name"
+          }
+        }
+      },
+      "PlayerState": {
+        "type": "string",
+        "enum": [
+          "Start",
+          "Stop"
+        ]
+      },
+      "Playlist": {
+        "type": "object",
+        "required": [
+          "version",
+          "repeat",
+          "loopCount",
+          "empty",
+          "desc",
+          "random",
+          "leadIn",
+          "mainPlaylist",
+          "leadOut"
+        ],
+        "properties": {
+          "desc": {
+            "type": "string",
+            "example": ""
+          },
+          "empty": {
+            "type": "boolean",
+            "example": true
+          },
+          "leadIn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaylistEntry"
+            }
+          },
+          "leadOut": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaylistEntry"
+            }
+          },
+          "loopCount": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          },
+          "mainPlaylist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaylistEntry"
+            }
+          },
+          "name": {
+            "type": "string",
+            "example": "sample",
+            "nullable": true
+          },
+          "playlistInfo": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaylistInfo"
+              }
+            ],
+            "nullable": true
+          },
+          "random": {
+            "type": "boolean",
+            "example": false
+          },
+          "repeat": {
+            "type": "boolean",
+            "example": false
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3,
+            "minimum": 0
+          }
+        }
+      },
+      "PlaylistEntry": {
+        "type": "object",
+        "required": [
+          "sequenceName",
+          "playOnce",
+          "enabled",
+          "type"
+        ],
+        "properties": {
+          "duration": {
+            "type": "number",
+            "format": "float",
+            "example": 30,
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "playOnce": {
+            "type": "boolean",
+            "example": false
+          },
+          "sequenceName": {
+            "type": "string",
+            "example": "sequence.fseq"
+          },
+          "type": {
+            "type": "string",
+            "example": "sequence"
+          }
+        }
+      },
+      "PlaylistInfo": {
+        "type": "object",
+        "required": [
+          "total_duration",
+          "total_items"
+        ],
+        "properties": {
+          "total_duration": {
+            "type": "number",
+            "format": "float",
+            "example": 0
+          },
+          "total_items": {
+            "type": "integer",
+            "format": "int32",
+            "example": 0
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "required": [
+          "name",
+          "playlist_id",
+          "enabled",
+          "start_date",
+          "end_date",
+          "start_time",
+          "end_time",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday"
+        ],
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "example": "1970-01-01"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "time",
+            "example": "00:00"
+          },
+          "friday": {
+            "type": "boolean",
+            "example": true
+          },
+          "monday": {
+            "type": "boolean",
+            "example": true
+          },
+          "name": {
+            "type": "string",
+            "example": "Schedule"
+          },
+          "playlist_id": {
+            "type": "integer",
+            "format": "int32",
+            "example": 1
+          },
+          "saturday": {
+            "type": "boolean",
+            "example": true
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "example": "1920-01-01"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "time",
+            "example": "00:00"
+          },
+          "sunday": {
+            "type": "boolean",
+            "example": true
+          },
+          "thursday": {
+            "type": "boolean",
+            "example": true
+          },
+          "tuesday": {
+            "type": "boolean",
+            "example": true
+          },
+          "wednesday": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "SchedulerStatus": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/PlayerState"
+          }
+        }
+      },
+      "SequenceMeta": {
+        "type": "object",
+        "required": [
+          "Name",
+          "ID",
+          "StepTime",
+          "NumFrames",
+          "ChannelCount",
+          "variableHeaders"
+        ],
+        "properties": {
+          "ChannelCount": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of channels",
+            "example": 10,
+            "minimum": 0
+          },
+          "ID": {
+            "type": "string",
+            "description": "ID of the sequence (Likely the creation timestamp)",
+            "example": "12345"
+          },
+          "Name": {
+            "type": "string",
+            "description": "Name of the sequence",
+            "example": "sequence.fseq"
+          },
+          "NumFrames": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of framess",
+            "example": 100,
+            "minimum": 0
+          },
+          "StepTime": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Step time in milliseconds",
+            "example": 50,
+            "minimum": 0
+          },
+          "variableHeaders": {
+            "type": "object",
+            "description": "Any additional variables",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "sp": "xLights"
+            }
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "What went wrong",
+            "example": "Could not open file",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Status",
+            "example": "error"
+          }
+        }
+      },
+      "SystemInfo": {
+        "type": "object",
+        "required": [
+          "HostName",
+          "HostDescription",
+          "Platform",
+          "Variant",
+          "SubPlatform",
+          "backgroundColor",
+          "Mode",
+          "Logo",
+          "Version",
+          "Branch",
+          "multisync",
+          "OSVersion",
+          "OSRelease",
+          "uuid",
+          "Utilization",
+          "Kernel",
+          "LocalGitVersion",
+          "RemoteGitVersion",
+          "UpgradeSource",
+          "IPs",
+          "typeId"
+        ],
+        "properties": {
+          "Branch": {
+            "type": "string",
+            "description": "The CVS branch we're running on",
+            "example": "main"
+          },
+          "HostDescription": {
+            "type": "string",
+            "description": "The description of this system",
+            "example": "Rust based FPP alternative"
+          },
+          "HostName": {
+            "type": "string",
+            "description": "Hostname of the system",
+            "example": "localhost"
+          },
+          "IPs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The IP addresses for this host",
+            "example": [
+              "127.0.0.1"
+            ]
+          },
+          "Kernel": {
+            "type": "string",
+            "description": "The kernel version",
+            "example": "6.4.4"
+          },
+          "LocalGitVersion": {
+            "type": "string",
+            "description": "The version for CVS",
+            "example": "1.0.0"
+          },
+          "Logo": {
+            "type": "string",
+            "description": "The logo of this system",
+            "example": "debian.png"
+          },
+          "Mode": {
+            "type": "string",
+            "description": "The mode of this system",
+            "example": "player"
+          },
+          "OSRelease": {
+            "type": "string",
+            "description": "The OS Release",
+            "example": ""
+          },
+          "OSVersion": {
+            "type": "string",
+            "description": "The OS Version",
+            "example": "Stretch"
+          },
+          "Platform": {
+            "type": "string",
+            "description": "The platform we're running on",
+            "example": "Linux"
+          },
+          "RemoteGitVersion": {
+            "type": "string",
+            "description": "The latest upstream CVS version",
+            "example": "1.0.0"
+          },
+          "SubPlatform": {
+            "type": "string",
+            "description": "Any additional contex to the platform",
+            "example": ""
+          },
+          "UpgradeSource": {
+            "type": "string",
+            "description": "The location of updates",
+            "example": "git"
+          },
+          "Utilization": {
+            "$ref": "#/components/schemas/SystemUtilization"
+          },
+          "Variant": {
+            "type": "string",
+            "description": "The platform we're running on",
+            "example": "Debian"
+          },
+          "Version": {
+            "type": "string",
+            "description": "The version of \"FPPF\" we're runnnig",
+            "example": "6.0"
+          },
+          "backgroundColor": {
+            "type": "string",
+            "description": "The background color to use in the UI",
+            "example": "#c01015"
+          },
+          "multisync": {
+            "type": "boolean",
+            "description": "Is multisync supported",
+            "example": false
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The type of system",
+            "example": 1,
+            "minimum": 0
+          },
+          "uuid": {
+            "type": "string",
+            "description": "The persistent UUID for this system",
+            "example": "82ae0c57-9a54-4911-9dc2-a1d2e512da7b"
+          }
+        }
+      },
+      "SystemUtilization": {
+        "type": "object",
+        "required": [
+          "CPU",
+          "Memory",
+          "Uptime",
+          "Disk"
+        ],
+        "properties": {
+          "CPU": {
+            "type": "number",
+            "format": "float"
+          },
+          "Disk": {
+            "$ref": "#/components/schemas/DiskUtilization"
+          },
+          "Memory": {
+            "type": "number",
+            "format": "float"
+          },
+          "Uptime": {
+            "type": "string"
+          }
+        }
+      },
+      "Universe": {
+        "type": "object",
+        "required": [
+          "description",
+          "active",
+          "address",
+          "startChannel",
+          "channelCount",
+          "id",
+          "deDuplicate",
+          "priority",
+          "monitor",
+          "type"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string",
+            "format": "ipv4"
+          },
+          "channelCount": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "deDuplicate": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "monitor": {
+            "type": "boolean"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "startChannel": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "type": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}
