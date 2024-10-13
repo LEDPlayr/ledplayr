@@ -11,6 +11,17 @@
     <meta name="apple-mobile-web-app-title" content="LEDPlayr" />
     <link rel="manifest" href="/site.webmanifest" />
 
+    <script type="text/javascript">
+      const darkMode =
+        window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const local = JSON.parse(localStorage.getItem("darkMode"));
+      if (local || (local === null && darkMode)) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      } else {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    </script>
+
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">
