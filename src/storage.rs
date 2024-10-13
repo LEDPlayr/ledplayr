@@ -29,26 +29,6 @@ impl Display for StorageType {
 pub fn init(cfg: &Config) -> Result<()> {
     let path = Path::new(&cfg.storage);
 
-    // tracing::debug!("Checking storage directory exists");
-    // if path.metadata().is_err() {
-    //     bail!(AppError::StorageError(
-    //         "Storage location doesn't exist".into()
-    //     ))
-    // }
-    // let meta = path.metadata().unwrap();
-    // if !meta.is_dir() {
-    //     bail!(AppError::StorageError(
-    //         "Storage location isn't a directory".into()
-    //     ))
-    // }
-    //
-    // tracing::debug!("Checking storage directory is writeable");
-    // if meta.permissions().readonly() {
-    //     bail!(AppError::StorageError(
-    //         "Storage location isn't writeable".into()
-    //     ))
-    // }
-    //
     tracing::debug!("Creating 'sequences' directory");
     let sequence = path.join(StorageType::Sequences.to_string());
     std::fs::create_dir_all(sequence).context("Couldn't create 'sequences' directory")?;
