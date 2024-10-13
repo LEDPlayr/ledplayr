@@ -100,7 +100,7 @@ pub struct PlaylistSequence {
     pub play_once: bool,
 }
 
-#[derive(Insertable, PartialEq, Debug, Deserialize)]
+#[derive(Insertable, PartialEq, Debug, Deserialize, AsChangeset)]
 #[diesel(table_name = schema::sequences)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct NewSequence {

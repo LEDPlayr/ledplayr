@@ -2,6 +2,7 @@ use std::{collections::HashMap, net::Ipv4Addr};
 
 use axum::body::Bytes;
 use axum_typed_multipart::{FieldData, TryFromMultipart};
+use chrono::{Datelike, Timelike};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use utoipa::ToSchema;
@@ -439,4 +440,49 @@ impl TryFrom<db::models::Schedule> for Schedule {
     }
 }
 
-// TODO: Do the above TryFrom the other way and remove the code from web.rs
+impl TryFrom<Schedule> for db::models::NewSchedule {
+    type Error = String;
+
+    fn try_from(value: Schedule) -> Result<Self, Self::Error> {
+        let start_date = match chrono::NaiveDate::parse_from_str(&value.start_date, "%Y-%m-%d") {
+            Ok(d) => d,
+            Err(_) => return Err("Start date isn't a valid date".into()),
+        }
+        .num_days_from_ce();
+
+        let end_date = match chrono::NaiveDate::parse_from_str(&value.end_date, "%Y-%m-%d") {
+            Ok(d) => d,
+            Err(_) => return Err("End date isn't a valid date".into()),
+        }
+        .num_days_from_ce();
+
+        let start_time = match chrono::NaiveTime::parse_from_str(&value.start_time, "%H:%M") {
+            Ok(d) => d,
+            Err(_) => return Err("Start time isn't a valid time".into()),
+        }
+        .num_seconds_from_midnight();
+
+        let end_time = match chrono::NaiveTime::parse_from_str(&value.end_time, "%H:%M") {
+            Ok(d) => d,
+            Err(_) => return Err("End time isn't a valid time".into()),
+        }
+        .num_seconds_from_midnight();
+
+        Ok(db::models::NewSchedule {
+            name: value.name,
+            playlist_id: value.playlist_id,
+            enabled: value.enabled,
+            start_date,
+            end_date,
+            start_time: start_time as i64,
+            end_time: end_time as i64,
+            monday: value.monday,
+            tuesday: value.tuesday,
+            wednesday: value.wednesday,
+            thursday: value.thursday,
+            friday: value.friday,
+            saturday: value.saturday,
+            sunday: value.sunday,
+        })
+    }
+}

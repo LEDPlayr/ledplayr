@@ -68,15 +68,20 @@ pub fn new_sequence(conn: &mut SqliteConnection, seq: fseq::parser::FSeq) -> Res
         None => "".to_string(),
     };
 
-    NewSequence {
+    let ns = NewSequence {
         name: filename,
         timestamp: seq.uuid.to_string(),
         step_time: seq.step_time_ms as i32,
         frames: seq.frame_count as i32,
         channels: seq.channel_count as i32,
-    }
-    .insert_into(sequences::table)
-    .execute(conn)?;
+    };
+
+    diesel::insert_into(sequences::table)
+        .values(&ns)
+        .on_conflict(sequences::name)
+        .do_update()
+        .set(&ns)
+        .execute(conn)?;
 
     let id = sequences::table
         .select(diesel::dsl::max(sequences::id))

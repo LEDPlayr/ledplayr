@@ -210,18 +210,18 @@ pub fn parse(fname: &str) -> Result<Box<FSeq>> {
     let mut sparse_ranges = Vec::new();
     for _ in 0..sparse_range_count {
         let mut start_channel_tmp = [0u8; 4];
+        start_channel_tmp[0] = f.read_u8()?;
         start_channel_tmp[1] = f.read_u8()?;
         start_channel_tmp[2] = f.read_u8()?;
-        start_channel_tmp[3] = f.read_u8()?;
         let start_channel;
         unsafe {
             start_channel = mem::transmute::<[u8; 4], u32>(start_channel_tmp);
         }
 
         let mut end_channel_offset_tmp = [0u8; 4];
+        end_channel_offset_tmp[0] = f.read_u8()?;
         end_channel_offset_tmp[1] = f.read_u8()?;
         end_channel_offset_tmp[2] = f.read_u8()?;
-        end_channel_offset_tmp[3] = f.read_u8()?;
         let end_channel_offset;
         unsafe {
             end_channel_offset = mem::transmute::<[u8; 4], u32>(end_channel_offset_tmp);

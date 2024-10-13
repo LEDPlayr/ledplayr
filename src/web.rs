@@ -14,7 +14,6 @@ use axum::{
     Json, Router,
 };
 use axum_typed_multipart::TypedMultipart;
-use chrono::{Datelike, Timelike};
 use humanize_duration::prelude::DurationExt;
 use rust_embed::Embed;
 use rustix::path::Arg;
@@ -856,7 +855,7 @@ async fn get_schedule(
         Ok(Some(s)) => match Schedule::try_from(s) {
             Ok(schedule) => (StatusCode::OK, Json(schedule)).into_response(),
             Err(e) => (
-                StatusCode::INTERNAL_SERVER_ERROR,
+                StatusCode::BAD_REQUEST,
                 Json(Status {
                     status: "error".into(),
                     error: Some(e.to_string()),
@@ -1402,81 +1401,18 @@ async fn create_or_update_schedule(state: Arc<Mutex<State>>, schedule: Schedule)
 
     let mut state = state.lock().unwrap();
 
-    let start_date = match chrono::NaiveDate::parse_from_str(&schedule.start_date, "%Y-%m-%d") {
-        Ok(d) => d,
-        Err(_) => {
+    let schedule = match db::models::NewSchedule::try_from(schedule) {
+        Ok(s) => s,
+        Err(e) => {
             return (
                 StatusCode::BAD_REQUEST,
                 Json(Status {
                     status: "error".into(),
-                    error: Some("Start date isn't a valid date".into()),
+                    error: Some(e.to_string()),
                 }),
             )
                 .into_response()
         }
-    }
-    .num_days_from_ce();
-
-    let end_date = match chrono::NaiveDate::parse_from_str(&schedule.end_date, "%Y-%m-%d") {
-        Ok(d) => d,
-        Err(_) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                Json(Status {
-                    status: "error".into(),
-                    error: Some("End date isn't a valid date".into()),
-                }),
-            )
-                .into_response()
-        }
-    }
-    .num_days_from_ce();
-
-    let start_time = match chrono::NaiveTime::parse_from_str(&schedule.start_time, "%H:%M") {
-        Ok(d) => d,
-        Err(_) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                Json(Status {
-                    status: "error".into(),
-                    error: Some("Start time isn't a valid time".into()),
-                }),
-            )
-                .into_response()
-        }
-    }
-    .num_seconds_from_midnight();
-
-    let end_time = match chrono::NaiveTime::parse_from_str(&schedule.end_time, "%H:%M") {
-        Ok(d) => d,
-        Err(_) => {
-            return (
-                StatusCode::BAD_REQUEST,
-                Json(Status {
-                    status: "error".into(),
-                    error: Some("End time isn't a valid time".into()),
-                }),
-            )
-                .into_response()
-        }
-    }
-    .num_seconds_from_midnight();
-
-    let schedule = db::models::NewSchedule {
-        name: schedule.name,
-        playlist_id: schedule.playlist_id,
-        enabled: schedule.enabled,
-        start_date,
-        end_date,
-        start_time: start_time as i64,
-        end_time: end_time as i64,
-        monday: schedule.monday,
-        tuesday: schedule.tuesday,
-        wednesday: schedule.wednesday,
-        thursday: schedule.thursday,
-        friday: schedule.friday,
-        saturday: schedule.saturday,
-        sunday: schedule.sunday,
     };
 
     match db::new_schedule(&mut state.db_conn, schedule) {

@@ -40,9 +40,11 @@ Most of what I need is included. Below is a list of what I may include if I find
 * Playing of media
 
 ## Known Issues
-* Uploading via xLights occasionally results in a sequence that has one less node than intended
-	* I haven't narrowed down where the error occurs
-	* Uploading the file manually works
+* Uploading via xLights can result in a sequence that has one less node than intended
+	* This only happens when uploading sequences at the same time as outputs
+	* It is advisable to untick all sequences and select "All" in the "UDP Out" column to upload outputs
+    * After initial output upload select "None" in the "UDP Out" column and tick sequences
+    * This issue is being actively investigated
 
 ## How to run
 Create the required configuration files and directories. None of the directories have fixed values but below are recommended paths and a sample `systemd` unit file.
