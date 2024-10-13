@@ -11,6 +11,10 @@ path = "src/bin/ledplayr.rs"
 name = "gen_openapi"
 path = "src/bin/gen_openapi.rs"
 
+[[bin]]
+name = "dump_fseq"
+path = "src/bin/dump_fseq.rs"
+
 [dependencies]
 anyhow = "1.0.88"
 axum = { version = "0.7.5", features = ["multipart"] }
