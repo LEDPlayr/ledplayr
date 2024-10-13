@@ -61,4 +61,3 @@ CREATE TABLE variables(
 
     FOREIGN KEY (sequence_id) REFERENCES sequences(id)
 );
-

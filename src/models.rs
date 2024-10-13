@@ -377,29 +377,25 @@ impl TryFrom<db::models::Schedule> for Schedule {
     type Error = String;
 
     fn try_from(value: db::models::Schedule) -> Result<Self, Self::Error> {
-        let start_date =
-            match chrono::NaiveDate::from_num_days_from_ce_opt(value.start_date)
-            {
-                Some(s) => s,
-                None => {
-                    tracing::error!("Could not convert start_date");
-                    return Err("Could not convert start_date".into());
-                }
+        let start_date = match chrono::NaiveDate::from_num_days_from_ce_opt(value.start_date) {
+            Some(s) => s,
+            None => {
+                tracing::error!("Could not convert start_date");
+                return Err("Could not convert start_date".into());
             }
-            .format("%Y-%m-%d")
-            .to_string();
+        }
+        .format("%Y-%m-%d")
+        .to_string();
 
-        let end_date =
-            match chrono::NaiveDate::from_num_days_from_ce_opt(value.end_date)
-            {
-                Some(s) => s,
-                None => {
-                    tracing::error!("Could not convert end_date");
-                    return Err("Could not convert end_date".into());
-                }
+        let end_date = match chrono::NaiveDate::from_num_days_from_ce_opt(value.end_date) {
+            Some(s) => s,
+            None => {
+                tracing::error!("Could not convert end_date");
+                return Err("Could not convert end_date".into());
             }
-            .format("%Y-%m-%d")
-            .to_string();
+        }
+        .format("%Y-%m-%d")
+        .to_string();
 
         let start_time =
             match chrono::NaiveTime::from_num_seconds_from_midnight_opt(value.start_time as u32, 0)

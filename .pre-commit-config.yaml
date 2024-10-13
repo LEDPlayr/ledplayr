@@ -1,0 +1,76 @@
+---
+fail_fast: true
+
+default_install_hook_types:
+    - pre-commit
+    - commit-msg
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v5.0.0
+      hooks:
+          - id: check-added-large-files
+          - id: fix-byte-order-marker
+          - id: check-case-conflict
+          - id: check-merge-conflict
+          - id: check-symlinks
+          - id: check-vcs-permalinks
+          - id: check-yaml
+          - id: destroyed-symlinks
+          - id: end-of-file-fixer
+          - id: mixed-line-ending
+          - id: trailing-whitespace
+
+    - repo: https://github.com/pre-commit/pre-commit
+      rev: v4.0.1
+      hooks:
+          - id: validate_manifest
+
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 0.2.1
+      hooks:
+          - id: yamlfmt
+            exclude: web/pnpm-lock.yaml
+
+    - repo: https://github.com/compilerla/conventional-pre-commit
+      rev: v3.4.0
+      hooks:
+          - id: conventional-pre-commit
+            stages: [commit-msg]
+            args: []
+
+    - repo: https://github.com/ComPWA/taplo-pre-commit
+      rev: v0.9.3
+      hooks:
+          - id: taplo-format
+          - id: taplo-lint
+
+    - repo: local
+      hooks:
+          - id: cargo-fmt
+            name: cargo-fmt
+            language: system
+            types: [rust]
+            entry: cargo fmt
+            args:
+                - --
+
+          - id: cargo-clippy
+            name: cargo-clippy
+            language: system
+            types: [rust]
+            pass_filenames: false
+            entry: cargo clippy
+            args:
+                - --all-features
+                - --all-targets
+                - --
+                - -Dwarnings
+                - -Dclippy::all
+
+          - id: lint-staged
+            name: lint-staged
+            language: system
+            files: ^web/
+            pass_filenames: false
+            entry: bash -c 'cd web && pnpm exec lint-staged'
