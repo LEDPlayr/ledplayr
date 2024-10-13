@@ -2,6 +2,7 @@
   import { base } from "$app/paths";
   import { route } from "$lib/ROUTES";
   import Stats from "./Stats.svelte";
+  import Theme from "./Theme.svelte";
 </script>
 
 <div class="flex max-h-full min-h-full flex-col">
@@ -39,6 +40,10 @@
       </ul>
     </li>
   </ul>
+
+  <div class="bg-base-300 text-center">
+    <Theme />
+  </div>
 
   <footer class="footer bg-base-300 px-10 py-2 md:py-5">
     <Stats />

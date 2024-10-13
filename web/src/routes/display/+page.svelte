@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <div class="mt-4 min-h-[32rem] rounded-xl border bg-base-content md:col-span-2">
+    <div class="mt-4 min-h-[32rem] rounded-xl border bg-base-200 md:col-span-2">
       <Canvas>
         <VirtualDisplay {visible} color={pointColor} />
       </Canvas>
