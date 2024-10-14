@@ -49,7 +49,8 @@ tokio-util = { version = "0.7.12", features = ["rt"] }
 toml = "0.8.19"
 tower-http = { version = "0.6.1", features = ["fs", "trace"] }
 tracing = "0.1.40"
-tracing-subscriber = "0.3.18"
+tracing-appender = "0.2.3"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 utoipa = { version = "4.2.3", features = ["axum_extras"] }
 utoipa-gen = { version = "4.3.0", features = ["axum_extras"] }
 utoipa-rapidoc = { version = "4.0.0", features = ["axum"] }

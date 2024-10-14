@@ -3,7 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Context, Result};
 
 use dotenvy::dotenv;
 use ledplayr::{
@@ -12,30 +12,67 @@ use ledplayr::{
 };
 use tokio::sync::mpsc;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
+use tracing::level_filters::LevelFilter;
+use tracing_appender::rolling::{RollingFileAppender, Rotation};
+use tracing_subscriber::{fmt::writer::MakeWriterExt, EnvFilter};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    tracing_subscriber::fmt::init();
-
     dotenv().ok();
 
     let cfg_file = env::var("CONFIG").map_err(|_| anyhow!("CONFIG envvar is required"))?;
+    let cfg =
+        std::fs::read_to_string(cfg_file).map_err(|e| AppError::ConfigError(e.to_string()))?;
+    let cfg: Config = toml::from_str(&cfg).map_err(|e| AppError::ConfigError(e.to_string()))?;
+
+    let env_filter = EnvFilter::builder()
+        .with_default_directive(LevelFilter::INFO.into())
+        .from_env_lossy();
+
+    if let Some(log) = &cfg.log {
+        let period = match log.period {
+            Some(ledplayr::config::LogPeriod::Minute) => Rotation::MINUTELY,
+            Some(ledplayr::config::LogPeriod::Hour) => Rotation::HOURLY,
+            Some(ledplayr::config::LogPeriod::Day) => Rotation::DAILY,
+            None => Rotation::NEVER,
+        };
+
+        let mut logfile = RollingFileAppender::builder().rotation(period);
+
+        if let Some(prefix) = &log.prefix {
+            logfile = logfile.filename_prefix(prefix);
+        }
+
+        if let Some(max_files) = &log.max_files {
+            logfile = logfile.max_log_files(*max_files);
+        }
+
+        let logfile = logfile
+            .build(&log.directory)
+            .context("failed to initialize rolling log")?;
+
+        tracing_subscriber::fmt()
+            .with_env_filter(env_filter)
+            .with_writer(std::io::stdout.and(logfile))
+            .init();
+    } else {
+        tracing_subscriber::fmt()
+            .with_env_filter(env_filter)
+            .with_writer(std::io::stdout)
+            .init();
+    }
 
     let built_time = chrono::DateTime::parse_from_rfc2822(built_info::BUILT_TIME_UTC)
         .unwrap()
         .with_timezone(&chrono::offset::Local);
     let version = built_info::GIT_VERSION.unwrap_or("unknown");
+
     tracing::info!(
         "Starting {} {} built {}",
         built_info::PKG_NAME,
         version,
         built_time
     );
-
-    tracing::info!("Opening config file: {cfg_file}");
-    let cfg =
-        std::fs::read_to_string(cfg_file).map_err(|e| AppError::ConfigError(e.to_string()))?;
-    let cfg: Config = toml::from_str(&cfg).map_err(|e| AppError::ConfigError(e.to_string()))?;
 
     tracing::info!("Setting up database");
     let mut db_conn = db::get(&cfg)?;
