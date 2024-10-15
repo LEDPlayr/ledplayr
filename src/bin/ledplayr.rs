@@ -34,6 +34,7 @@ async fn main() -> Result<()> {
             Some(ledplayr::config::LogPeriod::Minute) => Rotation::MINUTELY,
             Some(ledplayr::config::LogPeriod::Hour) => Rotation::HOURLY,
             Some(ledplayr::config::LogPeriod::Day) => Rotation::DAILY,
+            Some(ledplayr::config::LogPeriod::Never) => Rotation::NEVER,
             None => Rotation::NEVER,
         };
 
