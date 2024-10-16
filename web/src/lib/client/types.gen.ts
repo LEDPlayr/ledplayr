@@ -270,6 +270,23 @@ export type UploadDisplayResponse = Status;
 
 export type UploadDisplayError = Status;
 
+export type GetLogData = {
+  path: {
+    /**
+     * The name of the log to display
+     */
+    name: string;
+  };
+};
+
+export type GetLogResponse = string;
+
+export type GetLogError = Status;
+
+export type GetLogsResponse = Array<string>;
+
+export type GetLogsError = Status;
+
 export type GetModelsResponse = Array<Model>;
 
 export type GetModelsError = Status;

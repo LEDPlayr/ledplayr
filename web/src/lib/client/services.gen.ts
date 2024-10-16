@@ -17,6 +17,11 @@ import type {
   FppCommandResponse,
   GetDisplayError,
   GetDisplayResponse,
+  GetLogData,
+  GetLogError,
+  GetLogResponse,
+  GetLogsError,
+  GetLogsResponse,
   GetModelsError,
   GetModelsResponse,
   GetOutputsError,
@@ -135,6 +140,30 @@ export const uploadDisplay = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/api/configfile/virtualdisplaymap",
+  });
+};
+
+/**
+ * Get a specific log
+ */
+export const getLog = <ThrowOnError extends boolean = false>(
+  options: Options<GetLogData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<GetLogResponse, GetLogError, ThrowOnError>({
+    ...options,
+    url: "/api/log/{name}",
+  });
+};
+
+/**
+ * Get log filenames
+ */
+export const getLogs = <ThrowOnError extends boolean = false>(
+  options?: Options<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<GetLogsResponse, GetLogsError, ThrowOnError>({
+    ...options,
+    url: "/api/logs",
   });
 };
 
