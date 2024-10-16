@@ -10,8 +10,10 @@ LEDPlayr is a lightweight player and scheduler for xLights FSEQ files
 	* LEDPlayr supports the FPP discovery protocol so should be automatically found on your network
 * FSEQ files - this the rendered file from xLights
 * Playlists with multiple sequences
-* Schedulingf of sequences
+* Scheduling of sequences
 	* By date, day of the week, and time period
+* Display of logs in the WebUI
+* Dark mode
 
 ## What isn't supported?
 * Testing models
@@ -27,8 +29,7 @@ It does and it has a LOT more features. LEDPlayr was born out of my frustration 
 Most of what I need is included. Below is a list of what I may include if I find time / have the need for it.
 
 * Docker images
-* Display of logs in the WebUI
-	* Coupled with better error handling
+* Better error handling
 * Ability to test models
 * Webcam streaming to the UI to make testing LED placement easier
 * Ability to view a sequence in the Web browser on the 3D Display
@@ -62,6 +63,13 @@ multicast = true # Optional, defaults to true
 [web]
 bind = "0.0.0.0" # Optional, defaults to "0.0.0.0"
 port = 80 # Optional, defaults to 3000
+
+[log] # Optional, defaults to no file logging
+directory = "/usr/local/share/ledplayr/storage" # Required
+prefix = "ledplay." # Optionsl, defaults to ""
+period = "hour" # Optional, log rotate period - defaults to never
+                # options are "minute", "hour", "day", "never"
+max_files = 3 # Optional, default is unlimited
 ```
 
 ### Systemd
