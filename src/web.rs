@@ -1,10 +1,11 @@
 use std::{
-    io::Write,
+    io::{Read, Write},
     net::Ipv4Addr,
     path::Path,
     sync::{Arc, Mutex},
 };
 
+use anyhow::anyhow;
 use axum::{
     body::Bytes,
     extract,
@@ -102,6 +103,8 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         .route("/api/scheduler", get(get_scheduler_status))
         .route("/api/scheduler/start", get(start_scheduler))
         .route("/api/scheduler/stop", get(stop_scheduler))
+        .route("/api/logs", get(get_logs))
+        .route("/api/log/:name", get(get_log))
         .fallback(static_handler)
         .layer(
             TraceLayer::new_for_http()
@@ -1317,6 +1320,128 @@ async fn stop_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>>
         }),
     )
         .into_response()
+}
+
+/// Get log filenames
+#[utoipa::path(
+    get,
+    path = "/api/logs",
+    responses(
+        (status = 200, description = "List of log filenames", body = Vec<String>),
+        (status = 500, description = "Something went wrong", body = Status)
+    ),
+    tag = "Logs"
+)]
+async fn get_logs(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
+    let state = state.lock().unwrap();
+
+    // Based on
+    // https://docs.rs/tracing-appender/latest/src/tracing_appender/rolling.rs.html#571
+    let files = match &state.cfg.log {
+        Some(log) => std::fs::read_dir(&log.directory)
+            .map(|dir| {
+                dir.filter_map(|entry| {
+                    let entry = entry.ok()?;
+                    let metadata = entry.metadata().ok()?;
+
+                    if !metadata.is_file() {
+                        return None;
+                    }
+
+                    let filename = entry.file_name();
+                    let filename = filename.to_str()?;
+                    if let Some(prefix) = &log.prefix {
+                        if !filename.starts_with(prefix) {
+                            return None;
+                        }
+                    }
+
+                    if let Some(period) = &log.period {
+                        if log.prefix.is_none()
+                            && time::Date::parse(filename, &period.date_format()).is_err()
+                        {
+                            return None;
+                        }
+                    }
+
+                    Some(filename.to_string())
+                })
+                .collect::<Vec<_>>()
+            })
+            .map_err(|e| anyhow!(e)),
+        None => Err(anyhow!("Logging not enabled")),
+    };
+
+    match files {
+        Ok(files) => (StatusCode::OK, Json(files)).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(Status {
+                status: "error".into(),
+                error: Some(e.to_string()),
+            }),
+        )
+            .into_response(),
+    }
+}
+
+/// Get a specific log
+#[utoipa::path(
+    get,
+    path = "/api/log/{name}",
+    params(
+        ("name" = String, Path, description = "The name of the log to display")
+    ),
+    responses(
+        (status = 200, description = "List of log filenames", body = String),
+        (status = 400, description = "Logging is disabled", body = Status),
+        (status = 500, description = "Something went wrong", body = Status)
+    ),
+    tag = "Logs"
+)]
+async fn get_log(
+    extract::State(state): extract::State<Arc<Mutex<State>>>,
+    extract::Path(name): extract::Path<String>,
+) -> Response {
+    let state = state.lock().unwrap();
+
+    match &state.cfg.log {
+        Some(log) => {
+            let path = std::path::Path::new(&log.directory).join(name);
+            match std::fs::OpenOptions::new().read(true).open(path) {
+                Ok(mut logfile) => {
+                    let mut data = String::new();
+                    match logfile.read_to_string(&mut data) {
+                        Ok(_) => (StatusCode::OK, data).into_response(),
+                        Err(e) => (
+                            StatusCode::INTERNAL_SERVER_ERROR,
+                            Json(Status {
+                                status: "error".into(),
+                                error: Some(e.to_string()),
+                            }),
+                        )
+                            .into_response(),
+                    }
+                }
+                Err(e) => (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(Status {
+                        status: "error".into(),
+                        error: Some(e.to_string()),
+                    }),
+                )
+                    .into_response(),
+            }
+        }
+        None => (
+            StatusCode::BAD_REQUEST,
+            Json(Status {
+                status: "error".into(),
+                error: Some("File logging is disabled".into()),
+            }),
+        )
+            .into_response(),
+    }
 }
 
 async fn create_or_update_playlist(state: Arc<Mutex<State>>, playlist: Playlist) -> Response {
