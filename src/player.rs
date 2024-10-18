@@ -59,7 +59,7 @@ async fn scheduler(
             Ok(channels) => {
                 for c in channels.channel_outputs.iter() {
                     for u in c.universes.iter() {
-                        controllers.push((u.address, u.channel_count));
+                        controllers.push((u.address, u.channel_count as usize));
                     }
                 }
             }
@@ -251,17 +251,21 @@ async fn play_schedule(
     Ok(())
 }
 
-async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, u32)>) {
+async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, usize)>) {
     tracing::info!("Started demuxer for {} controllers", senders.len());
 
     while let Some(data) = data_in.recv().await {
         let mut data = data.as_slice();
 
         for (s, channels) in senders.iter() {
-            let spl = data.split_at(*channels as usize);
-            data = spl.1;
+            if data.len() > *channels {
+                let spl = data.split_at(*channels);
+                data = spl.1;
 
-            s.send(spl.0.to_vec()).await.unwrap();
+                s.send(spl.0.to_vec()).await.unwrap();
+            } else {
+                tracing::warn!("Not enough data to send to output");
+            }
         }
     }
 
