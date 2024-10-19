@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
 };
 
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use axum::{
     body::Bytes,
     extract,
@@ -60,9 +60,16 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
 
     let listener = tokio::net::TcpListener::bind(format!("{ip}:{port}"))
         .await
+        .context("Web listener failed")
         .unwrap();
 
-    tracing::info!("Listening on {}", listener.local_addr().unwrap());
+    tracing::info!(
+        "Listening on {}",
+        listener
+            .local_addr()
+            .context("Failed to get local address")
+            .unwrap()
+    );
 
     let app = Router::new()
         .merge(RapiDoc::with_openapi("/api-docs/openapi2.json", ApiDoc::openapi()).path("/rapidoc"))

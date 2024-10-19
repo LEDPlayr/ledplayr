@@ -275,8 +275,11 @@ async fn sender(ip: Ipv4Addr, port: u16, mut r: Receiver<Vec<u8>>) {
         format!("{ip}:4048"),
         protocol::PixelConfig::default(),
         protocol::ID::Default,
-        std::net::UdpSocket::bind(format!("0.0.0.0:{port}")).unwrap(),
+        std::net::UdpSocket::bind(format!("0.0.0.0:{port}"))
+            .context("Failed to start UDP listener")
+            .unwrap(),
     )
+    .context("Failed to create DDP connection")
     .unwrap();
 
     tracing::info!("Started sender for controller: {ip}");
