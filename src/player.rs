@@ -1,12 +1,10 @@
 use core::time;
-use std::{
-    net::Ipv4Addr,
-    sync::{Arc, Mutex},
-};
+use std::{net::Ipv4Addr, sync::Arc};
 
 use anyhow::{Context, Result};
 use chrono::NaiveTime;
 use ddp_rs::{connection, protocol};
+use parking_lot::Mutex;
 use tokio::sync::mpsc::{self, Receiver, Sender};
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
@@ -53,7 +51,7 @@ async fn scheduler(
 
     // Don't lock forever
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
 
         match storage::read_outputs(&state.cfg) {
             Ok(channels) => {
@@ -110,7 +108,7 @@ async fn scheduler(
     tracker.wait().await;
 
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
         state.player_state = PlayerState::Stop;
     }
 
@@ -128,7 +126,7 @@ async fn check_for_schedules(
     let mut next = None;
 
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
         match db::get_current_schedule(&mut state.db_conn) {
             Ok(Some(s)) => {
                 tracing::debug!("Schedule found: {}", s.0.name);
@@ -196,7 +194,7 @@ async fn play_schedule(
 
         if seq.is_none() {
             tracing::info!("Loading sequence: {}", sequence.name);
-            let state = state.lock().unwrap();
+            let state = state.lock();
             seq = storage::read_sequence_meta(&state.cfg, &sequence.name)
                 .context("Couldn't read sequence meta")?;
         }

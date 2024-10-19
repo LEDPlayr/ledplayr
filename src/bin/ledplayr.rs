@@ -1,7 +1,4 @@
-use std::{
-    env,
-    sync::{Arc, Mutex},
-};
+use std::{env, sync::Arc};
 
 use anyhow::{anyhow, Context, Result};
 
@@ -10,6 +7,7 @@ use ledplayr::{
     built_info, config::Config, db, error::AppError, fpp, models::PlayerState, player,
     state::State, storage, web,
 };
+use parking_lot::Mutex;
 use tokio::sync::mpsc;
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 use tracing::level_filters::LevelFilter;

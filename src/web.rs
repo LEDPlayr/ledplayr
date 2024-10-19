@@ -2,7 +2,7 @@ use std::{
     io::{Read, Write},
     net::Ipv4Addr,
     path::Path,
-    sync::{Arc, Mutex},
+    sync::Arc,
 };
 
 use anyhow::anyhow;
@@ -16,6 +16,7 @@ use axum::{
 };
 use axum_typed_multipart::TypedMultipart;
 use humanize_duration::prelude::DurationExt;
+use parking_lot::Mutex;
 use rust_embed::Embed;
 use rustix::path::Arg;
 use systemstat::Platform;
@@ -48,7 +49,7 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
     let mut ip = Ipv4Addr::new(0, 0, 0, 0);
     let mut port = 3000;
 
-    if let Some(web) = &state.lock().unwrap().cfg.web {
+    if let Some(web) = &state.lock().cfg.web {
         if let Some(bind) = web.bind {
             ip = bind;
         }
@@ -198,7 +199,7 @@ async fn file_upload(
                 }
             };
 
-            let mut state = state.lock().unwrap();
+            let mut state = state.lock();
             let path = Path::new(&state.cfg.storage)
                 .join(dir.to_string())
                 .join(&filename);
@@ -289,7 +290,7 @@ async fn fpp_command(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     query: extract::Query<CommandQuery>,
 ) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     match query.command.as_str() {
         "moveFile" => {
@@ -354,7 +355,7 @@ async fn fpp_command(
     tag = "Sequences"
 )]
 async fn list_sequences(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_sequences(&mut state.db_conn) {
         Ok(seqs) => (
@@ -396,7 +397,7 @@ async fn get_sequence(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(filename): extract::Path<String>,
 ) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     match storage::read_file(&state.cfg, &filename, storage::StorageType::Sequences) {
         Ok(Some(data)) => (StatusCode::OK, data).into_response(),
@@ -441,7 +442,7 @@ async fn del_sequence(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(filename): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     if let Err(e) = storage::del_file(&state.cfg, &filename, storage::StorageType::Sequences) {
         tracing::error!("{e}");
@@ -498,7 +499,7 @@ async fn get_sequence_meta(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(filename): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_sequence(&mut state.db_conn, filename) {
         Ok(Some((seq, vars))) => (
@@ -548,7 +549,7 @@ async fn get_sequence_meta(
     tag = "Playlists"
 )]
 async fn list_playlists(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_playlists(&mut state.db_conn) {
         Ok(playlists) => {
@@ -584,7 +585,7 @@ async fn list_playlists(extract::State(state): extract::State<Arc<Mutex<State>>>
 async fn list_playlists_numbered(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_playlists(&mut state.db_conn) {
         Ok(playlists) => {
@@ -631,7 +632,7 @@ async fn get_playlist(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(playlist): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_playlist(&mut state.db_conn, playlist) {
         Ok(Some((p, s))) => {
@@ -762,7 +763,7 @@ async fn del_playlist(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(playlist_name): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::del_playlist(&mut state.db_conn, playlist_name) {
         Ok(Some(_)) => (
@@ -808,7 +809,7 @@ async fn del_playlist(
     tag = "Schedules"
 )]
 async fn list_schedules(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_schedules(&mut state.db_conn) {
         Ok(schedules) => {
@@ -852,7 +853,7 @@ async fn get_schedule(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(schedule): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::get_schedule(&mut state.db_conn, schedule) {
         Ok(Some(s)) => match Schedule::try_from(s) {
@@ -955,7 +956,7 @@ async fn del_schedule(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(schedule): extract::Path<String>,
 ) -> Response {
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     match db::del_schedule(&mut state.db_conn, schedule) {
         Ok(Some(_)) => (
@@ -1002,7 +1003,7 @@ async fn del_schedule(
     tag = "FPP Compatibility"
 )]
 async fn system_info(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     let uname = rustix::system::uname();
 
@@ -1234,7 +1235,7 @@ async fn upload_outputs(
 async fn get_scheduler_status(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
 ) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     (
         StatusCode::OK,
@@ -1258,7 +1259,7 @@ async fn get_scheduler_status(
 async fn start_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
     let ctrl;
     {
-        let state = state.lock().unwrap();
+        let state = state.lock();
         ctrl = state.player_ctrl.clone();
     }
     if let Err(e) = ctrl.send(PlayerState::Start).await {
@@ -1296,7 +1297,7 @@ async fn start_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>
 async fn stop_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
     let ctrl;
     {
-        let state = state.lock().unwrap();
+        let state = state.lock();
         ctrl = state.player_ctrl.clone();
     }
 
@@ -1333,7 +1334,7 @@ async fn stop_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>>
     tag = "Logs"
 )]
 async fn get_logs(extract::State(state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     // Based on
     // https://docs.rs/tracing-appender/latest/src/tracing_appender/rolling.rs.html#571
@@ -1403,7 +1404,7 @@ async fn get_log(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(name): extract::Path<String>,
 ) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     match &state.cfg.log {
         Some(log) => {
@@ -1470,7 +1471,7 @@ async fn create_or_update_playlist(state: Arc<Mutex<State>>, playlist: Playlist)
             .into_response();
     }
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     let sequences = playlist
         .main_playlist
@@ -1524,7 +1525,7 @@ async fn create_or_update_schedule(state: Arc<Mutex<State>>, schedule: Schedule)
             .into_response();
     }
 
-    let mut state = state.lock().unwrap();
+    let mut state = state.lock();
 
     let schedule = match db::models::NewSchedule::try_from(schedule) {
         Ok(s) => s,
@@ -1564,7 +1565,7 @@ async fn create_or_update_schedule(state: Arc<Mutex<State>>, schedule: Schedule)
 }
 
 async fn upload_other(state: Arc<Mutex<State>>, filename: String, data: Vec<u8>) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     match storage::upload_file(&state.cfg, &filename, StorageType::Other, data) {
         Ok(_) => (
@@ -1590,7 +1591,7 @@ async fn upload_other(state: Arc<Mutex<State>>, filename: String, data: Vec<u8>)
 }
 
 async fn download_other(state: Arc<Mutex<State>>, filename: String, mimetype: String) -> Response {
-    let state = state.lock().unwrap();
+    let state = state.lock();
 
     match storage::read_file(&state.cfg, &filename, StorageType::Other) {
         Ok(Some(d)) => (StatusCode::OK, [(header::CONTENT_TYPE, mimetype)], d).into_response(),
