@@ -1,12 +1,10 @@
 use core::time;
-use std::{
-    net::Ipv4Addr,
-    sync::{Arc, Mutex},
-};
+use std::{net::Ipv4Addr, sync::Arc};
 
 use anyhow::{Context, Result};
 use chrono::NaiveTime;
 use ddp_rs::{connection, protocol};
+use parking_lot::Mutex;
 use tokio::sync::mpsc::{self, Receiver, Sender};
 use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
@@ -53,13 +51,13 @@ async fn scheduler(
 
     // Don't lock forever
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
 
         match storage::read_outputs(&state.cfg) {
             Ok(channels) => {
                 for c in channels.channel_outputs.iter() {
                     for u in c.universes.iter() {
-                        controllers.push((u.address, u.channel_count));
+                        controllers.push((u.address, u.channel_count as usize));
                     }
                 }
             }
@@ -110,7 +108,7 @@ async fn scheduler(
     tracker.wait().await;
 
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
         state.player_state = PlayerState::Stop;
     }
 
@@ -128,7 +126,7 @@ async fn check_for_schedules(
     let mut next = None;
 
     {
-        let mut state = state.lock().unwrap();
+        let mut state = state.lock();
         match db::get_current_schedule(&mut state.db_conn) {
             Ok(Some(s)) => {
                 tracing::debug!("Schedule found: {}", s.0.name);
@@ -196,7 +194,7 @@ async fn play_schedule(
 
         if seq.is_none() {
             tracing::info!("Loading sequence: {}", sequence.name);
-            let state = state.lock().unwrap();
+            let state = state.lock();
             seq = storage::read_sequence_meta(&state.cfg, &sequence.name)
                 .context("Couldn't read sequence meta")?;
         }
@@ -251,17 +249,21 @@ async fn play_schedule(
     Ok(())
 }
 
-async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, u32)>) {
+async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, usize)>) {
     tracing::info!("Started demuxer for {} controllers", senders.len());
 
     while let Some(data) = data_in.recv().await {
         let mut data = data.as_slice();
 
         for (s, channels) in senders.iter() {
-            let spl = data.split_at(*channels as usize);
-            data = spl.1;
+            if data.len() > *channels {
+                let spl = data.split_at(*channels);
+                data = spl.1;
 
-            s.send(spl.0.to_vec()).await.unwrap();
+                s.send(spl.0.to_vec()).await.unwrap();
+            } else {
+                tracing::warn!("Not enough data to send to output");
+            }
         }
     }
 
@@ -273,8 +275,11 @@ async fn sender(ip: Ipv4Addr, port: u16, mut r: Receiver<Vec<u8>>) {
         format!("{ip}:4048"),
         protocol::PixelConfig::default(),
         protocol::ID::Default,
-        std::net::UdpSocket::bind(format!("0.0.0.0:{port}")).unwrap(),
+        std::net::UdpSocket::bind(format!("0.0.0.0:{port}"))
+            .context("Failed to start UDP listener")
+            .unwrap(),
     )
+    .context("Failed to create DDP connection")
     .unwrap();
 
     tracing::info!("Started sender for controller: {ip}");
