@@ -1381,7 +1381,10 @@ async fn get_logs(extract::State(state): extract::State<Arc<Mutex<State>>>) -> R
     };
 
     match files {
-        Ok(files) => (StatusCode::OK, Json(files)).into_response(),
+        Ok(mut files) => {
+            files.sort();
+            (StatusCode::OK, Json(files)).into_response()
+        }
         Err(e) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(Status {
