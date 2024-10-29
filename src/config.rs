@@ -37,6 +37,7 @@ pub struct Config {
 
     pub web: Option<WebConfig>,
     pub log: Option<LogConfig>,
+    pub scheduler: Option<SchedulerConfig>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -51,4 +52,9 @@ pub struct LogConfig {
     pub prefix: Option<String>,
     pub period: Option<LogPeriod>,
     pub max_files: Option<usize>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SchedulerConfig {
+    pub auto_start: Option<bool>,
 }

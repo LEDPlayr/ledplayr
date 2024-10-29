@@ -8,7 +8,11 @@ use std::{
 use anyhow::{anyhow, bail, Context, Result};
 use rustix::path::Arg;
 
-use crate::{config::Config, fseq, models::Channels};
+use crate::{
+    config::Config,
+    fseq,
+    models::{Channels, Model},
+};
 
 pub enum StorageType {
     Sequences,
@@ -147,6 +151,23 @@ pub fn read_outputs(cfg: &Config) -> Result<Channels> {
         .context("Could not read file")?;
 
     serde_json::from_str::<Channels>(&contents).map_err(|e| anyhow!(e))
+}
+
+pub fn read_models(cfg: &Config) -> Result<Vec<Model>> {
+    let filename = Path::new(&cfg.storage)
+        .join(StorageType::Other.to_string())
+        .join("models.json");
+
+    let mut file = std::fs::OpenOptions::new()
+        .read(true)
+        .open(filename)
+        .context("Could not open file")?;
+
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)
+        .context("Could not read file")?;
+
+    serde_json::from_str::<Vec<Model>>(&contents).map_err(|e| anyhow!(e))
 }
 
 pub fn output_exists(cfg: &Config) -> bool {

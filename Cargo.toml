@@ -15,6 +15,10 @@ path = "src/bin/gen_openapi.rs"
 name = "dump_fseq"
 path = "src/bin/dump_fseq.rs"
 
+[[bin]]
+name = "gen_gradients"
+path = "src/bin/gen_gradients.rs"
+
 [dependencies]
 anyhow = "1.0.88"
 axum = { version = "0.7.5", features = ["multipart"] }
@@ -22,6 +26,7 @@ axum_typed_multipart = "0.12.1"
 byteorder = "1.5.0"
 chrono = "0.4.38"
 clap = "4.5.17"
+colorgrad = "0.7.0"
 ddp-rs = "0.4.1"
 diesel = { version = "2.2.4", features = ["sqlite", "chrono"] }
 diesel_migrations = { version = "2.2.0", features = ["sqlite"] }
@@ -29,6 +34,7 @@ dotenvy = "0.15.7"
 futures-core = "0.3.30"
 futures-util = "0.3.30"
 humanize-duration = "0.0.6"
+image = "0.25.4"
 local-ip-address = "0.6.3"
 mime_guess = "2.0.5"
 parking_lot = "0.12.3"

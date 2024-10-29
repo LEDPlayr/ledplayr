@@ -6,7 +6,7 @@
     "license": {
       "name": ""
     },
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/api/channel/output/universeOutputs": {
@@ -1182,6 +1182,103 @@
         }
       }
     },
+    "/api/test/run": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Run LED test patterns",
+        "operationId": "run_test",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSpec"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tests started ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/test/sequence": {
+      "post": {
+        "tags": [
+          "Testing"
+        ],
+        "summary": "Get the pattern of LED colors for the given test",
+        "operationId": "get_test_sequence",
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "description": "Lenght of the LED chain",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Sequence"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The pattern of RGB to display",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/upload": {
       "post": {
         "tags": [
@@ -1354,6 +1451,47 @@
           }
         }
       },
+      "Chase": {
+        "type": "object",
+        "required": [
+          "color",
+          "width"
+        ],
+        "properties": {
+          "color": {
+            "$ref": "#/components/schemas/Color"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Color": {
+        "type": "object",
+        "required": [
+          "r",
+          "g",
+          "b"
+        ],
+        "properties": {
+          "b": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "g": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "r": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          }
+        }
+      },
       "DiskUtilization": {
         "type": "object",
         "required": [
@@ -1500,11 +1638,62 @@
           }
         }
       },
-      "PlayerState": {
+      "Pattern": {
         "type": "string",
         "enum": [
-          "Start",
-          "Stop"
+          "spectral",
+          "blues",
+          "greens",
+          "greys",
+          "oranges",
+          "purples",
+          "reds",
+          "turbo",
+          "viridis",
+          "inferno",
+          "magma",
+          "plasma",
+          "cividis",
+          "warm",
+          "cool",
+          "cube_helix",
+          "sinebow",
+          "rainbow"
+        ]
+      },
+      "PlayerState": {
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "start"
+            ]
+          },
+          {
+            "type": "object",
+            "required": [
+              "testing"
+            ],
+            "properties": {
+              "testing": {
+                "$ref": "#/components/schemas/TestSpec"
+              }
+            }
+          },
+          {
+            "type": "string",
+            "enum": [
+              "stop"
+            ]
+          }
+        ]
+      },
+      "PlayerStatus": {
+        "type": "string",
+        "enum": [
+          "start",
+          "testing",
+          "stop"
         ]
       },
       "Playlist": {
@@ -1722,9 +1911,85 @@
         ],
         "properties": {
           "status": {
-            "$ref": "#/components/schemas/PlayerState"
+            "$ref": "#/components/schemas/PlayerStatus"
           }
         }
+      },
+      "Sequence": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "solid"
+            ],
+            "properties": {
+              "solid": {
+                "$ref": "#/components/schemas/Color"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "chase"
+            ],
+            "properties": {
+              "chase": {
+                "$ref": "#/components/schemas/Chase"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "pattern"
+            ],
+            "properties": {
+              "pattern": {
+                "$ref": "#/components/schemas/Pattern"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "moving_pattern"
+            ],
+            "properties": {
+              "moving_pattern": {
+                "$ref": "#/components/schemas/Pattern"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "custom_pattern"
+            ],
+            "properties": {
+              "custom_pattern": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Color"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "custom_moving_pattern"
+            ],
+            "properties": {
+              "custom_moving_pattern": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Color"
+                }
+              }
+            }
+          }
+        ]
       },
       "SequenceMeta": {
         "type": "object",
@@ -1959,6 +2224,26 @@
           },
           "Uptime": {
             "type": "string"
+          }
+        }
+      },
+      "TestSpec": {
+        "type": "object",
+        "required": [
+          "tests",
+          "step_ms"
+        ],
+        "properties": {
+          "step_ms": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "tests": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Sequence"
+            }
           }
         }
       },

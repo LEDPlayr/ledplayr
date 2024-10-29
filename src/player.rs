@@ -1,7 +1,7 @@
 use core::time;
-use std::{net::Ipv4Addr, sync::Arc};
+use std::{collections::HashMap, net::Ipv4Addr, sync::Arc};
 
-use anyhow::{Context, Result};
+use anyhow::{anyhow, Context, Result};
 use chrono::NaiveTime;
 use ddp_rs::{connection, protocol};
 use parking_lot::Mutex;
@@ -10,10 +10,22 @@ use tokio_util::{sync::CancellationToken, task::TaskTracker};
 
 use crate::{
     db::{self, models::NextSchedule},
-    models::PlayerState,
+    models::{PlayerState, PlayerStatus},
+    patterns,
     state::State,
     storage,
 };
+
+struct Data {
+    offset: usize,
+    data: Vec<u8>,
+}
+
+struct SenderConfig {
+    offset: usize,
+    len: usize,
+    chan: Sender<Data>,
+}
 
 pub async fn start_scheduler(
     state: Arc<Mutex<State>>,
@@ -27,9 +39,16 @@ pub async fn start_scheduler(
             },
             s = player_state.recv() => {
                 if let Some(s) = s {
-                    if s == PlayerState::Start {
-                        let cancel = cancel.child_token();
-                        scheduler(state.clone(), cancel.clone(), &mut player_state).await;
+                    match s {
+                        PlayerState::Start => {
+                            let cancel = cancel.child_token();
+                            scheduler(state.clone(), cancel.clone(), &mut player_state).await;
+                        },
+                        PlayerState::Testing(tests) => {
+                            let cancel = cancel.child_token();
+                            tester(state.clone(), cancel.clone(), &mut player_state, tests).await;
+                        },
+                        _ => {}
                     }
                 }
             }
@@ -44,46 +63,19 @@ async fn scheduler(
 ) {
     tracing::info!("Scheduler thread started");
 
-    let tracker = TaskTracker::new();
-
-    // Load controllers
-    let mut controllers = Vec::new();
-
-    // Don't lock forever
     {
         let mut state = state.lock();
-
-        match storage::read_outputs(&state.cfg) {
-            Ok(channels) => {
-                for c in channels.channel_outputs.iter() {
-                    for u in c.universes.iter() {
-                        controllers.push((u.address, u.channel_count as usize));
-                    }
-                }
-            }
-            Err(e) => {
-                tracing::error!("Could not start scheduler: {e}");
-                return;
-            }
-        };
-
-        state.player_state = PlayerState::Start;
+        state.player_status = PlayerStatus::Start;
     }
 
-    let mut senders = Vec::new();
-
-    let mut port = 4048;
-    for (ip, channels) in controllers.iter() {
-        let (data_out, sender_rx) = mpsc::channel::<Vec<u8>>(1);
-        tracker.spawn(sender(*ip, port, sender_rx));
-        senders.push((data_out, *channels));
-        port += 1;
-    }
-
-    // Spawn the demuxer
-    let (s, r) = mpsc::channel::<Vec<u8>>(1);
-    tracker.spawn(demuxer(r, senders));
-
+    let tracker = TaskTracker::new();
+    let s = match start_senders(state.clone(), &tracker).await {
+        Ok(s) => s,
+        Err(e) => {
+            tracing::error!("{e}");
+            return;
+        }
+    };
     tracker.close();
 
     let mut interval = tokio::time::interval(time::Duration::from_secs(10));
@@ -100,7 +92,12 @@ async fn scheduler(
                     }
                 }
             }
-            _ = interval.tick() => check_for_schedules(state.clone(), cancel.clone(), s.clone(), player_state).await,
+            _ = interval.tick() => check_for_schedules(
+                state.clone(),
+                cancel.clone(),
+                s.clone(),
+                player_state
+            ).await,
         }
     }
 
@@ -109,7 +106,7 @@ async fn scheduler(
 
     {
         let mut state = state.lock();
-        state.player_state = PlayerState::Stop;
+        state.player_status = PlayerStatus::Stop;
     }
 
     tracing::info!("Scheduler thread stopped");
@@ -118,7 +115,7 @@ async fn scheduler(
 async fn check_for_schedules(
     state: Arc<Mutex<State>>,
     cancel: CancellationToken,
-    s: Sender<Vec<u8>>,
+    s: Sender<Data>,
     player_state: &mut Receiver<PlayerState>,
 ) {
     tracing::debug!("Checking for schedules");
@@ -152,7 +149,7 @@ async fn play_schedule(
     state: Arc<Mutex<State>>,
     next: NextSchedule,
     cancel: CancellationToken,
-    s: Sender<Vec<u8>>,
+    s: Sender<Data>,
     player_state: &mut Receiver<PlayerState>,
 ) -> Result<()> {
     let (schedule, playlist, sequences) = next;
@@ -220,7 +217,7 @@ async fn play_schedule(
                     if let Some(ref mut seq) = seq {
                         match seq.get_frame(frame as u32) {
                             Ok(Some(f)) => {
-                                s.send(f).await.context("Couldn't send frame")?;
+                                s.send(Data{offset:0, data:f}).await.context("Couldn't send frame")?;
                             },
                             Ok(None) => break,
                             Err(e) => {
@@ -249,20 +246,91 @@ async fn play_schedule(
     Ok(())
 }
 
-async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, usize)>) {
+async fn start_senders(state: Arc<Mutex<State>>, tracker: &TaskTracker) -> Result<Sender<Data>> {
+    // Load controllers
+    let mut controllers = Vec::new();
+
+    // Don't lock forever
+    {
+        let state = state.lock();
+
+        match storage::read_outputs(&state.cfg) {
+            Ok(channels) => {
+                for c in channels.channel_outputs.iter() {
+                    for u in c.universes.iter() {
+                        controllers.push((
+                            u.address,
+                            u.start_channel as usize,
+                            u.channel_count as usize,
+                        ));
+                    }
+                }
+            }
+            Err(e) => {
+                return Err(anyhow!("Could not start scheduler: {e}"));
+            }
+        };
+    }
+
+    let mut senders = Vec::new();
+
+    let mut port = 4048;
+    for (ip, start, len) in controllers.iter() {
+        let (data_out, sender_rx) = mpsc::channel::<Data>(1);
+        tracker.spawn(sender(*ip, port, *len, sender_rx));
+        senders.push(SenderConfig {
+            offset: *start - 1,
+            len: *len,
+            chan: data_out,
+        });
+        port += 1;
+    }
+
+    // Spawn the demuxer
+    let (s, r) = mpsc::channel::<Data>(1);
+    tracker.spawn(demuxer(r, senders));
+
+    Ok(s)
+}
+
+async fn demuxer(mut data_in: Receiver<Data>, senders: Vec<SenderConfig>) {
     tracing::info!("Started demuxer for {} controllers", senders.len());
 
     while let Some(data) = data_in.recv().await {
-        let mut data = data.as_slice();
+        let mut d_start = data.offset;
+        let mut data = data.data.as_slice();
 
-        for (s, channels) in senders.iter() {
-            if data.len() > *channels {
-                let spl = data.split_at(*channels);
-                data = spl.1;
+        for cfg in senders.iter() {
+            let d_end = d_start + data.len() - 1;
+            let s_start = cfg.offset;
+            let s_end = s_start + cfg.len - 1;
 
-                s.send(spl.0.to_vec()).await.unwrap();
-            } else {
-                tracing::warn!("Not enough data to send to output");
+            if d_start >= s_start && d_start < s_end {
+                let offset = d_start - s_start;
+
+                if d_end <= s_end {
+                    cfg.chan
+                        .send(Data {
+                            offset,
+                            data: data.to_vec(),
+                        })
+                        .await
+                        .unwrap();
+                    break;
+                } else {
+                    let spl = data.split_at(s_end - d_start + 1);
+
+                    data = spl.1;
+
+                    cfg.chan
+                        .send(Data {
+                            offset,
+                            data: spl.0.to_vec(),
+                        })
+                        .await
+                        .unwrap();
+                    d_start = s_end + 1;
+                }
             }
         }
     }
@@ -270,7 +338,7 @@ async fn demuxer(mut data_in: Receiver<Vec<u8>>, senders: Vec<(Sender<Vec<u8>>, 
     tracing::info!("Stopped demuxer for {} controllers", senders.len());
 }
 
-async fn sender(ip: Ipv4Addr, port: u16, mut r: Receiver<Vec<u8>>) {
+async fn sender(ip: Ipv4Addr, port: u16, len: usize, mut r: Receiver<Data>) {
     let mut conn = connection::DDPConnection::try_new(
         format!("{ip}:4048"),
         protocol::PixelConfig::default(),
@@ -284,9 +352,149 @@ async fn sender(ip: Ipv4Addr, port: u16, mut r: Receiver<Vec<u8>>) {
 
     tracing::info!("Started sender for controller: {ip}");
 
-    while let Some(data) = r.recv().await {
-        conn.write(&data).unwrap();
+    while let Some(mut data) = r.recv().await {
+        let to_send = if data.offset == 0 {
+            data.data
+        } else {
+            let mut d = vec![0u8; data.offset];
+            d.append(&mut data.data);
+            d
+        };
+
+        if to_send.len() == len {
+            conn.write(&to_send).unwrap();
+        } else {
+            tracing::warn!("Bad data length {}!={}", to_send.len(), len);
+        }
     }
 
     tracing::info!("Stopped sender for controller: {ip}");
+}
+
+async fn tester(
+    state: Arc<Mutex<State>>,
+    cancel: CancellationToken,
+    player_state: &mut Receiver<PlayerState>,
+    tests: patterns::TestSpec,
+) {
+    tracing::info!("Testing thread started");
+
+    let mut model_lookup = HashMap::new();
+
+    // Don't lock forever
+    {
+        let mut state = state.lock();
+
+        match storage::read_models(&state.cfg) {
+            Ok(models) => {
+                for m in models.into_iter() {
+                    model_lookup.insert(m.name.clone(), m);
+                }
+            }
+            Err(e) => {
+                tracing::error!("Could not start tester: {e}");
+                return;
+            }
+        };
+
+        state.player_status = PlayerStatus::Testing;
+    }
+
+    // (start, len, sequence)
+    let mut test_setup = Vec::new();
+    for (model, sequence) in tests.tests.iter() {
+        if let Some(m) = model_lookup.get(model) {
+            if m.channel_count % 3 != 0 {
+                tracing::error!("Can't handle a non multiple of 3 channel count");
+                cancel.cancel();
+                return;
+            }
+
+            let start = (m.start_channel - 1) / 3;
+            let len = m.channel_count / 3;
+
+            test_setup.push((start as usize, len as usize, sequence));
+        } else {
+            tracing::error!("Invalid model specified '{model}'");
+            cancel.cancel();
+            return;
+        }
+    }
+    test_setup.sort_by(|a, b| a.0.cmp(&b.0));
+
+    let mut intvl = tokio::time::interval(time::Duration::from_millis(tests.step_ms));
+    intvl.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+
+    let tracker = TaskTracker::new();
+    let s = match start_senders(state.clone(), &tracker).await {
+        Ok(s) => s,
+        Err(e) => {
+            tracing::error!("{e}");
+            return;
+        }
+    };
+    tracker.close();
+
+    let mut loop_count = 0;
+    loop {
+        tokio::select! {
+            _ = cancel.cancelled() => break,
+            s = player_state.recv() => {
+                if let Some(s) = s {
+                    if s == PlayerState::Stop {
+                        cancel.cancel();
+                        break;
+                    }
+                }
+            }
+            _ = intvl.tick() => {
+                let mut to_send = Vec::new();
+                let mut start_channel: Option<usize> = None;
+                let mut last_channel = 0;
+
+                for (start, len, seq) in test_setup.iter() {
+                    if *start != last_channel && !to_send.is_empty() {
+                        if let Some(start_channel) = start_channel {
+                            s.send(Data{offset: start_channel * 3, data: to_send})
+                                    .await
+                                    .context("Couldn't send frame")
+                                    .unwrap();
+                            to_send = Vec::new();
+                        }
+                        start_channel = None;
+                    }
+
+                    if start_channel.is_none() {
+                        start_channel = Some(*start);
+                    }
+
+                    let mut data = seq.as_vec(*len);
+                    if seq.moves() {
+                        data.rotate_right((loop_count % len) * 3);
+                    }
+                    to_send.append(&mut data);
+                    last_channel = start + len;
+                }
+
+                if let Some(start_channel) = start_channel {
+                    s.send(Data{offset: start_channel * 3, data: to_send})
+                            .await
+                            .context("Couldn't send frame")
+                            .unwrap();
+                }
+
+                loop_count += 1
+            }
+        }
+    }
+
+    drop(s);
+    tracker.wait().await;
+
+    {
+        let mut state = state.lock();
+        state.player_status = PlayerStatus::Stop;
+    }
+
+    tracing::info!("Testing thread stopped");
 }

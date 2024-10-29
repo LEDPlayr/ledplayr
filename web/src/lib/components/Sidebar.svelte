@@ -24,7 +24,7 @@
       <h2 class="menu-title">Display</h2>
       <ul>
         <li><a href={route("/outputs")}>Manage Outputs</a></li>
-        <li><a href={route("/display")}>Virtual 3D Display</a></li>
+        <li><a href={route("/display")}>Test Display</a></li>
       </ul>
     </li>
     <li>

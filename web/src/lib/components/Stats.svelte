@@ -1,60 +1,21 @@
 <script lang="ts">
-  import type { SchedulerStatus } from "$lib/client";
-
   import PhPause from "virtual:icons/ph/pause";
   import PhPlay from "virtual:icons/ph/play";
   import PhSpinner from "virtual:icons/ph/spinner";
 
-  import { onMount } from "svelte";
-  import { getSchedulerStatus, startScheduler, stopScheduler, systemInfo } from "$lib/client";
-  import { sysInfo } from "$lib/stores";
-
-  type PlayerStatus = "Unknown" | "Pending" | "Started" | "Stopped";
-
-  let player_state: SchedulerStatus | undefined = $state();
-  let loading = $state(true);
-  let player_status: PlayerStatus = $derived.by(() => {
-    if (loading) {
-      return "Pending";
-    } else if (player_state?.status == "Start") {
-      return "Started";
-    } else if (player_state?.status == "Stop") {
-      return "Stopped";
-    } else {
-      return "Unknown";
-    }
-  });
-
-  const update = async () => {
-    try {
-      $sysInfo = (await systemInfo()).data;
-      player_state = (await getSchedulerStatus()).data;
-    } catch (_err) {
-      $sysInfo = undefined;
-      player_state = undefined;
-    }
-    loading = false;
-  };
+  import { startScheduler, stopScheduler } from "$lib/client";
+  import { playerStatus, sysInfo } from "$lib/stores";
+  import { updateStatus } from "$lib/utils";
 
   const toggleScheduler = async () => {
-    if (player_status == "Started") {
-      loading = true;
+    if ($playerStatus == "Started" || $playerStatus == "Testing") {
       await stopScheduler();
-      await update();
-    } else if (player_status == "Stopped") {
-      loading = true;
+      await updateStatus();
+    } else if ($playerStatus == "Stopped") {
       await startScheduler();
-      await update();
+      await updateStatus();
     }
   };
-
-  onMount(() => {
-    const intvl = setInterval(update, 5000);
-    update();
-    return () => {
-      clearInterval(intvl);
-    };
-  });
 </script>
 
 <div class="w-full">
@@ -73,12 +34,12 @@
     ).toFixed(2)}%
   </div>
   <div class="flex w-full flex-row">
-    <span class="flex-grow font-semibold">Scheduler:</span>{player_status}
+    <span class="flex-grow font-semibold">Scheduler:</span>{$playerStatus}
   </div>
   <button type="button" class="btn btn-neutral btn-sm m-2" onclick={toggleScheduler}>
-    {#if player_status == "Started"}
+    {#if $playerStatus == "Started" || $playerStatus == "Testing"}
       <PhPause /> Stop Scheduler
-    {:else if player_status == "Stopped"}
+    {:else if $playerStatus == "Stopped"}
       <PhPlay /> Start Scheduler
     {:else}
       <PhSpinner class="animate-spin" /> Pending

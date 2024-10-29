@@ -8,6 +8,7 @@ pub mod error;
 pub mod fpp;
 pub mod fseq;
 pub mod models;
+pub mod patterns;
 pub mod player;
 pub mod state;
 pub mod storage;

@@ -46,6 +46,42 @@ export const ChannelsSchema = {
   },
 } as const;
 
+export const ChaseSchema = {
+  type: "object",
+  required: ["color", "width"],
+  properties: {
+    color: {
+      $ref: "#/components/schemas/Color",
+    },
+    width: {
+      type: "integer",
+      minimum: 0,
+    },
+  },
+} as const;
+
+export const ColorSchema = {
+  type: "object",
+  required: ["r", "g", "b"],
+  properties: {
+    b: {
+      type: "integer",
+      format: "int32",
+      minimum: 0,
+    },
+    g: {
+      type: "integer",
+      format: "int32",
+      minimum: 0,
+    },
+    r: {
+      type: "integer",
+      format: "int32",
+      minimum: 0,
+    },
+  },
+} as const;
+
 export const DiskUtilizationSchema = {
   type: "object",
   required: ["Media", "Root"],
@@ -185,9 +221,55 @@ export const NumberedPlaylistSchema = {
   },
 } as const;
 
-export const PlayerStateSchema = {
+export const PatternSchema = {
   type: "string",
-  enum: ["Start", "Stop"],
+  enum: [
+    "spectral",
+    "blues",
+    "greens",
+    "greys",
+    "oranges",
+    "purples",
+    "reds",
+    "turbo",
+    "viridis",
+    "inferno",
+    "magma",
+    "plasma",
+    "cividis",
+    "warm",
+    "cool",
+    "cube_helix",
+    "sinebow",
+    "rainbow",
+  ],
+} as const;
+
+export const PlayerStateSchema = {
+  oneOf: [
+    {
+      type: "string",
+      enum: ["start"],
+    },
+    {
+      type: "object",
+      required: ["testing"],
+      properties: {
+        testing: {
+          $ref: "#/components/schemas/TestSpec",
+        },
+      },
+    },
+    {
+      type: "string",
+      enum: ["stop"],
+    },
+  ],
+} as const;
+
+export const PlayerStatusSchema = {
+  type: "string",
+  enum: ["start", "testing", "stop"],
 } as const;
 
 export const PlaylistSchema = {
@@ -399,9 +481,74 @@ export const SchedulerStatusSchema = {
   required: ["status"],
   properties: {
     status: {
-      $ref: "#/components/schemas/PlayerState",
+      $ref: "#/components/schemas/PlayerStatus",
     },
   },
+} as const;
+
+export const SequenceSchema = {
+  oneOf: [
+    {
+      type: "object",
+      required: ["solid"],
+      properties: {
+        solid: {
+          $ref: "#/components/schemas/Color",
+        },
+      },
+    },
+    {
+      type: "object",
+      required: ["chase"],
+      properties: {
+        chase: {
+          $ref: "#/components/schemas/Chase",
+        },
+      },
+    },
+    {
+      type: "object",
+      required: ["pattern"],
+      properties: {
+        pattern: {
+          $ref: "#/components/schemas/Pattern",
+        },
+      },
+    },
+    {
+      type: "object",
+      required: ["moving_pattern"],
+      properties: {
+        moving_pattern: {
+          $ref: "#/components/schemas/Pattern",
+        },
+      },
+    },
+    {
+      type: "object",
+      required: ["custom_pattern"],
+      properties: {
+        custom_pattern: {
+          type: "array",
+          items: {
+            $ref: "#/components/schemas/Color",
+          },
+        },
+      },
+    },
+    {
+      type: "object",
+      required: ["custom_moving_pattern"],
+      properties: {
+        custom_moving_pattern: {
+          type: "array",
+          items: {
+            $ref: "#/components/schemas/Color",
+          },
+        },
+      },
+    },
+  ],
 } as const;
 
 export const SequenceMetaSchema = {
@@ -624,6 +771,24 @@ export const SystemUtilizationSchema = {
     },
     Uptime: {
       type: "string",
+    },
+  },
+} as const;
+
+export const TestSpecSchema = {
+  type: "object",
+  required: ["tests", "step_ms"],
+  properties: {
+    step_ms: {
+      type: "integer",
+      format: "int64",
+      minimum: 0,
+    },
+    tests: {
+      type: "object",
+      additionalProperties: {
+        $ref: "#/components/schemas/Sequence",
+      },
     },
   },
 } as const;
