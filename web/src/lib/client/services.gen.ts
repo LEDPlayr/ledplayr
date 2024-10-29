@@ -40,6 +40,9 @@ import type {
   GetSequenceMetaError,
   GetSequenceMetaResponse,
   GetSequenceResponse,
+  GetTestSequenceData,
+  GetTestSequenceError,
+  GetTestSequenceResponse,
   ListPlaylistsError,
   ListPlaylistsNumberedError,
   ListPlaylistsNumberedResponse,
@@ -54,6 +57,9 @@ import type {
   NewScheduleData,
   NewScheduleError,
   NewScheduleResponse,
+  RunTestData,
+  RunTestError,
+  RunTestResponse,
   StartSchedulerError,
   StartSchedulerResponse,
   StopSchedulerError,
@@ -492,6 +498,34 @@ export const systemInfo = <ThrowOnError extends boolean = false>(
   return (options?.client ?? client).get<SystemInfoResponse, SystemInfoError, ThrowOnError>({
     ...options,
     url: "/api/system/info",
+  });
+};
+
+/**
+ * Run LED test patterns
+ */
+export const runTest = <ThrowOnError extends boolean = false>(
+  options: Options<RunTestData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<RunTestResponse, RunTestError, ThrowOnError>({
+    ...options,
+    url: "/api/test/run",
+  });
+};
+
+/**
+ * Get the pattern of LED colors for the given test
+ */
+export const getTestSequence = <ThrowOnError extends boolean = false>(
+  options: Options<GetTestSequenceData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<
+    GetTestSequenceResponse,
+    GetTestSequenceError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/api/test/sequence",
   });
 };
 

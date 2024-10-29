@@ -13,6 +13,17 @@ export type Channels = {
   channelOutputs: Array<ChannelOutput>;
 };
 
+export type Chase = {
+  color: Color;
+  width: number;
+};
+
+export type Color = {
+  b: number;
+  g: number;
+  r: number;
+};
+
 export type DiskUtilization = {
   Media: FreeTotal;
   Root: FreeTotal;
@@ -52,7 +63,34 @@ export type NumberedPlaylist = {
   name: string;
 };
 
-export type PlayerState = "Start" | "Stop";
+export type Pattern =
+  | "spectral"
+  | "blues"
+  | "greens"
+  | "greys"
+  | "oranges"
+  | "purples"
+  | "reds"
+  | "turbo"
+  | "viridis"
+  | "inferno"
+  | "magma"
+  | "plasma"
+  | "cividis"
+  | "warm"
+  | "cool"
+  | "cube_helix"
+  | "sinebow"
+  | "rainbow";
+
+export type PlayerState =
+  | "start"
+  | {
+      testing: TestSpec;
+    }
+  | "stop";
+
+export type PlayerStatus = "start" | "testing" | "stop";
 
 export type Playlist = {
   desc: string;
@@ -99,8 +137,28 @@ export type Schedule = {
 };
 
 export type SchedulerStatus = {
-  status: PlayerState;
+  status: PlayerStatus;
 };
+
+export type Sequence =
+  | {
+      solid: Color;
+    }
+  | {
+      chase: Chase;
+    }
+  | {
+      pattern: Pattern;
+    }
+  | {
+      moving_pattern: Pattern;
+    }
+  | {
+      custom_pattern: Array<Color>;
+    }
+  | {
+      custom_moving_pattern: Array<Color>;
+    };
 
 export type SequenceMeta = {
   /**
@@ -231,6 +289,13 @@ export type SystemUtilization = {
   Disk: DiskUtilization;
   Memory: number;
   Uptime: string;
+};
+
+export type TestSpec = {
+  step_ms: number;
+  tests: {
+    [key: string]: Sequence;
+  };
 };
 
 export type Universe = {
@@ -465,6 +530,28 @@ export type ListSequencesError = Status;
 export type SystemInfoResponse = SystemInfo;
 
 export type SystemInfoError = unknown;
+
+export type RunTestData = {
+  body: TestSpec;
+};
+
+export type RunTestResponse = Status;
+
+export type RunTestError = Status;
+
+export type GetTestSequenceData = {
+  body: Sequence;
+  query: {
+    /**
+     * Lenght of the LED chain
+     */
+    length: number;
+  };
+};
+
+export type GetTestSequenceResponse = Array<Color>;
+
+export type GetTestSequenceError = Status;
 
 export type FileUploadData = {
   body: FileUpload;

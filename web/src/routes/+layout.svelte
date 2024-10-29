@@ -4,9 +4,12 @@
   import Navbar from "$lib/components/Navbar.svelte";
   import Notifications from "$lib/components/Notifications.svelte";
   import Sidebar from "$lib/components/Sidebar.svelte";
-  import { darkMode } from "$lib/stores";
+  import { darkMode, sysInfo } from "$lib/stores";
 
   import "../app.scss";
+
+  import { systemInfo } from "$lib/client";
+  import { updateStatus } from "$lib/utils";
 
   let { children } = $props();
   let drawer = $state(false);
@@ -38,6 +41,24 @@
       window.removeEventListener("storage", updateDarkMode);
     };
   });
+
+  onMount(() => {
+    const intvl = setInterval(update, 5000);
+    update();
+    return () => {
+      clearInterval(intvl);
+    };
+  });
+
+  const update = async () => {
+    await updateStatus();
+
+    try {
+      $sysInfo = (await systemInfo()).data;
+    } catch (_err) {
+      $sysInfo = undefined;
+    }
+  };
 
   $effect(() => {
     let theme: string;

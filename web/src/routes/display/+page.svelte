@@ -1,15 +1,21 @@
 <script lang="ts">
-  import type { Model } from "$lib/client";
+  import type { Color, Model, Sequence } from "$lib/client";
+
+  import PhPause from "virtual:icons/ph/pause";
+  import PhPlay from "virtual:icons/ph/play";
+  import PhTestTube from "virtual:icons/ph/test-tube";
 
   import { Canvas } from "@threlte/core";
   import { onMount } from "svelte";
-  import { getModels } from "$lib/client";
+  import { getModels, runTest, startScheduler, stopScheduler } from "$lib/client";
+  import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
-  import { notify } from "$lib/utils";
+  import { patterns, playerStatus } from "$lib/stores";
+  import { notify, updateStatus } from "$lib/utils";
 
-  type ModelView = Model & { visible: boolean };
-  let models: Record<string, ModelView> = $state({});
-  let pointColor = $state("#ff0000");
+  const gray: Color = { r: 25, g: 25, b: 25 };
+  let models: Record<string, [Model, Sequence | undefined]> = $state({});
+  let step = $state(100);
 
   onMount(async () => {
     const { data, error } = await getModels();
@@ -18,13 +24,7 @@
         data
           .sort((a, b) => a.StartChannel - b.StartChannel)
           .map((m) => {
-            return [
-              m.Name,
-              {
-                visible: true,
-                ...m,
-              },
-            ];
+            return [m.Name, [m, undefined]];
           }),
       );
     }
@@ -33,65 +33,122 @@
     }
   });
 
-  const checkAll = () => {
-    for (const m in models) {
-      models[m].visible = true;
-    }
-  };
-
-  const uncheckAll = () => {
-    for (const m in models) {
-      models[m].visible = false;
-    }
-  };
-
-  const visible = $derived.by(() => {
+  let colors = $derived.by(() => {
     return Object.values(models)
-      .filter((m) => m.visible)
-      .map((m) => [m.StartChannel - 1, m.StartChannel + m.ChannelCount - 1]);
+      .map(([m, s]) => {
+        const count = m.ChannelCount / 3;
+
+        if (s) {
+          if ("solid" in s) {
+            return Array(count).fill(s.solid);
+          } else if ("chase" in s) {
+            let data = Array(count).fill(gray);
+            let width = Math.min(s.chase.width, count);
+            for (let i = 0; i < width; i++) {
+              data[i] = s.chase.color;
+            }
+            return data;
+          } else if ("pattern" in s) {
+            const p = $patterns[`${s.pattern}@${count}`];
+            if (p) {
+              return p;
+            }
+          } else if ("moving_pattern" in s) {
+            const p = $patterns[`${s.moving_pattern}@${count}`];
+            if (p) {
+              return p;
+            }
+          }
+        }
+
+        return Array(count).fill(gray);
+      })
+      .flat();
   });
+
+  const startTest = async () => {
+    const d = Object.fromEntries(
+      Object.values(models)
+        .map(([m, s]) => [m.Name, s])
+        .filter(([_m, s]) => s !== undefined),
+    );
+
+    const { error } = await runTest({ body: { step_ms: step, tests: d } });
+    if (error) {
+      notify(`${error}`, "error");
+    }
+    await updateStatus();
+  };
+
+  const stop = async () => {
+    const { error } = await stopScheduler();
+    if (error) {
+      notify(`${error}`, "error");
+    }
+    await updateStatus();
+  };
+
+  const start = async () => {
+    const { error } = await startScheduler();
+    if (error) {
+      notify(`${error}`, "error");
+    }
+    await updateStatus();
+  };
 </script>
 
 <svelte:head>
-  <title>LEDPlayr: Virtual Display</title>
+  <title>LEDPlayr: Test Display</title>
 </svelte:head>
 
 <div class="flex flex-grow flex-col p-5">
-  <h1 class="text-2xl">Virtual 3D Display</h1>
+  <h1 class="text-2xl">Test Display</h1>
 
   <div class="divider"></div>
 
   <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     <div>
-      <h2 class="mb-4 text-lg">Show/Hide models</h2>
+      <h2 class="text-lg">Test Control</h2>
+
+      <p class="w-full text-center">Status: {$playerStatus}</p>
+
+      <div class="m-4 flex flex-row gap-4">
+        <button class="btn" onclick={stop} disabled={$playerStatus == "Stopped"}>
+          <PhPause />Stop
+        </button>
+        <button
+          class="btn"
+          onclick={startTest}
+          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
+          <PhTestTube />Start Test
+        </button>
+        <button
+          class="btn"
+          onclick={start}
+          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
+          <PhPlay />Start Scheduler
+        </button>
+      </div>
+
+      <h2 class="mb-4 text-lg">Configure Models</h2>
 
       <label class="label cursor-pointer">
-        Point Color
-        <input type="color" bind:value={pointColor} />
+        Step (ms)
+        <input type="number" min="10" bind:value={step} />
       </label>
 
-      <button onclick={checkAll} class="btn btn-ghost btn-sm">Select All</button>
-      <button onclick={uncheckAll} class="btn btn-ghost btn-sm">Unselect All</button>
-
-      <div class="max-h-[32rem] overflow-y-scroll p-4">
-        <ul class="mt-4 flex flex-col gap-2">
+      <div class="p-4">
+        <div class="mt-4 flex flex-col gap-2">
           {#each Object.keys(models) as m}
-            <li class="rounded-lg border border-base-300 p-2">
-              <div class="form-control">
-                <label class="label cursor-pointer">
-                  <span class="label-text">{models[m].Name}</span>
-                  <input type="checkbox" bind:checked={models[m].visible} class="checkbox" />
-                </label>
-              </div>
-            </li>
+            <TestModel model={models[m][0]} bind:sequence={models[m][1]} />
           {/each}
-        </ul>
+        </div>
       </div>
     </div>
 
-    <div class="mt-4 min-h-[32rem] rounded-xl border bg-base-200 md:col-span-2">
+    <div class="mt-4 h-[32rem] rounded-xl border bg-base-200 md:col-span-2">
       <Canvas>
-        <VirtualDisplay {visible} color={pointColor} />
+        <VirtualDisplay {colors} />
       </Canvas>
     </div>
   </div>

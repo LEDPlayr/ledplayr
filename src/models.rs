@@ -7,7 +7,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use utoipa::ToSchema;
 
-use crate::db;
+use crate::{db, patterns::TestSpec};
 
 #[derive(Debug, Default, Serialize, ToSchema)]
 pub struct SystemInfo {
@@ -309,12 +309,22 @@ pub struct Channels {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct SchedulerStatus {
-    pub status: PlayerState,
+    pub status: PlayerStatus,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone, ToSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum PlayerState {
     Start,
+    Testing(TestSpec),
+    Stop,
+}
+
+#[derive(Debug, PartialEq, Serialize, Clone, ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum PlayerStatus {
+    Start,
+    Testing,
     Stop,
 }
 

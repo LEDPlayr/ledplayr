@@ -4,3 +4,5 @@ export interface Notification {
   message: string;
   timeout: number;
 }
+
+export type PlayerStatus = "Unknown" | "Started" | "Stopped" | "Testing";

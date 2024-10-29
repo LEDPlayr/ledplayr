@@ -14,6 +14,8 @@ LEDPlayr is a lightweight player and scheduler for xLights FSEQ files
 	* By date, day of the week, and time period
 * Display of logs in the WebUI
 * Dark mode
+* Ability to test models
+    * A combination of static and moving patterns can be used to test models
 
 ## What isn't supported?
 * Testing models
@@ -29,8 +31,6 @@ It does and it has a LOT more features. LEDPlayr was born out of my frustration 
 Most of what I need is included. Below is a list of what I may include if I find time / have the need for it.
 
 * Docker images
-* Better error handling
-* Ability to test models
 * Webcam streaming to the UI to make testing LED placement easier
 * Ability to view a sequence in the Web browser on the 3D Display
 	* I have no real need for this but it sounds fun and cool
@@ -59,6 +59,9 @@ Download the pre-built binary from Github releases. Currently available builds f
 database_url = "/usr/local/share/ledplayr/db.sqlite" # Required
 storage = "/usr/local/share/ledplayr/storage" # Required
 multicast = true # Optional, defaults to true
+
+[scheduler]
+auto_start = true # Optional, defaults to true
 
 [web]
 bind = "0.0.0.0" # Optional, defaults to "0.0.0.0"

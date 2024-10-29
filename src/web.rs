@@ -8,7 +8,7 @@ use std::{
 use anyhow::{anyhow, Context};
 use axum::{
     body::Bytes,
-    extract,
+    extract::{self, Query},
     http::{header, StatusCode, Uri},
     response::{Html, IntoResponse, Response},
     routing::{get, post},
@@ -19,15 +19,22 @@ use humanize_duration::prelude::DurationExt;
 use parking_lot::Mutex;
 use rust_embed::Embed;
 use rustix::path::Arg;
+use serde::Deserialize;
 use systemstat::Platform;
 use tokio_util::sync::CancellationToken;
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
-use utoipa::OpenApi;
+use utoipa::{IntoParams, OpenApi};
 use utoipa_rapidoc::RapiDoc;
 use utoipauto::utoipauto;
 
-use crate::{built_info, db::models::NewSequencePlus, models::*, storage::StorageType};
+use crate::{
+    built_info,
+    db::models::NewSequencePlus,
+    models::*,
+    patterns::{self, TestSpec},
+    storage::StorageType,
+};
 use crate::{
     db::{self},
     state::State,
@@ -111,6 +118,8 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         .route("/api/scheduler", get(get_scheduler_status))
         .route("/api/scheduler/start", get(start_scheduler))
         .route("/api/scheduler/stop", get(stop_scheduler))
+        .route("/api/test/run", post(run_test))
+        .route("/api/test/sequence", post(get_test_sequence))
         .route("/api/logs", get(get_logs))
         .route("/api/log/:name", get(get_log))
         .fallback(static_handler)
@@ -1247,7 +1256,7 @@ async fn get_scheduler_status(
     (
         StatusCode::OK,
         Json(SchedulerStatus {
-            status: state.player_state.clone(),
+            status: state.player_status.clone(),
         }),
     )
         .into_response()
@@ -1328,6 +1337,81 @@ async fn stop_scheduler(extract::State(state): extract::State<Arc<Mutex<State>>>
         }),
     )
         .into_response()
+}
+
+/// Run LED test patterns
+#[utoipa::path(
+    post,
+    path = "/api/test/run",
+    request_body(content = TestSpec),
+    responses(
+        (status = 200, description = "Tests started ok", body = Status),
+        (status = 500, description = "Something went wrong", body = Status)
+    ),
+    tag = "Testing"
+)]
+async fn run_test(
+    extract::State(state): extract::State<Arc<Mutex<State>>>,
+    Json(test_spec): Json<TestSpec>,
+) -> Response {
+    let ctrl;
+    {
+        let state = state.lock();
+        ctrl = state.player_ctrl.clone();
+    }
+
+    if let Err(e) = ctrl.send(PlayerState::Testing(test_spec)).await {
+        tracing::error!("Could not start tests: {e}");
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(Status {
+                status: "error".into(),
+                error: Some(e.to_string()),
+            }),
+        )
+            .into_response();
+    }
+
+    (
+        StatusCode::OK,
+        Json(Status {
+            status: "ok".into(),
+            error: None,
+        }),
+    )
+        .into_response()
+}
+
+#[derive(Deserialize, IntoParams)]
+struct LengthQuery {
+    length: usize,
+}
+
+/// Get the pattern of LED colors for the given test
+#[utoipa::path(
+    post,
+    path = "/api/test/sequence",
+    request_body(content = Sequence),
+    params(
+        ("length" = usize, Query, description = "Lenght of the LED chain")
+    ),
+    responses(
+        (status = 200, description = "The pattern of RGB to display", body = Vec<Color>),
+        (status = 500, description = "Something went wrong", body = Status)
+    ),
+    tag = "Testing"
+)]
+async fn get_test_sequence(q: Query<LengthQuery>, Json(seq): Json<patterns::Sequence>) -> Response {
+    let data = seq.as_vec(q.length);
+    let data = data
+        .chunks(3)
+        .map(|c| patterns::Color {
+            r: c[0],
+            g: c[1],
+            b: c[2],
+        })
+        .collect::<Vec<_>>();
+    (StatusCode::OK, Json(data)).into_response()
 }
 
 /// Get log filenames
