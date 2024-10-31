@@ -24,7 +24,7 @@
     type: 4,
   };
   let outputToAdd: Universe = $state({ ...emptyOutput });
-  let outputs: Universe[] = $state([]);
+  let outputs: Map<number, Universe> = $state(new Map());
 
   onMount(async () => {
     await loadOutputs();
@@ -33,9 +33,17 @@
   const loadOutputs = async () => {
     const { data, error } = await getOutputs();
     if (data) {
-      outputs = data.channelOutputs[0].universes;
+      outputs = new Map(
+        data.channelOutputs[0].universes
+          .sort((a, b) => {
+            return a.id - b.id;
+          })
+          .map((u) => {
+            return [u.id, u];
+          }),
+      );
     } else {
-      outputs = [];
+      outputs = new Map();
     }
     if (error) {
       notify(`${error.error}`, "error");
@@ -51,7 +59,7 @@
           enabled: true,
           timeout: 1000,
           channelCount: -1,
-          universes: outputs,
+          universes: outputs.values().toArray(),
         },
       ],
     };
@@ -60,6 +68,11 @@
       notify(`${error.error}`, "error");
     }
     await loadOutputs();
+  };
+
+  const addOrUpdateOutput = async () => {
+    outputs.set(outputToAdd.id, outputToAdd);
+    await saveOutputs();
   };
 
   const clearOutput = () => {
@@ -71,7 +84,7 @@
   };
 
   const removeOutput = async (i: number) => {
-    outputs.splice(i, 1);
+    outputs.delete(i);
     await saveOutputs();
   };
 </script>
@@ -147,8 +160,9 @@
   </label>
 
   <div class="my-3 grid w-full max-w-xl grid-cols-2 gap-4">
-    <button onclick={saveOutputs} class="btn btn-primary">
-      <PhFloppyDisk /> Save Outputs
+    <button onclick={addOrUpdateOutput} class="btn btn-primary">
+      <PhFloppyDisk />
+      {outputs.has(outputToAdd.id) ? "Update" : "Add"} Output
     </button>
     <button onclick={clearOutput} class="btn btn-neutral">
       <PhBackspace /> Clear Outputs
@@ -163,7 +177,7 @@
     <PhArrowsClockwise /> Refresh Outputs
   </button>
 
-  {#if outputs.length > 0}
+  {#if outputs.size > 0}
     <table class="table">
       <thead class="hidden sm:table-header-group">
         <tr>
@@ -178,7 +192,7 @@
         </tr>
       </thead>
       <tbody class="grid grid-cols-1 gap-2 sm:table-row-group">
-        {#each outputs as row, index (row.id)}
+        {#each outputs as [id, row] (id)}
           <tr class="hover card mb-4 flex flex-col border sm:table-row sm:border-none">
             <td class="flex flex-row sm:table-cell">
               <span class="flex-grow font-semibold sm:hidden">ID:</span>
@@ -219,7 +233,7 @@
               <Delete
                 showText={false}
                 callback={async () => {
-                  await removeOutput(index);
+                  await removeOutput(id);
                 }}
                 class="sm:mx-2 sm:h-8 sm:min-h-8 sm:w-8 sm:rounded-full sm:p-0 sm:text-sm" />
             </td>
