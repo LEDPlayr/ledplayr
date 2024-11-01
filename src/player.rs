@@ -1,5 +1,5 @@
 use core::time;
-use std::{collections::HashMap, net::Ipv4Addr, sync::Arc};
+use std::{cmp::Ordering, collections::HashMap, net::Ipv4Addr, sync::Arc};
 
 use anyhow::{anyhow, Context, Result};
 use chrono::NaiveTime;
@@ -353,18 +353,35 @@ async fn sender(ip: Ipv4Addr, port: u16, len: usize, mut r: Receiver<Data>) {
     tracing::info!("Started sender for controller: {ip}");
 
     while let Some(mut data) = r.recv().await {
-        let to_send = if data.offset == 0 {
-            data.data
-        } else {
-            let mut d = vec![0u8; data.offset];
-            d.append(&mut data.data);
-            d
+        let d_len = data.data.len();
+        let d_end = data.offset + d_len;
+
+        let to_send = match d_end.cmp(&len) {
+            Ordering::Equal => {
+                if data.offset == 0 {
+                    // Everything is ok
+                    Ok(data.data)
+                } else {
+                    // Pad start
+                    let mut d = vec![0u8; data.offset];
+                    d.append(&mut data.data);
+                    Ok(d)
+                }
+            }
+            Ordering::Less => {
+                // Pad end
+                let mut pad = vec![0u8; d_end - d_len];
+                data.data.append(&mut pad);
+                Ok(data.data)
+            }
+            Ordering::Greater => Err(anyhow!("Too much data for sender {}>{}", d_len, len)),
         };
 
-        if to_send.len() == len {
-            conn.write(&to_send).unwrap();
-        } else {
-            tracing::warn!("Bad data length {}!={}", to_send.len(), len);
+        match to_send {
+            Ok(data) => {
+                conn.write(&data).unwrap();
+            }
+            Err(e) => tracing::warn!("{e}"),
         }
     }
 
