@@ -6,16 +6,34 @@
   import PhTestTube from "virtual:icons/ph/test-tube";
 
   import { Canvas } from "@threlte/core";
+  import { AnimationFrames } from "runed";
   import { onMount } from "svelte";
   import { getModels, runTest, startScheduler, stopScheduler } from "$lib/client";
   import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
   import { patterns, playerStatus } from "$lib/stores";
-  import { notify, updateStatus } from "$lib/utils";
+  import { notify, rotate, updateStatus } from "$lib/utils";
 
   const gray: Color = { r: 25, g: 25, b: 25 };
   let models: Record<string, [Model, Sequence | undefined]> = $state({});
   let step = $state(100);
+  let offset = $state(0);
+  let fps = $derived(1000 / step);
+  let preview = $state(false);
+  const animation = new AnimationFrames(
+    () => {
+      offset++;
+    },
+    { fpsLimit: () => fps, immediate: false },
+  );
+
+  $effect(() => {
+    if (preview) {
+      animation.start();
+    } else {
+      animation.stop();
+    }
+  });
 
   onMount(async () => {
     const { data, error } = await getModels();
@@ -47,6 +65,7 @@
             for (let i = 0; i < width; i++) {
               data[i] = s.chase.color;
             }
+            data = rotate(data, offset);
             return data;
           } else if ("pattern" in s) {
             const p = $patterns[`${s.pattern}@${count}`];
@@ -56,7 +75,7 @@
           } else if ("moving_pattern" in s) {
             const p = $patterns[`${s.moving_pattern}@${count}`];
             if (p) {
-              return p;
+              return rotate(p, offset);
             }
           }
         }
@@ -129,6 +148,11 @@
           <PhPlay />Start Scheduler
         </button>
       </div>
+
+      <label class="label cursor-pointer">
+        <span class="label-text">Preview Animation?</span>
+        <input type="checkbox" bind:checked={preview} class="toggle" />
+      </label>
 
       <h2 class="mb-4 text-lg">Configure Models</h2>
 
