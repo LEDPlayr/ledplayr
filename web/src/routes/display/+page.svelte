@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Color, Model, Sequence } from "$lib/client";
+  import type { CamPos } from "$lib/types";
 
   import PhPause from "virtual:icons/ph/pause";
   import PhPlay from "virtual:icons/ph/play";
@@ -8,6 +9,7 @@
   import { Canvas } from "@threlte/core";
   import { AnimationFrames } from "runed";
   import { onMount } from "svelte";
+  import * as THREE from "three";
   import { getModels, runTest, startScheduler, stopScheduler } from "$lib/client";
   import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
@@ -20,6 +22,10 @@
   let offset = $state(0);
   let fps = $derived(1000 / step);
   let preview = $state(false);
+  let selectedPosition = $state("");
+  let positionName = $state("");
+  let positions: { [key: string]: CamPos } = $state({});
+
   const animation = new AnimationFrames(
     () => {
       offset++;
@@ -114,6 +120,34 @@
     }
     await updateStatus();
   };
+
+  let scene: ReturnType<typeof VirtualDisplay>;
+
+  onMount(() => {
+    const data = localStorage.getItem("cam_positions");
+    if (data) {
+      positions = JSON.parse(data);
+    }
+  });
+
+  const saveCamera = () => {
+    if (scene) {
+      const cam = scene.getCamera();
+      if (cam) {
+        positions[positionName] = cam;
+        localStorage.setItem("cam_positions", JSON.stringify(positions));
+      }
+    }
+  };
+
+  const restoreCamera = () => {
+    if (scene) {
+      const cam = positions[selectedPosition];
+      if (cam) {
+        scene.restoreCamera(cam);
+      }
+    }
+  };
 </script>
 
 <svelte:head>
@@ -131,7 +165,7 @@
 
       <p class="w-full text-center">Status: {$playerStatus}</p>
 
-      <div class="m-4 flex flex-row gap-4">
+      <div class="m-4 flex flex-row flex-wrap place-content-center gap-4">
         <button class="btn" onclick={stop} disabled={$playerStatus == "Stopped"}>
           <PhPause />Stop
         </button>
@@ -158,7 +192,7 @@
 
       <label class="label cursor-pointer">
         Step (ms)
-        <input type="number" min="10" bind:value={step} />
+        <input class="input input-bordered" type="number" min="10" bind:value={step} />
       </label>
 
       <div class="p-4">
@@ -171,9 +205,41 @@
     </div>
 
     <div class="mt-4 h-[32rem] rounded-xl border bg-base-200 md:col-span-2">
-      <Canvas>
-        <VirtualDisplay {colors} />
+      <Canvas toneMapping={THREE.NeutralToneMapping}>
+        <VirtualDisplay {colors} bind:this={scene} />
       </Canvas>
+
+      <div class="grid-cols-2 gap-2 lg:grid">
+        <div class="grid gap-2">
+          <label class="form-control w-full max-w-xl">
+            <div class="label">
+              <span class="label-text">Name of scene to save</span>
+            </div>
+
+            <input type="text" class="input input-bordered" bind:value={positionName} />
+          </label>
+
+          <button class="btn" disabled={positionName == ""} onclick={saveCamera}>Save</button>
+        </div>
+
+        <div class="grid gap-2">
+          <label class="form-control w-full max-w-xl">
+            <div class="label">
+              <span class="label-text">Select a scene</span>
+            </div>
+
+            <select bind:value={selectedPosition} class="select select-bordered">
+              {#each Object.keys(positions) as p}
+                <option>{p}</option>
+              {/each}
+            </select>
+          </label>
+
+          <button class="btn" disabled={selectedPosition == ""} onclick={restoreCamera}>
+            Restore
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

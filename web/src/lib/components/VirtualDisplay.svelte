@@ -1,8 +1,12 @@
 <script lang="ts">
-  import { T } from "@threlte/core";
+  import type { CamPos } from "$lib/types";
+  import type { PerspectiveCamera } from "three";
+
+  import { T, useThrelte } from "@threlte/core";
   import { OrbitControls } from "@threlte/extras";
   import { onMount } from "svelte";
   import { BufferGeometry, Float32BufferAttribute } from "three";
+  import { OrbitControls as ThreeOrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
   import { getDisplay } from "$lib/client";
   import { notify } from "$lib/utils";
 
@@ -10,8 +14,10 @@
     colors: { r: number; g: number; b: number }[];
   }
   let { colors }: Props = $props();
-
   let display = $state("");
+  let cam: PerspectiveCamera | undefined = $state();
+  let controls: ThreeOrbitControls | undefined = $state();
+  const { invalidate } = useThrelte();
 
   let points: number[] = $derived.by(() => {
     let ret = [];
@@ -53,18 +59,52 @@
       notify(`${error.error}`, "error");
     }
   });
+
+  export function getCamera(): CamPos | undefined {
+    if (cam && controls) {
+      return {
+        cam_pos_x: cam.position.x,
+        cam_pos_y: cam.position.y,
+        cam_pos_z: cam.position.z,
+        cam_rot_x: cam.rotation.x,
+        cam_rot_y: cam.rotation.y,
+        cam_rot_z: cam.rotation.z,
+        cam_zoom: cam.zoom,
+        ctrl_x: controls.target.x,
+        ctrl_y: controls.target.y,
+        ctrl_z: controls.target.z,
+      };
+    }
+  }
+
+  export function restoreCamera(pos: CamPos) {
+    if (cam && controls) {
+      cam.position.x = pos.cam_pos_x;
+      cam.position.y = pos.cam_pos_y;
+      cam.position.z = pos.cam_pos_z;
+      cam.rotation.x = pos.cam_rot_x;
+      cam.rotation.y = pos.cam_rot_y;
+      cam.rotation.z = pos.cam_rot_z;
+      cam.zoom = pos.cam_zoom;
+      controls.target.x = pos.ctrl_x;
+      controls.target.y = pos.ctrl_y;
+      controls.target.z = pos.ctrl_z;
+
+      invalidate();
+    }
+  }
 </script>
 
-<T.PerspectiveCamera makeDefault position={[10, 5, 10]} lookAt.y={0.5}>
-  <OrbitControls />
+<T.PerspectiveCamera makeDefault position={[10, 5, 10]} lookAt.y={0.5} bind:ref={cam}>
+  <OrbitControls bind:ref={controls} />
 </T.PerspectiveCamera>
 
 <T.DirectionalLight position.y={10} position.z={10} />
-<T.AmbientLight intensity={0.3} />
+<T.AmbientLight intensity={2} />
 
 <T.GridHelper args={[10, 10]} />
 
 <T.Points>
   <T is={bufGeometry} />
-  <T.PointsMaterial size={0.25} vertexColors />
+  <T.PointsMaterial size={0.5} vertexColors />
 </T.Points>
