@@ -52,11 +52,6 @@ export async function updateStatus() {
 }
 
 export function rotate<T>(a: Array<T>, n: number): Array<T> {
-  const len = a.length;
-  const res = new Array(len);
-
-  if (n % len === 0) return a.slice();
-  else for (let i = 0; i < len; i++) res[i] = a[(i + (len + (n % len))) % len];
-
-  return res;
+  const count = -n % a.length;
+  return [...a.slice(count, a.length), ...a.slice(0, count)];
 }
