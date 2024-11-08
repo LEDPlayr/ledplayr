@@ -1,10 +1,8 @@
 use std::{io::Write, path::Path, sync::Arc};
 
 use axum::{
-    extract::{self},
-    http::StatusCode,
+    extract,
     response::{IntoResponse, Response},
-    Json,
 };
 use axum_typed_multipart::TypedMultipart;
 use parking_lot::Mutex;
@@ -56,27 +54,13 @@ pub async fn file_upload(
                 Ok(file) => file,
                 Err(e) => {
                     tracing::error!("Error opening file: {e}");
-                    return (
-                        StatusCode::INTERNAL_SERVER_ERROR,
-                        Json(Status {
-                            status: "error".into(),
-                            error: Some(e.to_string()),
-                        }),
-                    )
-                        .into_response();
+                    return APIError::UnexpectedError(e.into()).into_response();
                 }
             };
 
             if let Err(e) = file.write_all(&f.contents) {
                 tracing::error!("Error writing file: {e}");
-                return (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(Status {
-                        status: "error".into(),
-                        error: Some(e.to_string()),
-                    }),
-                )
-                    .into_response();
+                return APIError::UnexpectedError(e.into()).into_response();
             }
 
             // Check sequences are valid and add to database
@@ -84,26 +68,12 @@ pub async fn file_upload(
                 if let Ok(Some(meta)) = storage::read_sequence_meta(&state.cfg, &filename) {
                     if let Err(e) = db::new_sequence(&mut state.db_conn, meta) {
                         tracing::error!("Error adding sequence to database: {e}");
-                        return (
-                            StatusCode::INTERNAL_SERVER_ERROR,
-                            Json(Status {
-                                status: "error".into(),
-                                error: Some(e.to_string()),
-                            }),
-                        )
-                            .into_response();
+                        return APIError::UnexpectedError(e).into_response();
                     }
                 }
             }
         }
     }
 
-    (
-        StatusCode::OK,
-        Json(Status {
-            status: "ok".into(),
-            error: None,
-        }),
-    )
-        .into_response()
+    APIError::Ok.into_response()
 }

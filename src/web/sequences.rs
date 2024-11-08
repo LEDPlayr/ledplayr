@@ -1,8 +1,7 @@
 use std::sync::Arc;
 
 use axum::{
-    extract::{self},
-    http::StatusCode,
+    extract,
     response::{IntoResponse, Response},
     Json,
 };
@@ -54,7 +53,7 @@ pub async fn get_sequence(
     let state = state.lock();
 
     match storage::read_file(&state.cfg, &filename, storage::StorageType::Sequences) {
-        Ok(Some(data)) => (StatusCode::OK, data).into_response(),
+        Ok(Some(data)) => data.into_response(),
         Ok(None) => APIError::NotFound("Sequence".into()).into_response(),
         Err(e) => APIError::UnexpectedError(e).into_response(),
     }

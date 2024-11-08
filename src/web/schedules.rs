@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use axum::{
     extract,
-    http::StatusCode,
     response::{IntoResponse, Response},
     Json,
 };
@@ -61,7 +60,7 @@ pub async fn get_schedule(
 
     match db::get_schedule(&mut state.db_conn, schedule) {
         Ok(Some(s)) => match Schedule::try_from(s) {
-            Ok(schedule) => (StatusCode::OK, Json(schedule)).into_response(),
+            Ok(schedule) => Json(schedule).into_response(),
             Err(e) => APIError::BadRequest(e).into_response(),
         },
         Ok(None) => APIError::NotFound("Schedule".into()).into_response(),
