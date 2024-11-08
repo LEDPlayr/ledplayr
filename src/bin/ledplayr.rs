@@ -12,7 +12,8 @@ use ledplayr::{
     models::{PlayerState, PlayerStatus},
     player,
     state::State,
-    storage, web,
+    storage,
+    web::router,
 };
 use parking_lot::Mutex;
 use tokio::sync::mpsc;
@@ -112,7 +113,7 @@ async fn main() -> Result<()> {
     if multicast_enabled {
         tracker.spawn(fpp::listen(cancel.clone()));
     }
-    tracker.spawn(web::run_server(state.clone(), cancel.clone()));
+    tracker.spawn(router::run_server(state.clone(), cancel.clone()));
     tracker.spawn(player::start_scheduler(
         state.clone(),
         cancel.clone(),

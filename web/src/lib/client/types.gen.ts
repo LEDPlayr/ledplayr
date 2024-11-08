@@ -41,6 +41,20 @@ export type FreeTotal = {
   Total: number;
 };
 
+export type Mesh = {
+  id: number;
+  name: string;
+  pos_x: number;
+  pos_y: number;
+  pos_z: number;
+  rot_x: number;
+  rot_y: number;
+  rot_z: number;
+  scale_x: number;
+  scale_y: number;
+  scale_z: number;
+};
+
 export type Model = {
   ChannelCount: number;
   ChannelCountPerNode: number;
@@ -56,6 +70,33 @@ export type Model = {
 
 export type Models = {
   models: Array<Model>;
+};
+
+export type NewMesh = {
+  name: string;
+  pos_x: number;
+  pos_y: number;
+  pos_z: number;
+  rot_x: number;
+  rot_y: number;
+  rot_z: number;
+  scale_x: number;
+  scale_y: number;
+  scale_z: number;
+};
+
+export type NewScene = {
+  cam_pos_x: number;
+  cam_pos_y: number;
+  cam_pos_z: number;
+  cam_rot_x: number;
+  cam_rot_y: number;
+  cam_rot_z: number;
+  cam_zoom: number;
+  ctrl_x: number;
+  ctrl_y: number;
+  ctrl_z: number;
+  name: string;
 };
 
 export type NumberedPlaylist = {
@@ -117,6 +158,21 @@ export type PlaylistEntry = {
 export type PlaylistInfo = {
   total_duration: number;
   total_items: number;
+};
+
+export type Scene = {
+  cam_pos_x: number;
+  cam_pos_y: number;
+  cam_pos_z: number;
+  cam_rot_x: number;
+  cam_rot_y: number;
+  cam_rot_z: number;
+  cam_zoom: number;
+  ctrl_x: number;
+  ctrl_y: number;
+  ctrl_z: number;
+  id: number;
+  name: string;
 };
 
 export type Schedule = {
@@ -348,13 +404,65 @@ export type GetLogResponse = string;
 
 export type GetLogError = Status;
 
-export type GetLogsResponse = Array<string>;
+export type ListLogsResponse = Array<string>;
 
-export type GetLogsError = Status;
+export type ListLogsError = Status;
 
-export type GetModelsResponse = Array<Model>;
+export type NewMeshData = {
+  body: NewMesh;
+};
 
-export type GetModelsError = Status;
+export type NewMeshResponse = Status;
+
+export type NewMeshError = Status;
+
+export type DownloadMeshData = {
+  path: {
+    /**
+     * The name of the mesh
+     */
+    mesh: string;
+  };
+};
+
+export type DownloadMeshResponse = Blob | File;
+
+export type DownloadMeshError = Status;
+
+export type UpdateMeshData = {
+  body: NewMesh;
+  path: {
+    /**
+     * The name of the mesh
+     */
+    mesh: string;
+  };
+};
+
+export type UpdateMeshResponse = Status;
+
+export type UpdateMeshError = Status;
+
+export type DelMeshData = {
+  path: {
+    /**
+     * The name of the mesh
+     */
+    mesh: string;
+  };
+};
+
+export type DelMeshResponse = Status;
+
+export type DelMeshError = Status;
+
+export type ListMeshesResponse = Array<Mesh>;
+
+export type ListMeshesError = Status;
+
+export type ListModelsResponse = Array<Model>;
+
+export type ListModelsError = Status;
 
 export type UploadModelsData = {
   body: Models;
@@ -419,6 +527,58 @@ export type ListPlaylistsError = Status;
 export type ListPlaylistsNumberedResponse = Array<NumberedPlaylist>;
 
 export type ListPlaylistsNumberedError = Status;
+
+export type NewSceneData = {
+  body: NewScene;
+};
+
+export type NewSceneResponse = Status;
+
+export type NewSceneError = Status;
+
+export type DelSceneData = {
+  path: {
+    /**
+     * The name of the scene
+     */
+    scene: string;
+  };
+};
+
+export type DelSceneResponse = Status;
+
+export type DelSceneError = Status;
+
+export type ListScenesResponse = Array<Scene>;
+
+export type ListScenesError = Status;
+
+export type GetSceneData = {
+  path: {
+    /**
+     * The name of the scene
+     */
+    scene: string;
+  };
+};
+
+export type GetSceneResponse = Scene;
+
+export type GetSceneError = Status;
+
+export type UpdateSceneData = {
+  body: NewScene;
+  path: {
+    /**
+     * The name of the scene
+     */
+    scene: string;
+  };
+};
+
+export type UpdateSceneResponse = Status;
+
+export type UpdateSceneError = Status;
 
 export type NewScheduleData = {
   body: Schedule;

@@ -7,6 +7,7 @@
   import PhWarningCircle from "virtual:icons/ph/warning-circle";
 
   import { onMount } from "svelte";
+
   import { notifications } from "$lib/stores";
 
   let toasts: Array<[number, Notification]> = $state([]);

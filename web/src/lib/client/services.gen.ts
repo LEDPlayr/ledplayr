@@ -1,14 +1,23 @@
 import type { Options } from "@hey-api/client-fetch";
 import type {
+  DelMeshData,
+  DelMeshError,
+  DelMeshResponse,
   DelPlaylistData,
   DelPlaylistError,
   DelPlaylistResponse,
+  DelSceneData,
+  DelSceneError,
+  DelSceneResponse,
   DelScheduleData,
   DelScheduleError,
   DelScheduleResponse,
   DelSequenceData,
   DelSequenceError,
   DelSequenceResponse,
+  DownloadMeshData,
+  DownloadMeshError,
+  DownloadMeshResponse,
   FileUploadData,
   FileUploadError,
   FileUploadResponse,
@@ -20,15 +29,14 @@ import type {
   GetLogData,
   GetLogError,
   GetLogResponse,
-  GetLogsError,
-  GetLogsResponse,
-  GetModelsError,
-  GetModelsResponse,
   GetOutputsError,
   GetOutputsResponse,
   GetPlaylistData,
   GetPlaylistError,
   GetPlaylistResponse,
+  GetSceneData,
+  GetSceneError,
+  GetSceneResponse,
   GetScheduleData,
   GetScheduleError,
   GetScheduleResponse,
@@ -43,17 +51,31 @@ import type {
   GetTestSequenceData,
   GetTestSequenceError,
   GetTestSequenceResponse,
+  ListLogsError,
+  ListLogsResponse,
+  ListMeshesError,
+  ListMeshesResponse,
+  ListModelsError,
+  ListModelsResponse,
   ListPlaylistsError,
   ListPlaylistsNumberedError,
   ListPlaylistsNumberedResponse,
   ListPlaylistsResponse,
+  ListScenesError,
+  ListScenesResponse,
   ListSchedulesError,
   ListSchedulesResponse,
   ListSequencesError,
   ListSequencesResponse,
+  NewMeshData,
+  NewMeshError,
+  NewMeshResponse,
   NewPlaylistData,
   NewPlaylistError,
   NewPlaylistResponse,
+  NewSceneData,
+  NewSceneError,
+  NewSceneResponse,
   NewScheduleData,
   NewScheduleError,
   NewScheduleResponse,
@@ -66,9 +88,15 @@ import type {
   StopSchedulerResponse,
   SystemInfoError,
   SystemInfoResponse,
+  UpdateMeshData,
+  UpdateMeshError,
+  UpdateMeshResponse,
   UpdatePlaylistData,
   UpdatePlaylistError,
   UpdatePlaylistResponse,
+  UpdateSceneData,
+  UpdateSceneError,
+  UpdateSceneResponse,
   UpdateScheduleData,
   UpdateScheduleError,
   UpdateScheduleResponse,
@@ -164,12 +192,79 @@ export const getLog = <ThrowOnError extends boolean = false>(
 /**
  * Get log filenames
  */
-export const getLogs = <ThrowOnError extends boolean = false>(
+export const listLogs = <ThrowOnError extends boolean = false>(
   options?: Options<unknown, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetLogsResponse, GetLogsError, ThrowOnError>({
+  return (options?.client ?? client).get<ListLogsResponse, ListLogsError, ThrowOnError>({
     ...options,
     url: "/api/logs",
+  });
+};
+
+/**
+ * New mesh
+ * Create a new mesh
+ */
+export const newMesh = <ThrowOnError extends boolean = false>(
+  options: Options<NewMeshData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<NewMeshResponse, NewMeshError, ThrowOnError>({
+    ...options,
+    url: "/api/mesh",
+  });
+};
+
+/**
+ * Get a 3D mesh
+ * Download a 3D mesh for the virtual display
+ */
+export const downloadMesh = <ThrowOnError extends boolean = false>(
+  options: Options<DownloadMeshData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<DownloadMeshResponse, DownloadMeshError, ThrowOnError>(
+    {
+      ...options,
+      url: "/api/mesh/{mesh}",
+    },
+  );
+};
+
+/**
+ * Update a mesh
+ * Create or update the given mesh
+ */
+export const updateMesh = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateMeshData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).put<UpdateMeshResponse, UpdateMeshError, ThrowOnError>({
+    ...options,
+    url: "/api/mesh/{mesh}",
+  });
+};
+
+/**
+ * Delete a mesh
+ * Delete the given mesh
+ */
+export const delMesh = <ThrowOnError extends boolean = false>(
+  options: Options<DelMeshData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).delete<DelMeshResponse, DelMeshError, ThrowOnError>({
+    ...options,
+    url: "/api/mesh/{mesh}",
+  });
+};
+
+/**
+ * List all meshes
+ * List all 3D meshes
+ */
+export const listMeshes = <ThrowOnError extends boolean = false>(
+  options?: Options<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<ListMeshesResponse, ListMeshesError, ThrowOnError>({
+    ...options,
+    url: "/api/meshes",
   });
 };
 
@@ -177,10 +272,10 @@ export const getLogs = <ThrowOnError extends boolean = false>(
  * Retrieve models.json
  * Download the models in JSON format
  */
-export const getModels = <ThrowOnError extends boolean = false>(
+export const listModels = <ThrowOnError extends boolean = false>(
   options?: Options<unknown, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetModelsResponse, GetModelsError, ThrowOnError>({
+  return (options?.client ?? client).get<ListModelsResponse, ListModelsError, ThrowOnError>({
     ...options,
     url: "/api/models",
   });
@@ -294,6 +389,71 @@ export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: "/api/playlists/numbered",
+  });
+};
+
+/**
+ * New scene
+ * Create a new scene
+ */
+export const newScene = <ThrowOnError extends boolean = false>(
+  options: Options<NewSceneData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<NewSceneResponse, NewSceneError, ThrowOnError>({
+    ...options,
+    url: "/api/scene",
+  });
+};
+
+/**
+ * Delete a scene
+ * Delete the given scene
+ */
+export const delScene = <ThrowOnError extends boolean = false>(
+  options: Options<DelSceneData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).delete<DelSceneResponse, DelSceneError, ThrowOnError>({
+    ...options,
+    url: "/api/scene/{scene}",
+  });
+};
+
+/**
+ * List scenes
+ * List all scenes
+ */
+export const listScenes = <ThrowOnError extends boolean = false>(
+  options?: Options<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<ListScenesResponse, ListScenesError, ThrowOnError>({
+    ...options,
+    url: "/api/scenes",
+  });
+};
+
+/**
+ * Get a scene
+ * Read a single scene
+ */
+export const getScene = <ThrowOnError extends boolean = false>(
+  options: Options<GetSceneData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<GetSceneResponse, GetSceneError, ThrowOnError>({
+    ...options,
+    url: "/api/scenes/{scene}",
+  });
+};
+
+/**
+ * Update a scene
+ * Create or update the given scene
+ */
+export const updateScene = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateSceneData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).put<UpdateSceneResponse, UpdateSceneError, ThrowOnError>({
+    ...options,
+    url: "/api/scenes/{scene}",
   });
 };
 

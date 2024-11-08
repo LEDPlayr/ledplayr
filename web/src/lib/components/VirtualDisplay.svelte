@@ -1,19 +1,23 @@
 <script lang="ts">
-  import type { CamPos } from "$lib/types";
   import type { PerspectiveCamera } from "three";
+  import type { Mesh } from "$lib/client";
+  import type { CamPos } from "$lib/types";
 
   import { T, useThrelte } from "@threlte/core";
-  import { OrbitControls } from "@threlte/extras";
+  import { GLTF, OrbitControls } from "@threlte/extras";
   import { onMount } from "svelte";
-  import { BufferGeometry, Float32BufferAttribute } from "three";
+  import { BufferGeometry, Float32BufferAttribute, MOUSE } from "three";
   import { OrbitControls as ThreeOrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
   import { getDisplay } from "$lib/client";
   import { notify } from "$lib/utils";
 
   interface Props {
     colors: { r: number; g: number; b: number }[];
+    light: number;
+    meshes: Mesh[];
   }
-  let { colors }: Props = $props();
+  let { colors, light, meshes }: Props = $props();
   let display = $state("");
   let cam: PerspectiveCamera | undefined = $state();
   let controls: ThreeOrbitControls | undefined = $state();
@@ -96,15 +100,22 @@
 </script>
 
 <T.PerspectiveCamera makeDefault position={[10, 5, 10]} lookAt.y={0.5} bind:ref={cam}>
-  <OrbitControls bind:ref={controls} />
+  <OrbitControls
+    bind:ref={controls}
+    mouseButtons={{ LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.DOLLY }} />
 </T.PerspectiveCamera>
 
-<T.DirectionalLight position.y={10} position.z={10} />
-<T.AmbientLight intensity={2} />
-
-<T.GridHelper args={[10, 10]} />
+<T.AmbientLight intensity={light} />
 
 <T.Points>
   <T is={bufGeometry} />
   <T.PointsMaterial size={0.5} vertexColors />
 </T.Points>
+
+{#each meshes as m}
+  <GLTF
+    url={`/api/mesh/${m.name}`}
+    scale={[m.scale_x, m.scale_y, m.scale_z]}
+    position={[m.pos_x, m.pos_y, m.pos_z]}
+    rotation={[m.rot_x, m.rot_y, m.rot_z]} />
+{/each}
