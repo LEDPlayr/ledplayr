@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS `meshes`;
+DROP TABLE IF EXISTS `scenes`;

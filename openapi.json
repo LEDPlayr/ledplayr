@@ -232,7 +232,7 @@
           "Logs"
         ],
         "summary": "Get log filenames",
-        "operationId": "get_logs",
+        "operationId": "list_logs",
         "responses": {
           "200": {
             "description": "List of log filenames",
@@ -260,6 +260,259 @@
         }
       }
     },
+    "/api/mesh": {
+      "post": {
+        "tags": [
+          "Meshes"
+        ],
+        "summary": "New mesh",
+        "description": "Create a new mesh",
+        "operationId": "new_mesh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMesh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The mesh was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete mesh supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mesh/{mesh}": {
+      "get": {
+        "tags": [
+          "Meshes"
+        ],
+        "summary": "Get a 3D mesh",
+        "description": "Download a 3D mesh for the virtual display",
+        "operationId": "download_mesh",
+        "parameters": [
+          {
+            "name": "mesh",
+            "in": "path",
+            "description": "The name of the mesh",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested mesh",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown mesh",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Meshes"
+        ],
+        "summary": "Update a mesh",
+        "description": "Create or update the given mesh",
+        "operationId": "update_mesh",
+        "parameters": [
+          {
+            "name": "mesh",
+            "in": "path",
+            "description": "The name of the mesh",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMesh"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested mesh was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete mesh supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Meshes"
+        ],
+        "summary": "Delete a mesh",
+        "description": "Delete the given mesh",
+        "operationId": "del_mesh",
+        "parameters": [
+          {
+            "name": "mesh",
+            "in": "path",
+            "description": "The name of the mesh",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested mesh was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The mesh wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meshes": {
+      "get": {
+        "tags": [
+          "Meshes"
+        ],
+        "summary": "List all meshes",
+        "description": "List all 3D meshes",
+        "operationId": "list_meshes",
+        "responses": {
+          "200": {
+            "description": "List of meshes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Mesh"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/models": {
       "get": {
         "tags": [
@@ -267,7 +520,7 @@
         ],
         "summary": "Retrieve models.json",
         "description": "Download the models in JSON format",
-        "operationId": "get_models",
+        "operationId": "list_models",
         "responses": {
           "200": {
             "description": "Models downloaded successfully",
@@ -615,6 +868,260 @@
                   "items": {
                     "$ref": "#/components/schemas/NumberedPlaylist"
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scene": {
+      "post": {
+        "tags": [
+          "Scenes"
+        ],
+        "summary": "New scene",
+        "description": "Create a new scene",
+        "operationId": "new_scene",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewScene"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The scene was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete scene supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scene/{scene}": {
+      "delete": {
+        "tags": [
+          "Scenes"
+        ],
+        "summary": "Delete a scene",
+        "description": "Delete the given scene",
+        "operationId": "del_scene",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "path",
+            "description": "The name of the scene",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested scene was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The scene wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scenes": {
+      "get": {
+        "tags": [
+          "Scenes"
+        ],
+        "summary": "List scenes",
+        "description": "List all scenes",
+        "operationId": "list_scenes",
+        "responses": {
+          "200": {
+            "description": "List of available scenes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scene"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scenes/{scene}": {
+      "get": {
+        "tags": [
+          "Scenes"
+        ],
+        "summary": "Get a scene",
+        "description": "Read a single scene",
+        "operationId": "get_scene",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "path",
+            "description": "The name of the scene",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested scene",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scene"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The scene wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Scenes"
+        ],
+        "summary": "Update a scene",
+        "description": "Create or update the given scene",
+        "operationId": "update_scene",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "path",
+            "description": "The name of the scene",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewScene"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested scene was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete scene supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
                 }
               }
             }
@@ -1539,6 +2046,67 @@
           }
         }
       },
+      "Mesh": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "scale_x",
+          "scale_y",
+          "scale_z",
+          "pos_x",
+          "pos_y",
+          "pos_z",
+          "rot_x",
+          "rot_y",
+          "rot_z"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pos_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "pos_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "pos_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_z": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
       "Model": {
         "type": "object",
         "required": [
@@ -1617,6 +2185,123 @@
             "items": {
               "$ref": "#/components/schemas/Model"
             }
+          }
+        }
+      },
+      "NewMesh": {
+        "type": "object",
+        "required": [
+          "name",
+          "scale_x",
+          "scale_y",
+          "scale_z",
+          "pos_x",
+          "pos_y",
+          "pos_z",
+          "rot_x",
+          "rot_y",
+          "rot_z"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "pos_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "pos_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "pos_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "rot_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "scale_z": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      },
+      "NewScene": {
+        "type": "object",
+        "required": [
+          "name",
+          "cam_pos_x",
+          "cam_pos_y",
+          "cam_pos_z",
+          "cam_rot_x",
+          "cam_rot_y",
+          "cam_rot_z",
+          "cam_zoom",
+          "ctrl_x",
+          "ctrl_y",
+          "ctrl_z"
+        ],
+        "properties": {
+          "cam_pos_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_pos_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_pos_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_zoom": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },
@@ -1819,6 +2504,72 @@
             "type": "integer",
             "format": "int32",
             "example": 0
+          }
+        }
+      },
+      "Scene": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "cam_pos_x",
+          "cam_pos_y",
+          "cam_pos_z",
+          "cam_rot_x",
+          "cam_rot_y",
+          "cam_rot_z",
+          "cam_zoom",
+          "ctrl_x",
+          "ctrl_y",
+          "ctrl_z"
+        ],
+        "properties": {
+          "cam_pos_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_pos_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_pos_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_rot_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "cam_zoom": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_x": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_y": {
+            "type": "number",
+            "format": "float"
+          },
+          "ctrl_z": {
+            "type": "number",
+            "format": "float"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
           }
         }
       },

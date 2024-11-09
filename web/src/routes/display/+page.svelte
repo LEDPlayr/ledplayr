@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { Color, Model, Sequence } from "$lib/client";
-  import type { CamPos } from "$lib/types";
+  import type { Color, Mesh, Model, Scene, Sequence } from "$lib/client";
 
+  import PhArrowsIn from "virtual:icons/ph/arrows-in";
+  import PhArrowsOut from "virtual:icons/ph/arrows-out";
   import PhPause from "virtual:icons/ph/pause";
   import PhPlay from "virtual:icons/ph/play";
   import PhTestTube from "virtual:icons/ph/test-tube";
@@ -10,21 +11,39 @@
   import { AnimationFrames } from "runed";
   import { onMount } from "svelte";
   import * as THREE from "three";
-  import { getModels, runTest, startScheduler, stopScheduler } from "$lib/client";
+
+  import {
+    listMeshes,
+    listModels,
+    listScenes,
+    runTest,
+    startScheduler,
+    stopScheduler,
+    updateScene,
+  } from "$lib/client";
   import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
   import { patterns, playerStatus } from "$lib/stores";
   import { notify, rotate, updateStatus } from "$lib/utils";
 
   const gray: Color = { r: 25, g: 25, b: 25 };
+
   let models: Record<string, [Model, Sequence | undefined]> = $state({});
-  let step = $state(100);
+  let meshes: Mesh[] = $state([]);
+
+  let scenes: Scene[] = $state([]);
+  let selectedScene: Scene | undefined = $state();
+  let sceneName = $state("");
+  let scene: ReturnType<typeof VirtualDisplay>;
+  let light = $state(5);
+
+  let step = $state(40);
   let offset = $state(0);
   let fps = $derived(1000 / step);
   let preview = $state(false);
-  let selectedPosition = $state("");
-  let positionName = $state("");
-  let positions: { [key: string]: CamPos } = $state({});
+
+  let isFs = $state(false);
+  let fsWrapper: HTMLDivElement | undefined;
 
   const animation = new AnimationFrames(
     () => {
@@ -42,7 +61,14 @@
   });
 
   onMount(async () => {
-    const { data, error } = await getModels();
+    registerFullscreen();
+    await loadModels();
+    await loadScenes();
+    await loadMeshes();
+  });
+
+  const loadModels = async () => {
+    const { data, error } = await listModels();
     if (data) {
       models = Object.fromEntries(
         data
@@ -55,7 +81,38 @@
     if (error) {
       notify(`${error.error}`, "error");
     }
-  });
+  };
+
+  const loadScenes = async () => {
+    const { data, error } = await listScenes();
+    if (data) {
+      scenes = data;
+    }
+    if (error) {
+      notify(`${error.error}`, "error");
+    }
+  };
+
+  const loadMeshes = async () => {
+    const { data, error } = await listMeshes();
+    if (data) {
+      meshes = data;
+    }
+    if (error) {
+      notify(`${error.error}`, "error");
+    }
+  };
+
+  const registerFullscreen = () => {
+    const fullscreenChange = () => {
+      isFs = !!document.fullscreenElement;
+    };
+
+    addEventListener("fullscreenchange", fullscreenChange);
+    return () => {
+      removeEventListener("fullscreenchange", fullscreenChange);
+    };
+  };
 
   let colors = $derived.by(() => {
     return Object.values(models)
@@ -121,30 +178,39 @@
     await updateStatus();
   };
 
-  let scene: ReturnType<typeof VirtualDisplay>;
-
-  onMount(() => {
-    const data = localStorage.getItem("cam_positions");
-    if (data) {
-      positions = JSON.parse(data);
-    }
-  });
-
-  const saveCamera = () => {
+  const saveCamera = async () => {
     if (scene) {
       const cam = scene.getCamera();
       if (cam) {
-        positions[positionName] = cam;
-        localStorage.setItem("cam_positions", JSON.stringify(positions));
+        const { error } = await updateScene({
+          path: { scene: sceneName },
+          body: { name: sceneName, ...cam },
+        });
+        if (error) {
+          notify(`${error.error}`, "error");
+        } else {
+          await loadScenes();
+        }
       }
     }
   };
 
   const restoreCamera = () => {
-    if (scene) {
-      const cam = positions[selectedPosition];
-      if (cam) {
-        scene.restoreCamera(cam);
+    if (scene && selectedScene) {
+      scene.restoreCamera(selectedScene);
+    }
+  };
+
+  const toggleFullscreen = async () => {
+    if (isFs) {
+      document.exitFullscreen();
+    } else {
+      if (fsWrapper) {
+        try {
+          await fsWrapper.requestFullscreen();
+        } catch (err) {
+          notify(`Error attempting to enable fullscreen mode: ${err}`, "error");
+        }
       }
     }
   };
@@ -190,9 +256,15 @@
 
       <h2 class="mb-4 text-lg">Configure Models</h2>
 
-      <label class="label cursor-pointer">
-        Step (ms)
-        <input class="input input-bordered" type="number" min="10" bind:value={step} />
+      <label class="label grid cursor-pointer grid-cols-5">
+        <span>Step {step}ms</span>
+        <input
+          type="range"
+          min="10"
+          max="100"
+          bind:value={step}
+          step="5"
+          class="range col-span-4" />
       </label>
 
       <div class="p-4">
@@ -204,10 +276,29 @@
       </div>
     </div>
 
-    <div class="mt-4 h-[32rem] rounded-xl border bg-base-200 md:col-span-2">
-      <Canvas toneMapping={THREE.NeutralToneMapping}>
-        <VirtualDisplay {colors} bind:this={scene} />
-      </Canvas>
+    <div class="mt-4 md:col-span-2">
+      <div
+        bind:this={fsWrapper}
+        class="h-[32rem] bg-base-200"
+        class:rounded-xl={!isFs}
+        class:border={!isFs}>
+        <Canvas toneMapping={THREE.NoToneMapping}>
+          <VirtualDisplay {colors} {light} {meshes} bind:this={scene} />
+        </Canvas>
+
+        <button class="btn btn-ghost relative bottom-12" onclick={toggleFullscreen}>
+          {#if isFs}
+            <PhArrowsIn />
+          {:else}
+            <PhArrowsOut />
+          {/if}
+        </button>
+      </div>
+
+      <label class="label grid cursor-pointer grid-cols-5">
+        Ambient Light ({light * 10}%)
+        <input type="range" min="0" max="10" bind:value={light} step="0.5" class="range" />
+      </label>
 
       <div class="grid-cols-2 gap-2 lg:grid">
         <div class="grid gap-2">
@@ -216,10 +307,10 @@
               <span class="label-text">Name of scene to save</span>
             </div>
 
-            <input type="text" class="input input-bordered" bind:value={positionName} />
+            <input type="text" class="input input-bordered" bind:value={sceneName} />
           </label>
 
-          <button class="btn" disabled={positionName == ""} onclick={saveCamera}>Save</button>
+          <button class="btn" disabled={sceneName == ""} onclick={saveCamera}>Save</button>
         </div>
 
         <div class="grid gap-2">
@@ -228,14 +319,14 @@
               <span class="label-text">Select a scene</span>
             </div>
 
-            <select bind:value={selectedPosition} class="select select-bordered">
-              {#each Object.keys(positions) as p}
-                <option>{p}</option>
+            <select bind:value={selectedScene} class="select select-bordered">
+              {#each scenes as s}
+                <option value={s}>{s.name}</option>
               {/each}
             </select>
           </label>
 
-          <button class="btn" disabled={selectedPosition == ""} onclick={restoreCamera}>
+          <button class="btn" disabled={!selectedScene} onclick={restoreCamera}>
             Restore
           </button>
         </div>

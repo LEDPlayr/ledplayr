@@ -2,6 +2,7 @@
   import type { Model, Pattern, Sequence } from "$lib/client";
 
   import { tick } from "svelte";
+
   import { getTestSequence } from "$lib/client";
   import { patterns } from "$lib/stores";
   import { hexToRGB8 } from "$lib/utils";

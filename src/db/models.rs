@@ -5,9 +5,43 @@ use diesel::{
     query_builder::AsChangeset,
     Selectable,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::db::schema;
+
+#[derive(Queryable, Selectable, Identifiable, PartialEq, Debug, Serialize, ToSchema)]
+#[diesel(table_name = schema::meshes)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct Mesh {
+    pub id: i32,
+    pub name: String,
+    pub scale_x: f32,
+    pub scale_y: f32,
+    pub scale_z: f32,
+    pub pos_x: f32,
+    pub pos_y: f32,
+    pub pos_z: f32,
+    pub rot_x: f32,
+    pub rot_y: f32,
+    pub rot_z: f32,
+}
+
+#[derive(Insertable, PartialEq, Debug, AsChangeset, Deserialize, ToSchema)]
+#[diesel(table_name = schema::meshes)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct NewMesh {
+    pub name: String,
+    pub scale_x: f32,
+    pub scale_y: f32,
+    pub scale_z: f32,
+    pub pos_x: f32,
+    pub pos_y: f32,
+    pub pos_z: f32,
+    pub rot_x: f32,
+    pub rot_y: f32,
+    pub rot_z: f32,
+}
 
 #[derive(Queryable, Selectable, Identifiable, PartialEq, Debug)]
 #[diesel(table_name = schema::playlists)]
@@ -38,6 +72,41 @@ pub struct UpdatePlaylist {
     pub description: Option<String>,
     pub repeat: Option<bool>,
     pub loop_count: Option<i32>,
+}
+
+#[derive(Queryable, Selectable, Identifiable, PartialEq, Serialize, Debug, ToSchema)]
+#[diesel(table_name = schema::scenes)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct Scene {
+    pub id: i32,
+    pub name: String,
+    pub cam_pos_x: f32,
+    pub cam_pos_y: f32,
+    pub cam_pos_z: f32,
+    pub cam_rot_x: f32,
+    pub cam_rot_y: f32,
+    pub cam_rot_z: f32,
+    pub cam_zoom: f32,
+    pub ctrl_x: f32,
+    pub ctrl_y: f32,
+    pub ctrl_z: f32,
+}
+
+#[derive(Insertable, PartialEq, Debug, AsChangeset, Deserialize, ToSchema)]
+#[diesel(table_name = schema::scenes)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct NewScene {
+    pub name: String,
+    pub cam_pos_x: f32,
+    pub cam_pos_y: f32,
+    pub cam_pos_z: f32,
+    pub cam_rot_x: f32,
+    pub cam_rot_y: f32,
+    pub cam_rot_z: f32,
+    pub cam_zoom: f32,
+    pub ctrl_x: f32,
+    pub ctrl_y: f32,
+    pub ctrl_z: f32,
 }
 
 #[derive(Queryable, Selectable, Identifiable, PartialEq, Debug)]

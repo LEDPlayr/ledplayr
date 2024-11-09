@@ -124,6 +124,68 @@ export const FreeTotalSchema = {
   },
 } as const;
 
+export const MeshSchema = {
+  type: "object",
+  required: [
+    "id",
+    "name",
+    "scale_x",
+    "scale_y",
+    "scale_z",
+    "pos_x",
+    "pos_y",
+    "pos_z",
+    "rot_x",
+    "rot_y",
+    "rot_z",
+  ],
+  properties: {
+    id: {
+      type: "integer",
+      format: "int32",
+    },
+    name: {
+      type: "string",
+    },
+    pos_x: {
+      type: "number",
+      format: "float",
+    },
+    pos_y: {
+      type: "number",
+      format: "float",
+    },
+    pos_z: {
+      type: "number",
+      format: "float",
+    },
+    rot_x: {
+      type: "number",
+      format: "float",
+    },
+    rot_y: {
+      type: "number",
+      format: "float",
+    },
+    rot_z: {
+      type: "number",
+      format: "float",
+    },
+    scale_x: {
+      type: "number",
+      format: "float",
+    },
+    scale_y: {
+      type: "number",
+      format: "float",
+    },
+    scale_z: {
+      type: "number",
+      format: "float",
+    },
+  },
+} as const;
+
 export const ModelSchema = {
   type: "object",
   required: [
@@ -201,6 +263,125 @@ export const ModelsSchema = {
       items: {
         $ref: "#/components/schemas/Model",
       },
+    },
+  },
+} as const;
+
+export const NewMeshSchema = {
+  type: "object",
+  required: [
+    "name",
+    "scale_x",
+    "scale_y",
+    "scale_z",
+    "pos_x",
+    "pos_y",
+    "pos_z",
+    "rot_x",
+    "rot_y",
+    "rot_z",
+  ],
+  properties: {
+    name: {
+      type: "string",
+    },
+    pos_x: {
+      type: "number",
+      format: "float",
+    },
+    pos_y: {
+      type: "number",
+      format: "float",
+    },
+    pos_z: {
+      type: "number",
+      format: "float",
+    },
+    rot_x: {
+      type: "number",
+      format: "float",
+    },
+    rot_y: {
+      type: "number",
+      format: "float",
+    },
+    rot_z: {
+      type: "number",
+      format: "float",
+    },
+    scale_x: {
+      type: "number",
+      format: "float",
+    },
+    scale_y: {
+      type: "number",
+      format: "float",
+    },
+    scale_z: {
+      type: "number",
+      format: "float",
+    },
+  },
+} as const;
+
+export const NewSceneSchema = {
+  type: "object",
+  required: [
+    "name",
+    "cam_pos_x",
+    "cam_pos_y",
+    "cam_pos_z",
+    "cam_rot_x",
+    "cam_rot_y",
+    "cam_rot_z",
+    "cam_zoom",
+    "ctrl_x",
+    "ctrl_y",
+    "ctrl_z",
+  ],
+  properties: {
+    cam_pos_x: {
+      type: "number",
+      format: "float",
+    },
+    cam_pos_y: {
+      type: "number",
+      format: "float",
+    },
+    cam_pos_z: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_x: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_y: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_z: {
+      type: "number",
+      format: "float",
+    },
+    cam_zoom: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_x: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_y: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_z: {
+      type: "number",
+      format: "float",
+    },
+    name: {
+      type: "string",
     },
   },
 } as const;
@@ -389,6 +570,73 @@ export const PlaylistInfoSchema = {
       type: "integer",
       format: "int32",
       example: 0,
+    },
+  },
+} as const;
+
+export const SceneSchema = {
+  type: "object",
+  required: [
+    "id",
+    "name",
+    "cam_pos_x",
+    "cam_pos_y",
+    "cam_pos_z",
+    "cam_rot_x",
+    "cam_rot_y",
+    "cam_rot_z",
+    "cam_zoom",
+    "ctrl_x",
+    "ctrl_y",
+    "ctrl_z",
+  ],
+  properties: {
+    cam_pos_x: {
+      type: "number",
+      format: "float",
+    },
+    cam_pos_y: {
+      type: "number",
+      format: "float",
+    },
+    cam_pos_z: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_x: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_y: {
+      type: "number",
+      format: "float",
+    },
+    cam_rot_z: {
+      type: "number",
+      format: "float",
+    },
+    cam_zoom: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_x: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_y: {
+      type: "number",
+      format: "float",
+    },
+    ctrl_z: {
+      type: "number",
+      format: "float",
+    },
+    id: {
+      type: "integer",
+      format: "int32",
+    },
+    name: {
+      type: "string",
     },
   },
 } as const;

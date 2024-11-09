@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+
   import { afterNavigate } from "$app/navigation";
   import Navbar from "$lib/components/Navbar.svelte";
   import Notifications from "$lib/components/Notifications.svelte";

@@ -18,6 +18,7 @@ pub enum StorageType {
     Sequences,
     Media,
     Other,
+    Meshes,
 }
 
 impl Display for StorageType {
@@ -25,6 +26,7 @@ impl Display for StorageType {
         match self {
             Self::Sequences => f.write_str("sequences"),
             Self::Media => f.write_str("media"),
+            Self::Meshes => f.write_str("meshes"),
             Self::Other => f.write_str("other"),
         }
     }
@@ -44,6 +46,10 @@ pub fn init(cfg: &Config) -> Result<()> {
     tracing::debug!("Creating 'other' directory");
     let other = path.join(StorageType::Other.to_string());
     std::fs::create_dir_all(other).context("Couldn't create 'other' directory")?;
+
+    tracing::debug!("Creating 'meshes' directory");
+    let other = path.join(StorageType::Meshes.to_string());
+    std::fs::create_dir_all(other).context("Couldn't create 'meshes' directory")?;
 
     Ok(())
 }

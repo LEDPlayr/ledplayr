@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { SequenceMeta } from "$lib/client";
   import type { Component } from "svelte";
+  import type { SequenceMeta } from "$lib/client";
 
   import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
   import PhCheck from "virtual:icons/ph/check";
@@ -10,6 +10,7 @@
 
   import prettyBytes from "pretty-bytes";
   import { onMount } from "svelte";
+
   import {
     delSequence,
     fileUpload,

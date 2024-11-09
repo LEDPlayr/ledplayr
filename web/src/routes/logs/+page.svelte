@@ -3,7 +3,8 @@
 
   import { AnsiUp } from "ansi_up";
   import { onMount, tick } from "svelte";
-  import { getLog, getLogs } from "$lib/client";
+
+  import { getLog, listLogs } from "$lib/client";
   import { notify } from "$lib/utils";
 
   let logfiles: string[] = $state([]);
@@ -26,7 +27,7 @@
   });
 
   const loadLogfiles = async () => {
-    const { data, error } = await getLogs();
+    const { data, error } = await listLogs();
     if (data) {
       logfiles = data;
     } else {

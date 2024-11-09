@@ -57,7 +57,7 @@ pub fn get_sequence(
 
             Ok(Some((seq, vars)))
         }
-        Err(diesel::result::Error::NotFound) => Ok(None),
+        Err(NotFound) => Ok(None),
         Err(e) => Err(anyhow!(e)),
     }
 }
@@ -102,7 +102,7 @@ pub fn new_sequence(conn: &mut SqliteConnection, seq: fseq::parser::FSeq) -> Res
     Ok(())
 }
 
-pub fn del_sequence(conn: &mut SqliteConnection, n: String) -> Result<()> {
+pub fn del_sequence(conn: &mut SqliteConnection, n: String) -> Result<Option<()>> {
     match sequences::table
         .filter(sequences::name.eq(n))
         .select(sequences::id)
@@ -112,8 +112,9 @@ pub fn del_sequence(conn: &mut SqliteConnection, n: String) -> Result<()> {
             diesel::delete(sequences::table.filter(sequences::id.eq(seq_id))).execute(conn)?;
             diesel::delete(variables::table.filter(variables::sequence_id.eq(seq_id)))
                 .execute(conn)?;
-            Ok(())
+            Ok(Some(()))
         }
+        Err(NotFound) => Ok(None),
         Err(e) => Err(anyhow!(e)),
     }
 }
@@ -166,7 +167,10 @@ pub fn get_playlist(
     Ok(Some((playlist, sequences)))
 }
 
-pub fn new_playlist(conn: &mut SqliteConnection, to_insert: NewPlaylistAndSeq) -> Result<()> {
+pub fn new_playlist(
+    conn: &mut SqliteConnection,
+    to_insert: NewPlaylistAndSeq,
+) -> Result<Option<()>> {
     let (playlist, seqs) = to_insert;
 
     if let Err(e) = diesel::insert_into(playlists::table)
@@ -185,7 +189,7 @@ pub fn new_playlist(conn: &mut SqliteConnection, to_insert: NewPlaylistAndSeq) -
         .first(conn)
     {
         Ok(p) => p,
-        Err(NotFound) => return Err(anyhow!("Playlist not found")),
+        Err(NotFound) => return Ok(None),
         Err(e) => return Err(anyhow!(e)),
     };
 
@@ -201,7 +205,7 @@ pub fn new_playlist(conn: &mut SqliteConnection, to_insert: NewPlaylistAndSeq) -
             .first(conn)
         {
             Ok(s) => s,
-            Err(NotFound) => return Err(anyhow!("Sequence '{}' not found", s.sequence)),
+            Err(NotFound) => return Ok(None),
             Err(e) => return Err(anyhow!(e)),
         };
 
@@ -221,7 +225,7 @@ pub fn new_playlist(conn: &mut SqliteConnection, to_insert: NewPlaylistAndSeq) -
         }
     }
 
-    Ok(())
+    Ok(Some(()))
 }
 
 pub fn del_playlist(conn: &mut SqliteConnection, playlist_name: String) -> Result<Option<()>> {
@@ -339,6 +343,86 @@ pub fn new_schedule(conn: &mut SqliteConnection, schedule: NewSchedule) -> Resul
 pub fn del_schedule(conn: &mut SqliteConnection, schedule: String) -> Result<Option<()>> {
     match diesel::delete(schedules::table)
         .filter(schedules::name.eq(schedule))
+        .execute(conn)
+    {
+        Ok(_) => Ok(Some(())),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn get_scenes(conn: &mut SqliteConnection) -> Result<Vec<Scene>> {
+    scenes::table.load::<Scene>(conn).map_err(|e| anyhow!(e))
+}
+
+pub fn get_scene(conn: &mut SqliteConnection, scene: String) -> Result<Option<Scene>> {
+    match scenes::table
+        .filter(scenes::name.eq(scene))
+        .select(Scene::as_select())
+        .first(conn)
+    {
+        Ok(s) => Ok(Some(s)),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn new_scene(conn: &mut SqliteConnection, scene: NewScene) -> Result<()> {
+    match diesel::insert_into(scenes::table)
+        .values(&scene)
+        .on_conflict(scenes::name)
+        .do_update()
+        .set(&scene)
+        .execute(conn)
+    {
+        Ok(_) => Ok(()),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn del_scene(conn: &mut SqliteConnection, scene: String) -> Result<Option<()>> {
+    match diesel::delete(scenes::table)
+        .filter(scenes::name.eq(scene))
+        .execute(conn)
+    {
+        Ok(_) => Ok(Some(())),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn get_meshes(conn: &mut SqliteConnection) -> Result<Vec<Mesh>> {
+    meshes::table.load::<Mesh>(conn).map_err(|e| anyhow!(e))
+}
+
+pub fn get_mesh(conn: &mut SqliteConnection, mesh: String) -> Result<Option<Mesh>> {
+    match meshes::table
+        .filter(meshes::name.eq(mesh))
+        .select(Mesh::as_select())
+        .first(conn)
+    {
+        Ok(m) => Ok(Some(m)),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn new_mesh(conn: &mut SqliteConnection, mesh: NewMesh) -> Result<()> {
+    match diesel::insert_into(meshes::table)
+        .values(&mesh)
+        .on_conflict(meshes::name)
+        .do_update()
+        .set(&mesh)
+        .execute(conn)
+    {
+        Ok(_) => Ok(()),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn del_mesh(conn: &mut SqliteConnection, mesh: String) -> Result<Option<()>> {
+    match diesel::delete(meshes::table)
+        .filter(meshes::name.eq(mesh))
         .execute(conn)
     {
         Ok(_) => Ok(Some(())),

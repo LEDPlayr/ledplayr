@@ -1,6 +1,22 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    meshes (id) {
+        id -> Integer,
+        name -> Text,
+        scale_x -> Float,
+        scale_y -> Float,
+        scale_z -> Float,
+        pos_x -> Float,
+        pos_y -> Float,
+        pos_z -> Float,
+        rot_x -> Float,
+        rot_y -> Float,
+        rot_z -> Float,
+    }
+}
+
+diesel::table! {
     playlists (id) {
         id -> Integer,
         name -> Text,
@@ -17,6 +33,23 @@ diesel::table! {
         sort_by -> Integer,
         enabled -> Bool,
         play_once -> Bool,
+    }
+}
+
+diesel::table! {
+    scenes (id) {
+        id -> Integer,
+        name -> Text,
+        cam_pos_x -> Float,
+        cam_pos_y -> Float,
+        cam_pos_z -> Float,
+        cam_rot_x -> Float,
+        cam_rot_y -> Float,
+        cam_rot_z -> Float,
+        cam_zoom -> Float,
+        ctrl_x -> Float,
+        ctrl_y -> Float,
+        ctrl_z -> Float,
     }
 }
 
@@ -66,8 +99,10 @@ diesel::joinable!(schedules -> playlists (playlist_id));
 diesel::joinable!(variables -> sequences (sequence_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    meshes,
     playlists,
     playlists_sequences,
+    scenes,
     schedules,
     sequences,
     variables,
