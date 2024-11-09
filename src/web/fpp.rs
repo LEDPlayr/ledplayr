@@ -9,7 +9,7 @@ use axum::{
 use humanize_duration::prelude::DurationExt;
 use parking_lot::Mutex;
 use rustix::path::Arg;
-use systemstat::Platform;
+use systemstat::{saturating_sub_bytes, Platform};
 
 use crate::{
     built_info,
@@ -116,7 +116,8 @@ pub async fn system_info(extract::State(state): extract::State<Arc<Mutex<State>>
         utilization.cpu = load.one;
     }
     if let Ok(mem) = sys.memory() {
-        utilization.memory = mem.free.as_u64() as f32 / mem.total.as_u64() as f32;
+        utilization.memory =
+            saturating_sub_bytes(mem.total, mem.free).as_u64() as f32 / mem.total.as_u64() as f32;
     }
     if let Ok(uptime) = sys.uptime() {
         utilization.uptime = format!("{}", uptime.human(humanize_duration::Truncate::Second));

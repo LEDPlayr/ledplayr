@@ -26,7 +26,7 @@
     <span class="flex-grow font-semibold">Version:</span>{$sysInfo?.LocalGitVersion}
   </div>
   <div class="flex w-full flex-row">
-    <span class="flex-grow font-semibold">CPU:</span>{$sysInfo?.Utilization.CPU}%
+    <span class="flex-grow font-semibold">CPU:</span>{$sysInfo?.Utilization.CPU.toFixed(2)}%
   </div>
   <div class="flex w-full flex-row">
     <span class="flex-grow font-semibold">Memory:</span>{(
