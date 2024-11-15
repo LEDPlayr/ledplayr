@@ -19,6 +19,17 @@ path = "src/bin/dump_fseq.rs"
 name = "gen_gradients"
 path = "src/bin/gen_gradients.rs"
 
+[profile.optimised]
+inherits = "release"
+opt-level = 3
+debug = "none"
+strip = "symbols"
+debug-assertions = false
+overflow-checks = false
+lto = true
+panic = "abort"
+incremental = true
+
 [dependencies]
 anyhow = "1.0.88"
 axum = { version = "0.7.5", features = ["multipart"] }
@@ -46,7 +57,7 @@ serde_json = "1.0.128"
 socket2 = "0.5.7"
 systemstat = "0.2.3"
 tempfile = "3.12.0"
-thiserror = "1.0.63"
+thiserror = "2.0.3"
 time = "0.3.36"
 tokio = { version = "1.40.0", features = [
   "rt-multi-thread",

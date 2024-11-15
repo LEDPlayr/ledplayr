@@ -37,7 +37,7 @@
       <h2 class="menu-title">Developer</h2>
       <ul>
         <li><a href={route("/logs")}>View Server Logs</a></li>
-        <li><a rel="external" target="_blank" href="/rapidoc">OpenAPI</a></li>
+        <li><a rel="external" target="_blank" href={route("rapidoc")}>OpenAPI</a></li>
       </ul>
     </li>
   </ul>
