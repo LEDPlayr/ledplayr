@@ -9,6 +9,13 @@ import { defineConfig } from "vite";
 import { kitRoutes } from "vite-plugin-kit-routes";
 
 const cfg: UserConfig = {
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler",
+      },
+    },
+  },
   plugins: [
     sveltekit(),
     Icons({
@@ -16,6 +23,9 @@ const cfg: UserConfig = {
     }),
     kitRoutes({
       post_update_run: "pnpm exec prettier -w ./src/lib/ROUTES.ts",
+      LINKS: {
+        rapidoc: "/rapidoc",
+      },
     }),
     purgeCss(),
   ],

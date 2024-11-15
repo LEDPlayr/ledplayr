@@ -32,7 +32,9 @@ const ACTIONS = {};
 /**
  * LINKS
  */
-const LINKS = {};
+const LINKS = {
+  rapidoc: `/rapidoc`,
+};
 
 type ParamValue = string | number | undefined;
 
@@ -151,6 +153,6 @@ export type KIT_ROUTES = {
   };
   SERVERS: Record<string, never>;
   ACTIONS: Record<string, never>;
-  LINKS: Record<string, never>;
+  LINKS: { rapidoc: never };
   Params: Record<string, never>;
 };
