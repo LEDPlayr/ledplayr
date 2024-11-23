@@ -33,7 +33,7 @@
     "@threlte/extras": "9.0.0-next.30",
     "@tsconfig/recommended": "^1.0.8",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^22.9.1",
+    "@types/node": "^22.9.3",
     "@types/three": "^0.170.0",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.15.0",
@@ -61,7 +61,7 @@
     "typescript": "^5.7.2",
     "unplugin-icons": "^0.20.1",
     "vite": "^5.4.11",
-    "vite-plugin-kit-routes": "0.7.0-next.1",
+    "vite-plugin-kit-routes": "0.7.0",
     "vite-plugin-tailwind-purgecss": "^0.3.3"
   },
   "pnpm": {

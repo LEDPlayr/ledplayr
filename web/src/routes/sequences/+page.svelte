@@ -11,12 +11,7 @@
   import prettyBytes from "pretty-bytes";
   import { onMount } from "svelte";
 
-  import {
-    delSequence,
-    fileUpload,
-    getSequenceMeta,
-    listSequences,
-  } from "$lib/client/services.gen";
+  import { delSequence, fileUpload, getSequenceMeta, listSequences } from "$lib/client";
   import Delete from "$lib/components/Delete.svelte";
 
   interface Upload {
