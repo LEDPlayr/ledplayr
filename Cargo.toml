@@ -19,16 +19,16 @@ path = "src/bin/dump_fseq.rs"
 name = "gen_gradients"
 path = "src/bin/gen_gradients.rs"
 
-[profile.optimised]
-inherits = "release"
-opt-level = 3
-debug = "none"
-strip = "symbols"
-debug-assertions = false
-overflow-checks = false
-lto = true
-panic = "abort"
+[profile.dev]
 incremental = true
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+debug = "none"
 
 [dependencies]
 anyhow = "1.0.88"
