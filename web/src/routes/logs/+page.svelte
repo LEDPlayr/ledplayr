@@ -72,7 +72,7 @@
 </script>
 
 <svelte:head>
-  <title>LEDPlayr: Outputs</title>
+  <title>LEDPlayr: Logs</title>
 </svelte:head>
 
 <div class="p-5">
