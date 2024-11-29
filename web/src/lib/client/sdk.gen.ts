@@ -1,4 +1,4 @@
-import type { Options } from "@hey-api/client-fetch";
+import type { OptionsLegacyParser } from "@hey-api/client-fetch";
 import type {
   DelMeshData,
   DelMeshError,
@@ -122,7 +122,7 @@ export const client = createClient(createConfig());
  * Download the outputs in JSON format
  */
 export const getOutputs = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetOutputsResponse, GetOutputsError, ThrowOnError>({
     ...options,
@@ -135,7 +135,7 @@ export const getOutputs = <ThrowOnError extends boolean = false>(
  * Upload the outputs in JSON format
  */
 export const uploadOutputs = <ThrowOnError extends boolean = false>(
-  options: Options<UploadOutputsData, ThrowOnError>,
+  options: OptionsLegacyParser<UploadOutputsData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
     UploadOutputsResponse,
@@ -152,7 +152,7 @@ export const uploadOutputs = <ThrowOnError extends boolean = false>(
  * Download the VirtualDisplayMap
  */
 export const getDisplay = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetDisplayResponse, GetDisplayError, ThrowOnError>({
     ...options,
@@ -165,7 +165,7 @@ export const getDisplay = <ThrowOnError extends boolean = false>(
  * Upload the VirtualDisplayMap
  */
 export const uploadDisplay = <ThrowOnError extends boolean = false>(
-  options: Options<UploadDisplayData, ThrowOnError>,
+  options: OptionsLegacyParser<UploadDisplayData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
     UploadDisplayResponse,
@@ -181,7 +181,7 @@ export const uploadDisplay = <ThrowOnError extends boolean = false>(
  * Get a specific log
  */
 export const getLog = <ThrowOnError extends boolean = false>(
-  options: Options<GetLogData, ThrowOnError>,
+  options: OptionsLegacyParser<GetLogData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetLogResponse, GetLogError, ThrowOnError>({
     ...options,
@@ -193,7 +193,7 @@ export const getLog = <ThrowOnError extends boolean = false>(
  * Get log filenames
  */
 export const listLogs = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<ListLogsResponse, ListLogsError, ThrowOnError>({
     ...options,
@@ -206,7 +206,7 @@ export const listLogs = <ThrowOnError extends boolean = false>(
  * Create a new mesh
  */
 export const newMesh = <ThrowOnError extends boolean = false>(
-  options: Options<NewMeshData, ThrowOnError>,
+  options: OptionsLegacyParser<NewMeshData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<NewMeshResponse, NewMeshError, ThrowOnError>({
     ...options,
@@ -219,7 +219,7 @@ export const newMesh = <ThrowOnError extends boolean = false>(
  * Download a 3D mesh for the virtual display
  */
 export const downloadMesh = <ThrowOnError extends boolean = false>(
-  options: Options<DownloadMeshData, ThrowOnError>,
+  options: OptionsLegacyParser<DownloadMeshData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<DownloadMeshResponse, DownloadMeshError, ThrowOnError>(
     {
@@ -234,7 +234,7 @@ export const downloadMesh = <ThrowOnError extends boolean = false>(
  * Create or update the given mesh
  */
 export const updateMesh = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateMeshData, ThrowOnError>,
+  options: OptionsLegacyParser<UpdateMeshData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).put<UpdateMeshResponse, UpdateMeshError, ThrowOnError>({
     ...options,
@@ -247,7 +247,7 @@ export const updateMesh = <ThrowOnError extends boolean = false>(
  * Delete the given mesh
  */
 export const delMesh = <ThrowOnError extends boolean = false>(
-  options: Options<DelMeshData, ThrowOnError>,
+  options: OptionsLegacyParser<DelMeshData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<DelMeshResponse, DelMeshError, ThrowOnError>({
     ...options,
@@ -260,7 +260,7 @@ export const delMesh = <ThrowOnError extends boolean = false>(
  * List all 3D meshes
  */
 export const listMeshes = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<ListMeshesResponse, ListMeshesError, ThrowOnError>({
     ...options,
@@ -273,7 +273,7 @@ export const listMeshes = <ThrowOnError extends boolean = false>(
  * Download the models in JSON format
  */
 export const listModels = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<ListModelsResponse, ListModelsError, ThrowOnError>({
     ...options,
@@ -286,7 +286,7 @@ export const listModels = <ThrowOnError extends boolean = false>(
  * Upload the models in JSON format
  */
 export const uploadModels = <ThrowOnError extends boolean = false>(
-  options: Options<UploadModelsData, ThrowOnError>,
+  options: OptionsLegacyParser<UploadModelsData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
     UploadModelsResponse,
@@ -303,7 +303,7 @@ export const uploadModels = <ThrowOnError extends boolean = false>(
  * Create a new playlist
  */
 export const newPlaylist = <ThrowOnError extends boolean = false>(
-  options: Options<NewPlaylistData, ThrowOnError>,
+  options: OptionsLegacyParser<NewPlaylistData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<NewPlaylistResponse, NewPlaylistError, ThrowOnError>({
     ...options,
@@ -316,7 +316,7 @@ export const newPlaylist = <ThrowOnError extends boolean = false>(
  * Read back a playlist
  */
 export const getPlaylist = <ThrowOnError extends boolean = false>(
-  options: Options<GetPlaylistData, ThrowOnError>,
+  options: OptionsLegacyParser<GetPlaylistData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetPlaylistResponse, GetPlaylistError, ThrowOnError>({
     ...options,
@@ -329,7 +329,7 @@ export const getPlaylist = <ThrowOnError extends boolean = false>(
  * Create or update the given playlist
  */
 export const updatePlaylist = <ThrowOnError extends boolean = false>(
-  options: Options<UpdatePlaylistData, ThrowOnError>,
+  options: OptionsLegacyParser<UpdatePlaylistData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).put<
     UpdatePlaylistResponse,
@@ -346,7 +346,7 @@ export const updatePlaylist = <ThrowOnError extends boolean = false>(
  * Delete the given playlist
  */
 export const delPlaylist = <ThrowOnError extends boolean = false>(
-  options: Options<DelPlaylistData, ThrowOnError>,
+  options: OptionsLegacyParser<DelPlaylistData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<
     DelPlaylistResponse,
@@ -363,7 +363,7 @@ export const delPlaylist = <ThrowOnError extends boolean = false>(
  * List the name of all playlists
  */
 export const listPlaylists = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     ListPlaylistsResponse,
@@ -380,7 +380,7 @@ export const listPlaylists = <ThrowOnError extends boolean = false>(
  * List the playlists with their ID
  */
 export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     ListPlaylistsNumberedResponse,
@@ -397,7 +397,7 @@ export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
  * Create a new scene
  */
 export const newScene = <ThrowOnError extends boolean = false>(
-  options: Options<NewSceneData, ThrowOnError>,
+  options: OptionsLegacyParser<NewSceneData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<NewSceneResponse, NewSceneError, ThrowOnError>({
     ...options,
@@ -410,7 +410,7 @@ export const newScene = <ThrowOnError extends boolean = false>(
  * Delete the given scene
  */
 export const delScene = <ThrowOnError extends boolean = false>(
-  options: Options<DelSceneData, ThrowOnError>,
+  options: OptionsLegacyParser<DelSceneData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<DelSceneResponse, DelSceneError, ThrowOnError>({
     ...options,
@@ -423,7 +423,7 @@ export const delScene = <ThrowOnError extends boolean = false>(
  * List all scenes
  */
 export const listScenes = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<ListScenesResponse, ListScenesError, ThrowOnError>({
     ...options,
@@ -436,7 +436,7 @@ export const listScenes = <ThrowOnError extends boolean = false>(
  * Read a single scene
  */
 export const getScene = <ThrowOnError extends boolean = false>(
-  options: Options<GetSceneData, ThrowOnError>,
+  options: OptionsLegacyParser<GetSceneData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetSceneResponse, GetSceneError, ThrowOnError>({
     ...options,
@@ -449,7 +449,7 @@ export const getScene = <ThrowOnError extends boolean = false>(
  * Create or update the given scene
  */
 export const updateScene = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateSceneData, ThrowOnError>,
+  options: OptionsLegacyParser<UpdateSceneData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).put<UpdateSceneResponse, UpdateSceneError, ThrowOnError>({
     ...options,
@@ -462,7 +462,7 @@ export const updateScene = <ThrowOnError extends boolean = false>(
  * Create a new schedule
  */
 export const newSchedule = <ThrowOnError extends boolean = false>(
-  options: Options<NewScheduleData, ThrowOnError>,
+  options: OptionsLegacyParser<NewScheduleData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<NewScheduleResponse, NewScheduleError, ThrowOnError>({
     ...options,
@@ -475,7 +475,7 @@ export const newSchedule = <ThrowOnError extends boolean = false>(
  * Read back a schedule
  */
 export const getSchedule = <ThrowOnError extends boolean = false>(
-  options: Options<GetScheduleData, ThrowOnError>,
+  options: OptionsLegacyParser<GetScheduleData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetScheduleResponse, GetScheduleError, ThrowOnError>({
     ...options,
@@ -488,7 +488,7 @@ export const getSchedule = <ThrowOnError extends boolean = false>(
  * Create or update the given schedule
  */
 export const updateSchedule = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateScheduleData, ThrowOnError>,
+  options: OptionsLegacyParser<UpdateScheduleData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).put<
     UpdateScheduleResponse,
@@ -505,7 +505,7 @@ export const updateSchedule = <ThrowOnError extends boolean = false>(
  * Delete the given schedule
  */
 export const delSchedule = <ThrowOnError extends boolean = false>(
-  options: Options<DelScheduleData, ThrowOnError>,
+  options: OptionsLegacyParser<DelScheduleData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<
     DelScheduleResponse,
@@ -521,7 +521,7 @@ export const delSchedule = <ThrowOnError extends boolean = false>(
  * Get the scheduler status
  */
 export const getSchedulerStatus = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     GetSchedulerStatusResponse,
@@ -537,7 +537,7 @@ export const getSchedulerStatus = <ThrowOnError extends boolean = false>(
  * Start the scheduler
  */
 export const startScheduler = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     StartSchedulerResponse,
@@ -553,7 +553,7 @@ export const startScheduler = <ThrowOnError extends boolean = false>(
  * Stop the scheduler
  */
 export const stopScheduler = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     StopSchedulerResponse,
@@ -570,7 +570,7 @@ export const stopScheduler = <ThrowOnError extends boolean = false>(
  * List the name of all schedules
  */
 export const listSchedules = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     ListSchedulesResponse,
@@ -587,7 +587,7 @@ export const listSchedules = <ThrowOnError extends boolean = false>(
  * Download a sequence file
  */
 export const getSequence = <ThrowOnError extends boolean = false>(
-  options: Options<GetSequenceData, ThrowOnError>,
+  options: OptionsLegacyParser<GetSequenceData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<GetSequenceResponse, GetSequenceError, ThrowOnError>({
     ...options,
@@ -600,7 +600,7 @@ export const getSequence = <ThrowOnError extends boolean = false>(
  * Remove a sequence file
  */
 export const delSequence = <ThrowOnError extends boolean = false>(
-  options: Options<DelSequenceData, ThrowOnError>,
+  options: OptionsLegacyParser<DelSequenceData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).delete<
     DelSequenceResponse,
@@ -617,7 +617,7 @@ export const delSequence = <ThrowOnError extends boolean = false>(
  * Get the metadata belonging to a sequence
  */
 export const getSequenceMeta = <ThrowOnError extends boolean = false>(
-  options: Options<GetSequenceMetaData, ThrowOnError>,
+  options: OptionsLegacyParser<GetSequenceMetaData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     GetSequenceMetaResponse,
@@ -634,7 +634,7 @@ export const getSequenceMeta = <ThrowOnError extends boolean = false>(
  * List all sequence files
  */
 export const listSequences = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
     ListSequencesResponse,
@@ -653,7 +653,7 @@ export const listSequences = <ThrowOnError extends boolean = false>(
  * as xLights. Some values are hard-coded to ensure compatibility.
  */
 export const systemInfo = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>,
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<SystemInfoResponse, SystemInfoError, ThrowOnError>({
     ...options,
@@ -665,7 +665,7 @@ export const systemInfo = <ThrowOnError extends boolean = false>(
  * Run LED test patterns
  */
 export const runTest = <ThrowOnError extends boolean = false>(
-  options: Options<RunTestData, ThrowOnError>,
+  options: OptionsLegacyParser<RunTestData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<RunTestResponse, RunTestError, ThrowOnError>({
     ...options,
@@ -677,7 +677,7 @@ export const runTest = <ThrowOnError extends boolean = false>(
  * Get the pattern of LED colors for the given test
  */
 export const getTestSequence = <ThrowOnError extends boolean = false>(
-  options: Options<GetTestSequenceData, ThrowOnError>,
+  options: OptionsLegacyParser<GetTestSequenceData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
     GetTestSequenceResponse,
@@ -697,7 +697,7 @@ export const getTestSequence = <ThrowOnError extends boolean = false>(
  * `moveFile` isn't required and will be ignore.
  */
 export const fileUpload = <ThrowOnError extends boolean = false>(
-  options: Options<FileUploadData, ThrowOnError>,
+  options: OptionsLegacyParser<FileUploadData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<FileUploadResponse, FileUploadError, ThrowOnError>({
     ...options,
@@ -718,7 +718,7 @@ export const fileUpload = <ThrowOnError extends boolean = false>(
  * that's handled at upload time.
  */
 export const fppCommand = <ThrowOnError extends boolean = false>(
-  options: Options<FppCommandData, ThrowOnError>,
+  options: OptionsLegacyParser<FppCommandData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<FppCommandResponse, FppCommandError, ThrowOnError>({
     ...options,
