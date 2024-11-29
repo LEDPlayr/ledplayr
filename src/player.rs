@@ -286,6 +286,8 @@ async fn start_senders(state: Arc<Mutex<State>>, tracker: &TaskTracker) -> Resul
         port += 1;
     }
 
+    senders.sort_by(|a, b| a.offset.cmp(&b.offset));
+
     // Spawn the demuxer
     let (s, r) = mpsc::channel::<Data>(1);
     tracker.spawn(demuxer(r, senders));
