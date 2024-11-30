@@ -170,9 +170,13 @@ pub struct CommandQuery {
 pub struct FileUpload {
     /// File or files to upload
     #[form_data(limit = "2MiB")]
-    #[schema(value_type = Vec<u8>)]
+    #[schema(value_type = String, format = Binary)]
     pub myfile: Vec<FieldData<Bytes>>,
 }
+
+#[derive(ToSchema)]
+#[schema(value_type = String, format = Binary)]
+pub struct BinaryFile(pub Vec<u8>);
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct Playlist {

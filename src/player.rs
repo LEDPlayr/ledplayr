@@ -183,10 +183,14 @@ async fn play_schedule(
     while !cancel.is_cancelled() && (playlist.repeat || loop_count < playlist.loop_count) {
         let (play_once, sequence) = sequences.get(seq_idx).context("Couldn't get sequence")?;
         tracing::info!(
-            "Playlist loop: {loop_count}, sequence: {}({seq_idx}) - frames: {}@{}ms",
+            "Playlist loop: {loop_count}, sequence: {}({seq_idx}){} - frames: {}@{}ms",
             sequence.name,
+            match play_once {
+                true => "[once]",
+                false => "[repeat]",
+            },
             sequence.frames,
-            sequence.step_time
+            sequence.step_time,
         );
 
         if seq.is_none() {
@@ -285,6 +289,8 @@ async fn start_senders(state: Arc<Mutex<State>>, tracker: &TaskTracker) -> Resul
         });
         port += 1;
     }
+
+    senders.sort_by(|a, b| a.offset.cmp(&b.offset));
 
     // Spawn the demuxer
     let (s, r) = mpsc::channel::<Data>(1);

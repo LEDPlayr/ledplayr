@@ -11,7 +11,7 @@ use utoipa::IntoParams;
 
 use crate::{
     models::*,
-    patterns::{self, TestSpec},
+    patterns::{self, Color, Sequence, TestSpec},
     state::State,
     web::error::APIError,
 };

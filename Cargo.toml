@@ -31,50 +31,50 @@ strip = true
 debug = "none"
 
 [dependencies]
-anyhow = "1.0.88"
-axum = { version = "0.7.5", features = ["multipart"] }
-axum_typed_multipart = "0.12.1"
+anyhow = "1.0.93"
+axum = { version = "0.7.9", features = ["multipart"] }
+axum_typed_multipart = "0.13.2"
 byteorder = "1.5.0"
 chrono = "0.4.38"
-clap = "4.5.17"
+clap = "4.5.21"
 colorgrad = "0.7.0"
-ddp-rs = "0.4.1"
-diesel = { version = "2.2.4", features = ["sqlite", "chrono"] }
+ddp-rs = "1.0.0"
+diesel = { version = "2.2.5", features = ["sqlite", "chrono"] }
 diesel_migrations = { version = "2.2.0", features = ["sqlite"] }
 dotenvy = "0.15.7"
-futures-core = "0.3.30"
-futures-util = "0.3.30"
+futures-core = "0.3.31"
+futures-util = "0.3.31"
 humanize-duration = "0.0.6"
-image = "0.25.4"
+image = "0.25.5"
 local-ip-address = "0.6.3"
 mime_guess = "2.0.5"
 parking_lot = "0.12.3"
-rust-embed = { version = "8.5.0" }
+rust-embed = "8.5.0"
 rust-ini = "0.21.1"
-rustix = { version = "0.38.37", features = ["system"] }
-serde = "1.0.210"
-serde_json = "1.0.128"
-socket2 = "0.5.7"
+rustix = { version = "0.38.41", features = ["system"] }
+serde = "1.0.215"
+serde_json = "1.0.133"
+socket2 = "0.5.8"
 systemstat = "0.2.3"
-tempfile = "3.12.0"
+tempfile = "3.14.0"
 thiserror = "2.0.3"
 time = "0.3.36"
-tokio = { version = "1.40.0", features = [
+tokio = { version = "1.41.1", features = [
   "rt-multi-thread",
   "signal",
   "tracing",
 ] }
 tokio-util = { version = "0.7.12", features = ["rt"] }
 toml = "0.8.19"
-tower-http = { version = "0.6.1", features = ["fs", "trace"] }
-tracing = "0.1.40"
+tower-http = { version = "0.6.2", features = ["fs", "trace"] }
+tracing = "0.1.41"
 tracing-appender = "0.2.3"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
-utoipa = { version = "4.2.3", features = ["axum_extras"] }
-utoipa-gen = { version = "4.3.0", features = ["axum_extras"] }
-utoipa-rapidoc = { version = "4.0.0", features = ["axum"] }
-utoipauto = "0.1.14"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+utoipa = { version = "5.2.0", features = ["axum_extras"] }
+utoipa-gen = { version = "5.2.0", features = ["axum_extras"] }
+utoipa-rapidoc = { version = "5.0.0", features = ["axum"] }
+utoipauto = "0.2.0"
 zstd = "0.13.2"
 
 [build-dependencies]
-built = { version = "0.7.4", features = ["chrono", "git2"] }
+built = { version = "0.7.5", features = ["chrono", "git2"] }

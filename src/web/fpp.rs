@@ -227,7 +227,7 @@ pub async fn get_display(extract::State(state): extract::State<Arc<Mutex<State>>
 #[utoipa::path(
     post,
     path = "/api/configfile/virtualdisplaymap",
-    request_body(content = Vec<u8>),
+    request_body(content = inline(BinaryFile), content_type = "application/octet-stream"),
     responses(
         (status = 200, description = "VDM uploaded successfully", body = Status),
         (status = 500, description = "Something went wrong", body = Status)

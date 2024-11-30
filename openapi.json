@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "ledplayr",
     "description": "",
@@ -1905,6 +1905,10 @@
   },
   "components": {
     "schemas": {
+      "BinaryFile": {
+        "type": "string",
+        "format": "binary"
+      },
       "ChannelOutput": {
         "type": "object",
         "required": [
@@ -2427,17 +2431,21 @@
             }
           },
           "name": {
-            "type": "string",
-            "example": "sample",
-            "nullable": true
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "sample"
           },
           "playlistInfo": {
-            "allOf": [
+            "oneOf": [
+              {
+                "type": "null"
+              },
               {
                 "$ref": "#/components/schemas/PlaylistInfo"
               }
-            ],
-            "nullable": true
+            ]
           },
           "random": {
             "type": "boolean",
@@ -2465,10 +2473,12 @@
         ],
         "properties": {
           "duration": {
-            "type": "number",
+            "type": [
+              "number",
+              "null"
+            ],
             "format": "float",
-            "example": 30,
-            "nullable": true
+            "example": 30
           },
           "enabled": {
             "type": "boolean",
@@ -2790,6 +2800,9 @@
             "additionalProperties": {
               "type": "string"
             },
+            "propertyNames": {
+              "type": "string"
+            },
             "example": {
               "sp": "xLights"
             }
@@ -2803,10 +2816,12 @@
         ],
         "properties": {
           "error": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "What went wrong",
-            "example": "Could not open file",
-            "nullable": true
+            "example": "Could not open file"
           },
           "status": {
             "type": "string",
@@ -2917,7 +2932,8 @@
             "example": "git"
           },
           "Utilization": {
-            "$ref": "#/components/schemas/SystemUtilization"
+            "$ref": "#/components/schemas/SystemUtilization",
+            "description": "The current system utilization"
           },
           "Variant": {
             "type": "string",
@@ -2994,6 +3010,9 @@
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/Sequence"
+            },
+            "propertyNames": {
+              "type": "string"
             }
           }
         }
