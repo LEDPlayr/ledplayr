@@ -8,7 +8,7 @@ use axum::{
 };
 use parking_lot::Mutex;
 
-use crate::{state::State, web::error::APIError};
+use crate::{models::Status, state::State, web::error::APIError};
 
 /// Get log filenames
 #[utoipa::path(

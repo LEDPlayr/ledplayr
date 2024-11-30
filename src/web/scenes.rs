@@ -8,7 +8,11 @@ use axum::{
 use parking_lot::Mutex;
 
 use crate::{
-    db::{self, models::NewScene},
+    db::{
+        self,
+        models::{NewScene, Scene},
+    },
+    models::Status,
     state::State,
     web::error::APIError,
 };

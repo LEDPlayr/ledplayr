@@ -100,8 +100,12 @@ export const FileUploadSchema = {
   required: ["myfile"],
   properties: {
     myfile: {
-      type: "string",
-      format: "binary",
+      type: "array",
+      items: {
+        type: "integer",
+        format: "int32",
+        minimum: 0,
+      },
       description: "File or files to upload",
     },
   },
@@ -499,17 +503,18 @@ export const PlaylistSchema = {
       },
     },
     name: {
-      type: "string",
+      type: ["string", "null"],
       example: "sample",
-      nullable: true,
     },
     playlistInfo: {
-      allOf: [
+      oneOf: [
+        {
+          type: "null",
+        },
         {
           $ref: "#/components/schemas/PlaylistInfo",
         },
       ],
-      nullable: true,
     },
     random: {
       type: "boolean",
@@ -533,10 +538,9 @@ export const PlaylistEntrySchema = {
   required: ["sequenceName", "playOnce", "enabled", "type"],
   properties: {
     duration: {
-      type: "number",
+      type: ["number", "null"],
       format: "float",
       example: 30,
-      nullable: true,
     },
     enabled: {
       type: "boolean",
@@ -840,6 +844,9 @@ export const SequenceMetaSchema = {
       additionalProperties: {
         type: "string",
       },
+      propertyNames: {
+        type: "string",
+      },
       example: {
         sp: "xLights",
       },
@@ -852,10 +859,9 @@ export const StatusSchema = {
   required: ["status"],
   properties: {
     error: {
-      type: "string",
+      type: ["string", "null"],
       description: "What went wrong",
       example: "Could not open file",
-      nullable: true,
     },
     status: {
       type: "string",
@@ -966,6 +972,7 @@ export const SystemInfoSchema = {
     },
     Utilization: {
       $ref: "#/components/schemas/SystemUtilization",
+      description: "The current system utilization",
     },
     Variant: {
       type: "string",
@@ -1036,6 +1043,9 @@ export const TestSpecSchema = {
       type: "object",
       additionalProperties: {
         $ref: "#/components/schemas/Sequence",
+      },
+      propertyNames: {
+        type: "string",
       },
     },
   },

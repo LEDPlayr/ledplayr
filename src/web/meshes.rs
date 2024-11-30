@@ -9,7 +9,11 @@ use axum::{
 use parking_lot::Mutex;
 
 use crate::{
-    db::{self, models::NewMesh},
+    db::{
+        self,
+        models::{Mesh, NewMesh},
+    },
+    models::Status,
     state::State,
     storage::{self, StorageType},
     web::error::APIError,

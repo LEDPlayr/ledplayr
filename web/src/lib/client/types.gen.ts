@@ -33,7 +33,7 @@ export type FileUpload = {
   /**
    * File or files to upload
    */
-  myfile: Blob | File;
+  myfile: Array<number>;
 };
 
 export type FreeTotal = {
@@ -141,7 +141,7 @@ export type Playlist = {
   loopCount: number;
   mainPlaylist: Array<PlaylistEntry>;
   name?: string | null;
-  playlistInfo?: PlaylistInfo | null;
+  playlistInfo?: null | PlaylistInfo;
   random: boolean;
   repeat: boolean;
   version: number;
@@ -313,6 +313,9 @@ export type SystemInfo = {
    * The location of updates
    */
   UpgradeSource: string;
+  /**
+   * The current system utilization
+   */
   Utilization: SystemUtilization;
   /**
    * The platform we're running on
@@ -384,7 +387,7 @@ export type GetDisplayResponse = string;
 export type GetDisplayError = Status;
 
 export type UploadDisplayData = {
-  body: Blob | File;
+  body: Array<number>;
 };
 
 export type UploadDisplayResponse = Status;
@@ -425,7 +428,7 @@ export type DownloadMeshData = {
   };
 };
 
-export type DownloadMeshResponse = Blob | File;
+export type DownloadMeshResponse = Array<number>;
 
 export type DownloadMeshError = Status;
 
@@ -653,7 +656,7 @@ export type GetSequenceData = {
   };
 };
 
-export type GetSequenceResponse = Blob | File;
+export type GetSequenceResponse = Array<number>;
 
 export type GetSequenceError = Status;
 
