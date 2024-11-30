@@ -40,7 +40,7 @@ pub async fn list_sequences(extract::State(state): extract::State<Arc<Mutex<Stat
         ("filename" = String, Path, description = "The sequence to download")
     ),
     responses(
-        (status = 200, description = "The requested sequence", body = Vec<u8>),
+        (status = 200, description = "The requested sequence", body = inline(BinaryFile), content_type = "application/octet-stream"),
         (status = 404, description = "The sequence wasn't found", body = Status),
         (status = 500, description = "Something went wrong", body = Status)
     ),

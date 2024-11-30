@@ -143,12 +143,8 @@
           "content": {
             "application/octet-stream": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "format": "int32",
-                  "minimum": 0
-                }
+                "type": "string",
+                "format": "binary"
               }
             }
           },
@@ -341,12 +337,8 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32",
-                    "minimum": 0
-                  }
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -1517,12 +1509,8 @@
             "content": {
               "application/octet-stream": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32",
-                    "minimum": 0
-                  }
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -1917,6 +1905,10 @@
   },
   "components": {
     "schemas": {
+      "BinaryFile": {
+        "type": "string",
+        "format": "binary"
+      },
       "ChannelOutput": {
         "type": "object",
         "required": [
@@ -2033,12 +2025,8 @@
         ],
         "properties": {
           "myfile": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32",
-              "minimum": 0
-            },
+            "type": "string",
+            "format": "binary",
             "description": "File or files to upload"
           }
         }

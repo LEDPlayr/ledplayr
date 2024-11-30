@@ -13,7 +13,7 @@ use crate::{
         self,
         models::{Mesh, NewMesh},
     },
-    models::Status,
+    models::{BinaryFile, Status},
     state::State,
     storage::{self, StorageType},
     web::error::APIError,
@@ -50,7 +50,7 @@ pub async fn list_meshes(extract::State(state): extract::State<Arc<Mutex<State>>
         ("mesh" = String, Path, description = "The name of the mesh")
     ),
     responses(
-        (status = 200, description = "The requested mesh", body = Vec<u8>),
+        (status = 200, description = "The requested mesh", body = inline(BinaryFile), content_type = "application/octet-stream"),
         (status = 404, description = "Unknown mesh", body = Status),
         (status = 500, description = "Something went wrong", body = Status)
     ),
