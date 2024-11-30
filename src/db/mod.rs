@@ -299,6 +299,7 @@ pub fn get_current_schedule(conn: &mut SqliteConnection) -> Result<Option<NextSc
         .filter(playlists_sequences::playlist_id.eq(playlist.id))
         .inner_join(sequences::table)
         .select((playlists_sequences::play_once, Sequence::as_select()))
+        .order_by(playlists_sequences::sort_by.asc())
         .load::<(bool, Sequence)>(conn)
     {
         Ok(v) => v,
