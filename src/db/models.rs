@@ -11,6 +11,31 @@ use utoipa::ToSchema;
 use crate::db::schema;
 
 #[derive(Queryable, Selectable, Identifiable, PartialEq, Debug, Serialize, ToSchema)]
+#[diesel(table_name = schema::buttons)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct Button {
+    pub id: i32,
+    pub status: String,
+    pub error: String,
+    pub battery: f32,
+    pub input: bool,
+    pub last: i32,
+    pub now: i32,
+}
+
+#[derive(Insertable, PartialEq, Debug, AsChangeset, Deserialize, ToSchema)]
+#[diesel(table_name = schema::buttons)]
+#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+pub struct NewButton {
+    pub status: String,
+    pub error: String,
+    pub battery: f32,
+    pub input: bool,
+    pub last: i32,
+    pub now: Option<i32>,
+}
+
+#[derive(Queryable, Selectable, Identifiable, PartialEq, Debug, Serialize, ToSchema)]
 #[diesel(table_name = schema::meshes)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Mesh {

@@ -9,6 +9,261 @@
     "version": "0.4.3"
   },
   "paths": {
+    "/api/button": {
+      "post": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "New button",
+        "description": "Create a new button",
+        "operationId": "new_button",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewButton"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The button was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete button supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/button/{button}": {
+      "get": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Get a button",
+        "description": "Get a single button",
+        "operationId": "get_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested button",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Button"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown button",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Update a button",
+        "description": "Update the given button",
+        "operationId": "update_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewButton"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested button was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete button supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Delete a button",
+        "description": "Delete the given button",
+        "operationId": "del_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested button was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The button wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buttons": {
+      "get": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "List all buttons",
+        "description": "List all remote buttons",
+        "operationId": "list_buttons",
+        "responses": {
+          "200": {
+            "description": "List of buttons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Button"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/channel/output/universeOutputs": {
       "get": {
         "tags": [
@@ -1909,6 +2164,45 @@
         "type": "string",
         "format": "binary"
       },
+      "Button": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "error",
+          "battery",
+          "input",
+          "last",
+          "now"
+        ],
+        "properties": {
+          "battery": {
+            "type": "number",
+            "format": "float"
+          },
+          "error": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "input": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "now": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
       "ChannelOutput": {
         "type": "object",
         "required": [
@@ -2189,6 +2483,40 @@
             "items": {
               "$ref": "#/components/schemas/Model"
             }
+          }
+        }
+      },
+      "NewButton": {
+        "type": "object",
+        "required": [
+          "status",
+          "error",
+          "battery",
+          "input",
+          "last",
+          "now"
+        ],
+        "properties": {
+          "battery": {
+            "type": "number",
+            "format": "float"
+          },
+          "error": {
+            "type": "string"
+          },
+          "input": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "now": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
           }
         }
       },

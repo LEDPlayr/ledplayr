@@ -2,6 +2,16 @@
 
 export type BinaryFile = Blob | File;
 
+export type Button = {
+  battery: number;
+  error: string;
+  id: number;
+  input: boolean;
+  last: number;
+  now: number;
+  status: string;
+};
+
 export type ChannelOutput = {
   channelCount: number;
   enabled: boolean;
@@ -74,6 +84,15 @@ export type Models = {
   models: Array<Model>;
 };
 
+export type NewButton = {
+  battery: number;
+  error: string;
+  input: boolean;
+  last: number;
+  now: number;
+  status: string;
+};
+
 export type NewMesh = {
   name: string;
   pos_x: number;
@@ -126,6 +145,27 @@ export type Pattern =
   | "sinebow"
   | "rainbow";
 
+export const Pattern = {
+  SPECTRAL: "spectral",
+  BLUES: "blues",
+  GREENS: "greens",
+  GREYS: "greys",
+  ORANGES: "oranges",
+  PURPLES: "purples",
+  REDS: "reds",
+  TURBO: "turbo",
+  VIRIDIS: "viridis",
+  INFERNO: "inferno",
+  MAGMA: "magma",
+  PLASMA: "plasma",
+  CIVIDIS: "cividis",
+  WARM: "warm",
+  COOL: "cool",
+  CUBE_HELIX: "cube_helix",
+  SINEBOW: "sinebow",
+  RAINBOW: "rainbow",
+} as const;
+
 export type PlayerState =
   | "start"
   | {
@@ -134,6 +174,12 @@ export type PlayerState =
   | "stop";
 
 export type PlayerStatus = "start" | "testing" | "stop";
+
+export const PlayerStatus = {
+  START: "start",
+  TESTING: "testing",
+  STOP: "stop",
+} as const;
 
 export type Playlist = {
   desc: string;
@@ -371,6 +417,58 @@ export type Universe = {
   startChannel: number;
   type: number;
 };
+
+export type NewButtonData = {
+  body: NewButton;
+};
+
+export type NewButtonResponse = Status;
+
+export type NewButtonError = Status;
+
+export type GetButtonData = {
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type GetButtonResponse = Button;
+
+export type GetButtonError = Status;
+
+export type UpdateButtonData = {
+  body: NewButton;
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type UpdateButtonResponse = Status;
+
+export type UpdateButtonError = Status;
+
+export type DelButtonData = {
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type DelButtonResponse = Status;
+
+export type DelButtonError = Status;
+
+export type ListButtonsResponse = Array<Button>;
+
+export type ListButtonsError = Status;
 
 export type GetOutputsResponse = Channels;
 

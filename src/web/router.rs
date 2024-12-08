@@ -16,8 +16,8 @@ use utoipauto::utoipauto;
 use crate::{
     state::State,
     web::{
-        files, fpp, logs, meshes, playlists, scenes, scheduler, schedules, sequences, testing,
-        upload,
+        buttons, files, fpp, logs, meshes, playlists, scenes, scheduler, schedules, sequences,
+        testing, upload,
     },
 };
 
@@ -122,6 +122,14 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
             get(scenes::get_scene)
                 .put(scenes::update_scene)
                 .delete(scenes::del_scene),
+        )
+        .route("/api/buttons", get(buttons::list_buttons))
+        .route("/api/button", post(buttons::new_button))
+        .route(
+            "/api/button/:button",
+            get(buttons::get_button)
+                .put(buttons::update_button)
+                .delete(buttons::del_button),
         )
         .fallback(files::static_handler)
         .layer(

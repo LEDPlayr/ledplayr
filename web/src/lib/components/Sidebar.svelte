@@ -29,6 +29,12 @@
       </ul>
     </li>
     <li>
+      <h2 class="menu-title">Inputs</h2>
+      <ul>
+        <li><a href={route("/buttons")}>View Buttons</a></li>
+      </ul>
+    </li>
+    <li>
       <h2 class="menu-title">Help</h2>
       <ul>
         <li><a href={route("/about")}>About</a></li>
