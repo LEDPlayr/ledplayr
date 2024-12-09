@@ -1,3 +1,5 @@
+import { PlayerStatus as ClientPlayerStatus } from "./client";
+
 export type NotificationLevel = "success" | "info" | "warning" | "error";
 export interface Notification {
   level: NotificationLevel;
@@ -5,7 +7,7 @@ export interface Notification {
   timeout: number;
 }
 
-export type PlayerStatus = "Unknown" | "Started" | "Stopped" | "Testing";
+export type PlayerStatus = ClientPlayerStatus | "unknown";
 
 export type CamPos = {
   cam_pos_x: number;

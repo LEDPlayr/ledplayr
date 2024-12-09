@@ -3,7 +3,7 @@
 
   import { tick } from "svelte";
 
-  import { getTestSequence } from "$lib/client";
+  import { getTestPattern } from "$lib/client";
   import { patterns } from "$lib/stores";
   import { hexToRGB8 } from "$lib/utils";
   import PatternPicker from "./PatternPicker.svelte";
@@ -42,7 +42,7 @@
     if ("pattern" in sequence || "moving_pattern" in sequence) {
       const count = model.ChannelCount / 3;
 
-      const { data } = await getTestSequence({
+      const { data } = await getTestPattern({
         body: sequence,
         query: { length: count },
       });

@@ -85,7 +85,7 @@ async fn update_button(id: i32, button: NewButton, state: Arc<Mutex<State>>) {
         }
 
         tracing::info!("Button {id} pressed starting scheduler");
-        if let Err(e) = ctrl.send(PlayerState::Start).await {
+        if let Err(e) = ctrl.send(PlayerState::Schedule).await {
             tracing::error!("Could not start scheduler: {e}");
         }
     }

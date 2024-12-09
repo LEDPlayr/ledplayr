@@ -16,7 +16,7 @@ use utoipauto::utoipauto;
 use crate::{
     state::State,
     web::{
-        buttons, files, fpp, logs, meshes, playlists, scenes, scheduler, schedules, sequences,
+        buttons, files, fpp, logs, meshes, player, playlists, scenes, schedules, sequences,
         testing, upload,
     },
 };
@@ -100,11 +100,11 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
             "/api/channel/output/universeOutputs",
             get(fpp::get_outputs).post(fpp::upload_outputs),
         )
-        .route("/api/scheduler", get(scheduler::get_scheduler_status))
-        .route("/api/scheduler/start", get(scheduler::start_scheduler))
-        .route("/api/scheduler/stop", get(scheduler::stop_scheduler))
-        .route("/api/test/run", post(testing::run_test))
-        .route("/api/test/sequence", post(testing::get_test_sequence))
+        .route("/api/player", get(player::get_status))
+        .route("/api/player/schedule", get(player::start_scheduler))
+        .route("/api/player/stop", get(player::stop))
+        .route("/api/player/test", post(player::run_test))
+        .route("/api/test_pattern", post(testing::get_test_pattern))
         .route("/api/logs", get(logs::list_logs))
         .route("/api/log/:name", get(logs::get_log))
         .route("/api/meshes", get(meshes::list_meshes))

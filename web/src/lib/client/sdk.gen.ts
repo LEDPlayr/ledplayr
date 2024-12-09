@@ -46,17 +46,17 @@ import type {
   GetScheduleData,
   GetScheduleError,
   GetScheduleResponse,
-  GetSchedulerStatusError,
-  GetSchedulerStatusResponse,
   GetSequenceData,
   GetSequenceError,
   GetSequenceMetaData,
   GetSequenceMetaError,
   GetSequenceMetaResponse,
   GetSequenceResponse,
-  GetTestSequenceData,
-  GetTestSequenceError,
-  GetTestSequenceResponse,
+  GetStatusError,
+  GetStatusResponse,
+  GetTestPatternData,
+  GetTestPatternError,
+  GetTestPatternResponse,
   ListButtonsError,
   ListButtonsResponse,
   ListLogsError,
@@ -95,8 +95,8 @@ import type {
   RunTestResponse,
   StartSchedulerError,
   StartSchedulerResponse,
-  StopSchedulerError,
-  StopSchedulerResponse,
+  StopError,
+  StopResponse,
   SystemInfoError,
   SystemInfoResponse,
   UpdateButtonData,
@@ -380,6 +380,58 @@ export const uploadModels = <ThrowOnError extends boolean = false>(
 };
 
 /**
+ * Get the player status
+ */
+export const getStatus = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<GetStatusResponse, GetStatusError, ThrowOnError>({
+    ...options,
+    url: "/api/player",
+  });
+};
+
+/**
+ * Start the player scheduling
+ */
+export const startScheduler = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<
+    StartSchedulerResponse,
+    StartSchedulerError,
+    ThrowOnError
+  >({
+    ...options,
+    url: "/api/player/schedule",
+  });
+};
+
+/**
+ * Stop the player
+ */
+export const stop = <ThrowOnError extends boolean = false>(
+  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+) => {
+  return (options?.client ?? client).get<StopResponse, StopError, ThrowOnError>({
+    ...options,
+    url: "/api/player/stop",
+  });
+};
+
+/**
+ * Run LED test patterns
+ */
+export const runTest = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<RunTestData, ThrowOnError>,
+) => {
+  return (options?.client ?? client).post<RunTestResponse, RunTestError, ThrowOnError>({
+    ...options,
+    url: "/api/player/test",
+  });
+};
+
+/**
  * New playlist
  * Create a new playlist
  */
@@ -599,54 +651,6 @@ export const delSchedule = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Get the scheduler status
- */
-export const getSchedulerStatus = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    GetSchedulerStatusResponse,
-    GetSchedulerStatusError,
-    ThrowOnError
-  >({
-    ...options,
-    url: "/api/scheduler",
-  });
-};
-
-/**
- * Start the scheduler
- */
-export const startScheduler = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    StartSchedulerResponse,
-    StartSchedulerError,
-    ThrowOnError
-  >({
-    ...options,
-    url: "/api/scheduler/start",
-  });
-};
-
-/**
- * Stop the scheduler
- */
-export const stopScheduler = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    StopSchedulerResponse,
-    StopSchedulerError,
-    ThrowOnError
-  >({
-    ...options,
-    url: "/api/scheduler/stop",
-  });
-};
-
-/**
  * List schedules
  * List the name of all schedules
  */
@@ -743,30 +747,18 @@ export const systemInfo = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * Run LED test patterns
- */
-export const runTest = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<RunTestData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).post<RunTestResponse, RunTestError, ThrowOnError>({
-    ...options,
-    url: "/api/test/run",
-  });
-};
-
-/**
  * Get the pattern of LED colors for the given test
  */
-export const getTestSequence = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetTestSequenceData, ThrowOnError>,
+export const getTestPattern = <ThrowOnError extends boolean = false>(
+  options: OptionsLegacyParser<GetTestPatternData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).post<
-    GetTestSequenceResponse,
-    GetTestSequenceError,
+    GetTestPatternResponse,
+    GetTestPatternError,
     ThrowOnError
   >({
     ...options,
-    url: "/api/test/sequence",
+    url: "/api/test_pattern",
   });
 };
 

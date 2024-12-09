@@ -89,7 +89,7 @@ export type NewButton = {
   error: string;
   input: boolean;
   last: number;
-  now: number;
+  now?: number | null;
   status: string;
 };
 
@@ -167,18 +167,26 @@ export const Pattern = {
 } as const;
 
 export type PlayerState =
-  | "start"
+  | "schedule"
   | {
-      testing: TestSpec;
+      playlist: string;
+    }
+  | {
+      sequence: string;
+    }
+  | {
+      test: TestSpec;
     }
   | "stop";
 
-export type PlayerStatus = "start" | "testing" | "stop";
+export type PlayerStatus = "scheduler" | "playlist" | "sequence" | "testing" | "stopped";
 
 export const PlayerStatus = {
-  START: "start",
+  SCHEDULER: "scheduler",
+  PLAYLIST: "playlist",
+  SEQUENCE: "sequence",
   TESTING: "testing",
-  STOP: "stop",
+  STOPPED: "stopped",
 } as const;
 
 export type Playlist = {
@@ -238,10 +246,6 @@ export type Schedule = {
   thursday: boolean;
   tuesday: boolean;
   wednesday: boolean;
-};
-
-export type SchedulerStatus = {
-  status: PlayerStatus;
 };
 
 export type Sequence =
@@ -575,6 +579,26 @@ export type UploadModelsResponse = Status;
 
 export type UploadModelsError = Status;
 
+export type GetStatusResponse = PlayerStatus;
+
+export type GetStatusError = Status;
+
+export type StartSchedulerResponse = Status;
+
+export type StartSchedulerError = Status;
+
+export type StopResponse = Status;
+
+export type StopError = Status;
+
+export type RunTestData = {
+  body: TestSpec;
+};
+
+export type RunTestResponse = Status;
+
+export type RunTestError = Status;
+
 export type NewPlaylistData = {
   body: Playlist;
 };
@@ -731,18 +755,6 @@ export type DelScheduleResponse = Status;
 
 export type DelScheduleError = Status;
 
-export type GetSchedulerStatusResponse = SchedulerStatus;
-
-export type GetSchedulerStatusError = Status;
-
-export type StartSchedulerResponse = Status;
-
-export type StartSchedulerError = Status;
-
-export type StopSchedulerResponse = Status;
-
-export type StopSchedulerError = Status;
-
 export type ListSchedulesResponse = Array<Schedule>;
 
 export type ListSchedulesError = Status;
@@ -794,15 +806,7 @@ export type SystemInfoResponse = SystemInfo;
 
 export type SystemInfoError = unknown;
 
-export type RunTestData = {
-  body: TestSpec;
-};
-
-export type RunTestResponse = Status;
-
-export type RunTestError = Status;
-
-export type GetTestSequenceData = {
+export type GetTestPatternData = {
   body: Sequence;
   query: {
     /**
@@ -812,9 +816,9 @@ export type GetTestSequenceData = {
   };
 };
 
-export type GetTestSequenceResponse = Array<Color>;
+export type GetTestPatternResponse = Array<Color>;
 
-export type GetTestSequenceError = Status;
+export type GetTestPatternError = Status;
 
 export type FileUploadData = {
   body: FileUpload;

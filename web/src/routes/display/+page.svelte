@@ -18,13 +18,13 @@
     listScenes,
     runTest,
     startScheduler,
-    stopScheduler,
+    stop,
     updateScene,
   } from "$lib/client";
   import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
   import { patterns, playerStatus } from "$lib/stores";
-  import { notify, rotate, updateStatus } from "$lib/utils";
+  import { isPlaying, notify, rotate, updateStatus } from "$lib/utils";
 
   const gray: Color = { r: 25, g: 25, b: 25 };
 
@@ -162,8 +162,8 @@
     await updateStatus();
   };
 
-  const stop = async () => {
-    const { error } = await stopScheduler();
+  const stopPlayer = async () => {
+    const { error } = await stop();
     if (error) {
       notify(`${error}`, "error");
     }
@@ -229,22 +229,16 @@
     <div>
       <h2 class="text-lg">Test Control</h2>
 
-      <p class="w-full text-center">Status: {$playerStatus}</p>
+      <p class="w-full text-center">Status: <span class="capitalize">{$playerStatus}</span></p>
 
       <div class="m-4 flex flex-row flex-wrap place-content-center gap-4">
-        <button class="btn" onclick={stop} disabled={$playerStatus == "Stopped"}>
+        <button class="btn" onclick={stopPlayer} disabled={isPlaying($playerStatus) === false}>
           <PhPause />Stop
         </button>
-        <button
-          class="btn"
-          onclick={startTest}
-          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
+        <button class="btn" onclick={startTest} disabled={isPlaying($playerStatus) === true}>
           <PhTestTube />Start Test
         </button>
-        <button
-          class="btn"
-          onclick={start}
-          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
+        <button class="btn" onclick={start} disabled={isPlaying($playerStatus) === true}>
           <PhPlay />Start Scheduler
         </button>
       </div>

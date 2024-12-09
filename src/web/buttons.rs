@@ -123,7 +123,7 @@ pub async fn update_button(
             ctrl = state.player_ctrl.clone();
         }
 
-        if let Err(e) = ctrl.send(PlayerState::Start).await {
+        if let Err(e) = ctrl.send(PlayerState::Schedule).await {
             tracing::error!("Could not start scheduler: {e}");
         }
     }

@@ -98,7 +98,7 @@ async fn main() -> Result<()> {
         auto_start = scheduler_config.auto_start.unwrap_or(true);
     }
     if auto_start {
-        if let Err(e) = player_ctrl.send(PlayerState::Start).await {
+        if let Err(e) = player_ctrl.send(PlayerState::Schedule).await {
             tracing::error!("Could not start scheduler: {e}");
         }
     }
@@ -107,7 +107,7 @@ async fn main() -> Result<()> {
         cfg,
         db_conn,
         player_ctrl,
-        player_status: PlayerStatus::Stop,
+        player_status: PlayerStatus::Stopped,
     }));
 
     if multicast_enabled {

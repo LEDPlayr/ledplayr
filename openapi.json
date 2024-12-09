@@ -853,6 +853,140 @@
         }
       }
     },
+    "/api/player": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Get the player status",
+        "operationId": "get_status",
+        "responses": {
+          "200": {
+            "description": "Status of the scheduler",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/schedule": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Start the player scheduling",
+        "operationId": "start_scheduler",
+        "responses": {
+          "200": {
+            "description": "Player started ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/stop": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Stop the player",
+        "operationId": "stop",
+        "responses": {
+          "200": {
+            "description": "Player stopped ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/test": {
+      "post": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Run LED test patterns",
+        "operationId": "run_test",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSpec"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tests started ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/playlist": {
       "post": {
         "tags": [
@@ -1611,99 +1745,6 @@
         }
       }
     },
-    "/api/scheduler": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Get the scheduler status",
-        "operationId": "get_scheduler_status",
-        "responses": {
-          "200": {
-            "description": "Status of the scheduler",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchedulerStatus"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/scheduler/start": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Start the scheduler",
-        "operationId": "start_scheduler",
-        "responses": {
-          "200": {
-            "description": "Scheduler started ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/scheduler/stop": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Stop the scheduler",
-        "operationId": "stop_scheduler",
-        "responses": {
-          "200": {
-            "description": "Scheduler stopped ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/schedules": {
       "get": {
         "tags": [
@@ -1944,54 +1985,13 @@
         }
       }
     },
-    "/api/test/run": {
-      "post": {
-        "tags": [
-          "Testing"
-        ],
-        "summary": "Run LED test patterns",
-        "operationId": "run_test",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TestSpec"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Tests started ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/test/sequence": {
+    "/api/test_pattern": {
       "post": {
         "tags": [
           "Testing"
         ],
         "summary": "Get the pattern of LED colors for the given test",
-        "operationId": "get_test_sequence",
+        "operationId": "get_test_pattern",
         "parameters": [
           {
             "name": "length",
@@ -2493,8 +2493,7 @@
           "error",
           "battery",
           "input",
-          "last",
-          "now"
+          "last"
         ],
         "properties": {
           "battery": {
@@ -2512,7 +2511,10 @@
             "format": "int32"
           },
           "now": {
-            "type": "integer",
+            "type": [
+              "integer",
+              "null"
+            ],
             "format": "int32"
           },
           "status": {
@@ -2683,16 +2685,38 @@
           {
             "type": "string",
             "enum": [
-              "start"
+              "schedule"
             ]
           },
           {
             "type": "object",
             "required": [
-              "testing"
+              "playlist"
             ],
             "properties": {
-              "testing": {
+              "playlist": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "sequence"
+            ],
+            "properties": {
+              "sequence": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "test"
+            ],
+            "properties": {
+              "test": {
                 "$ref": "#/components/schemas/TestSpec"
               }
             }
@@ -2708,9 +2732,11 @@
       "PlayerStatus": {
         "type": "string",
         "enum": [
-          "start",
+          "scheduler",
+          "playlist",
+          "sequence",
           "testing",
-          "stop"
+          "stopped"
         ]
       },
       "Playlist": {
@@ -2990,17 +3016,6 @@
           "wednesday": {
             "type": "boolean",
             "example": true
-          }
-        }
-      },
-      "SchedulerStatus": {
-        "type": "object",
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "status": {
-            "$ref": "#/components/schemas/PlayerStatus"
           }
         }
       },
