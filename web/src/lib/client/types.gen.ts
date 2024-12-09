@@ -2,6 +2,16 @@
 
 export type BinaryFile = Blob | File;
 
+export type Button = {
+  battery: number;
+  error: string;
+  id: number;
+  input: boolean;
+  last: number;
+  now: number;
+  status: string;
+};
+
 export type ChannelOutput = {
   channelCount: number;
   enabled: boolean;
@@ -74,6 +84,15 @@ export type Models = {
   models: Array<Model>;
 };
 
+export type NewButton = {
+  battery: number;
+  error: string;
+  input: boolean;
+  last: number;
+  now?: number | null;
+  status: string;
+};
+
 export type NewMesh = {
   name: string;
   pos_x: number;
@@ -126,14 +145,49 @@ export type Pattern =
   | "sinebow"
   | "rainbow";
 
+export const Pattern = {
+  SPECTRAL: "spectral",
+  BLUES: "blues",
+  GREENS: "greens",
+  GREYS: "greys",
+  ORANGES: "oranges",
+  PURPLES: "purples",
+  REDS: "reds",
+  TURBO: "turbo",
+  VIRIDIS: "viridis",
+  INFERNO: "inferno",
+  MAGMA: "magma",
+  PLASMA: "plasma",
+  CIVIDIS: "cividis",
+  WARM: "warm",
+  COOL: "cool",
+  CUBE_HELIX: "cube_helix",
+  SINEBOW: "sinebow",
+  RAINBOW: "rainbow",
+} as const;
+
 export type PlayerState =
-  | "start"
+  | "schedule"
   | {
-      testing: TestSpec;
+      playlist: string;
+    }
+  | {
+      sequence: string;
+    }
+  | {
+      test: TestSpec;
     }
   | "stop";
 
-export type PlayerStatus = "start" | "testing" | "stop";
+export type PlayerStatus = "scheduler" | "playlist" | "sequence" | "testing" | "stopped";
+
+export const PlayerStatus = {
+  SCHEDULER: "scheduler",
+  PLAYLIST: "playlist",
+  SEQUENCE: "sequence",
+  TESTING: "testing",
+  STOPPED: "stopped",
+} as const;
 
 export type Playlist = {
   desc: string;
@@ -192,10 +246,6 @@ export type Schedule = {
   thursday: boolean;
   tuesday: boolean;
   wednesday: boolean;
-};
-
-export type SchedulerStatus = {
-  status: PlayerStatus;
 };
 
 export type Sequence =
@@ -372,6 +422,58 @@ export type Universe = {
   type: number;
 };
 
+export type NewButtonData = {
+  body: NewButton;
+};
+
+export type NewButtonResponse = Status;
+
+export type NewButtonError = Status;
+
+export type GetButtonData = {
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type GetButtonResponse = Button;
+
+export type GetButtonError = Status;
+
+export type UpdateButtonData = {
+  body: NewButton;
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type UpdateButtonResponse = Status;
+
+export type UpdateButtonError = Status;
+
+export type DelButtonData = {
+  path: {
+    /**
+     * The ID of the button
+     */
+    button: number;
+  };
+};
+
+export type DelButtonResponse = Status;
+
+export type DelButtonError = Status;
+
+export type ListButtonsResponse = Array<Button>;
+
+export type ListButtonsError = Status;
+
 export type GetOutputsResponse = Channels;
 
 export type GetOutputsError = Status;
@@ -476,6 +578,26 @@ export type UploadModelsData = {
 export type UploadModelsResponse = Status;
 
 export type UploadModelsError = Status;
+
+export type GetStatusResponse = PlayerStatus;
+
+export type GetStatusError = Status;
+
+export type StartSchedulerResponse = Status;
+
+export type StartSchedulerError = Status;
+
+export type StopResponse = Status;
+
+export type StopError = Status;
+
+export type RunTestData = {
+  body: TestSpec;
+};
+
+export type RunTestResponse = Status;
+
+export type RunTestError = Status;
 
 export type NewPlaylistData = {
   body: Playlist;
@@ -633,18 +755,6 @@ export type DelScheduleResponse = Status;
 
 export type DelScheduleError = Status;
 
-export type GetSchedulerStatusResponse = SchedulerStatus;
-
-export type GetSchedulerStatusError = Status;
-
-export type StartSchedulerResponse = Status;
-
-export type StartSchedulerError = Status;
-
-export type StopSchedulerResponse = Status;
-
-export type StopSchedulerError = Status;
-
 export type ListSchedulesResponse = Array<Schedule>;
 
 export type ListSchedulesError = Status;
@@ -696,15 +806,7 @@ export type SystemInfoResponse = SystemInfo;
 
 export type SystemInfoError = unknown;
 
-export type RunTestData = {
-  body: TestSpec;
-};
-
-export type RunTestResponse = Status;
-
-export type RunTestError = Status;
-
-export type GetTestSequenceData = {
+export type GetTestPatternData = {
   body: Sequence;
   query: {
     /**
@@ -714,9 +816,9 @@ export type GetTestSequenceData = {
   };
 };
 
-export type GetTestSequenceResponse = Array<Color>;
+export type GetTestPatternResponse = Array<Color>;
 
-export type GetTestSequenceError = Status;
+export type GetTestPatternError = Status;
 
 export type FileUploadData = {
   body: FileUpload;

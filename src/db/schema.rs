@@ -1,6 +1,18 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    buttons (id) {
+        id -> Integer,
+        status -> Text,
+        error -> Text,
+        battery -> Float,
+        input -> Bool,
+        last -> Integer,
+        now -> Integer,
+    }
+}
+
+diesel::table! {
     meshes (id) {
         id -> Integer,
         name -> Text,
@@ -99,6 +111,7 @@ diesel::joinable!(schedules -> playlists (playlist_id));
 diesel::joinable!(variables -> sequences (sequence_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    buttons,
     meshes,
     playlists,
     playlists_sequences,

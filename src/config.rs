@@ -38,6 +38,7 @@ pub struct Config {
     pub web: Option<WebConfig>,
     pub log: Option<LogConfig>,
     pub scheduler: Option<SchedulerConfig>,
+    pub buttons: Option<Vec<ButtonConfig>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -57,4 +58,11 @@ pub struct LogConfig {
 #[derive(Debug, Deserialize)]
 pub struct SchedulerConfig {
     pub auto_start: Option<bool>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ButtonConfig {
+    pub id: i32,
+    pub device: String,
+    pub baudrate: Option<u32>,
 }

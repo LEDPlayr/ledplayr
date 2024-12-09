@@ -1,8 +1,6 @@
 <script lang="ts">
-  import type { Pattern } from "$lib/client";
-
   import { base } from "$app/paths";
-  import { PatternSchema } from "$lib/client";
+  import { Pattern } from "$lib/client";
 
   type Props = {
     pattern: Pattern;
@@ -12,7 +10,7 @@
   let { pattern = $bindable(), onChange = undefined }: Props = $props();
   let open = $state(false);
 
-  const possiblePatterns = PatternSchema.enum.values().toArray();
+  const possiblePatterns = Object.values(Pattern);
 
   const choosePattern = (p: Pattern) => {
     pattern = p;

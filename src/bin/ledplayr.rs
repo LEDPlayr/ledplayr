@@ -4,7 +4,7 @@ use anyhow::{anyhow, Context, Result};
 
 use dotenvy::dotenv;
 use ledplayr::{
-    built_info,
+    built_info, button,
     config::Config,
     db,
     error::AppError,
@@ -98,7 +98,7 @@ async fn main() -> Result<()> {
         auto_start = scheduler_config.auto_start.unwrap_or(true);
     }
     if auto_start {
-        if let Err(e) = player_ctrl.send(PlayerState::Start).await {
+        if let Err(e) = player_ctrl.send(PlayerState::Schedule).await {
             tracing::error!("Could not start scheduler: {e}");
         }
     }
@@ -107,12 +107,13 @@ async fn main() -> Result<()> {
         cfg,
         db_conn,
         player_ctrl,
-        player_status: PlayerStatus::Stop,
+        player_status: PlayerStatus::Stopped,
     }));
 
     if multicast_enabled {
         tracker.spawn(fpp::listen(cancel.clone()));
     }
+    tracker.spawn(button::listen(state.clone(), cancel.clone()));
     tracker.spawn(router::run_server(state.clone(), cancel.clone()));
     tracker.spawn(player::start_scheduler(
         state.clone(),

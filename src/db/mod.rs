@@ -431,3 +431,51 @@ pub fn del_mesh(conn: &mut SqliteConnection, mesh: String) -> Result<Option<()>>
         Err(e) => Err(anyhow!(e)),
     }
 }
+
+pub fn get_buttons(conn: &mut SqliteConnection) -> Result<Vec<Button>> {
+    buttons::table.load::<Button>(conn).map_err(|e| anyhow!(e))
+}
+
+pub fn get_button(conn: &mut SqliteConnection, id: i32) -> Result<Option<Button>> {
+    match buttons::table
+        .filter(buttons::id.eq(id))
+        .select(Button::as_select())
+        .first(conn)
+    {
+        Ok(m) => Ok(Some(m)),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn new_button(conn: &mut SqliteConnection, button: NewButton) -> Result<()> {
+    match diesel::insert_into(buttons::table)
+        .values(&button)
+        .execute(conn)
+    {
+        Ok(_) => Ok(()),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn update_button(conn: &mut SqliteConnection, id: i32, button: NewButton) -> Result<()> {
+    match diesel::update(buttons::table)
+        .set(&button)
+        .filter(buttons::id.eq(id))
+        .execute(conn)
+    {
+        Ok(_) => Ok(()),
+        Err(e) => Err(anyhow!(e)),
+    }
+}
+
+pub fn del_button(conn: &mut SqliteConnection, id: i32) -> Result<Option<()>> {
+    match diesel::delete(buttons::table)
+        .filter(buttons::id.eq(id))
+        .execute(conn)
+    {
+        Ok(_) => Ok(Some(())),
+        Err(NotFound) => Ok(None),
+        Err(e) => Err(anyhow!(e)),
+    }
+}

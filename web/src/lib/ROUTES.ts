@@ -11,6 +11,7 @@
 const PAGES = {
   "/": `/`,
   "/about": `/about`,
+  "/buttons": `/buttons`,
   "/display": `/display`,
   "/logs": `/logs`,
   "/models": `/models`,
@@ -145,6 +146,7 @@ export type KIT_ROUTES = {
   PAGES: {
     "/": never;
     "/about": never;
+    "/buttons": never;
     "/display": never;
     "/logs": never;
     "/models": never;

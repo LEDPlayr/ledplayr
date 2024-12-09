@@ -40,11 +40,11 @@ pub async fn start_scheduler(
             s = player_state.recv() => {
                 if let Some(s) = s {
                     match s {
-                        PlayerState::Start => {
+                        PlayerState::Schedule => {
                             let cancel = cancel.child_token();
                             scheduler(state.clone(), cancel.clone(), &mut player_state).await;
                         },
-                        PlayerState::Testing(tests) => {
+                        PlayerState::Test(tests) => {
                             let cancel = cancel.child_token();
                             tester(state.clone(), cancel.clone(), &mut player_state, tests).await;
                         },
@@ -65,7 +65,7 @@ async fn scheduler(
 
     {
         let mut state = state.lock();
-        state.player_status = PlayerStatus::Start;
+        state.player_status = PlayerStatus::Scheduler;
     }
 
     let tracker = TaskTracker::new();
@@ -106,7 +106,7 @@ async fn scheduler(
 
     {
         let mut state = state.lock();
-        state.player_status = PlayerStatus::Stop;
+        state.player_status = PlayerStatus::Stopped;
     }
 
     tracing::info!("Scheduler thread stopped");
@@ -516,7 +516,7 @@ async fn tester(
 
     {
         let mut state = state.lock();
-        state.player_status = PlayerStatus::Stop;
+        state.player_status = PlayerStatus::Stopped;
     }
 
     tracing::info!("Testing thread stopped");
