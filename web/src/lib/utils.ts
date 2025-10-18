@@ -1,7 +1,7 @@
 import type { PlayerStatus as ClientPlayerStatus, Color } from "./client";
 import type { NotificationLevel, PlayerStatus } from "./types";
 
-import { getSchedulerStatus } from "./client";
+import { getStatus } from "./client";
 import { notifications, playerStatus } from "./stores";
 
 export function notify(message: string, level: NotificationLevel = "info", timeout = 3000) {
@@ -32,22 +32,27 @@ export function hexToRGB8(hex: string): Color {
 }
 
 export function getPlayerStatus(status?: ClientPlayerStatus): PlayerStatus {
-  if (status == "start") {
-    return "Started";
-  } else if (status == "stop") {
-    return "Stopped";
-  } else if (status == "testing") {
-    return "Testing";
-  } else {
-    return "Unknown";
+  return status || "unknown";
+}
+
+export function isPlaying(status: PlayerStatus): boolean | undefined {
+  switch (status) {
+    case "unknown":
+      return undefined;
+    case "scheduler":
+    case "playlist":
+    case "sequence":
+    case "testing":
+      return true;
   }
+  return false;
 }
 
 export async function updateStatus() {
   try {
-    playerStatus.set(getPlayerStatus((await getSchedulerStatus()).data?.status));
+    playerStatus.set(getPlayerStatus((await getStatus()).data));
   } catch (_err) {
-    playerStatus.set("Unknown");
+    playerStatus.set("unknown");
   }
 }
 
@@ -55,3 +60,8 @@ export function rotate<T>(a: Array<T>, n: number): Array<T> {
   const count = -n % a.length;
   return [...a.slice(count, a.length), ...a.slice(0, count)];
 }
+
+// https://github.com/microsoft/TypeScript/issues/51572#issuecomment-1319153323
+export const entries = Object.entries as <T>(obj: T) => Array<[keyof T, T[keyof T]]>;
+export const keys = Object.keys as <T>(obj: T) => Array<keyof T>;
+export const values = Object.values as <T>(obj: T) => Array<T[keyof T]>;

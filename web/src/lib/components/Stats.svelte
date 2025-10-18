@@ -1,17 +1,19 @@
 <script lang="ts">
-  import PhPause from "virtual:icons/ph/pause";
-  import PhPlay from "virtual:icons/ph/play";
-  import PhSpinner from "virtual:icons/ph/spinner";
+  import PhPlayDuotone from "~icons/ph/play-duotone";
+  import PhSpinner from "~icons/ph/spinner";
+  import PhStopDutone from "~icons/ph/stop-duotone";
 
-  import { startScheduler, stopScheduler } from "$lib/client";
+  import { startScheduler, stop } from "$lib/client";
   import { playerStatus, sysInfo } from "$lib/stores";
-  import { updateStatus } from "$lib/utils";
+  import { isPlaying, updateStatus } from "$lib/utils";
 
   const toggleScheduler = async () => {
-    if ($playerStatus == "Started" || $playerStatus == "Testing") {
-      await stopScheduler();
+    const playing = isPlaying($playerStatus);
+
+    if (playing === true) {
+      await stop();
       await updateStatus();
-    } else if ($playerStatus == "Stopped") {
+    } else if (playing === false) {
       await startScheduler();
       await updateStatus();
     }
@@ -34,13 +36,14 @@
     ).toFixed(2)}%
   </div>
   <div class="flex w-full flex-row">
-    <span class="flex-grow font-semibold">Scheduler:</span>{$playerStatus}
+    <span class="flex-grow font-semibold">Status:</span>
+    <span class="capitalize">{$playerStatus}</span>
   </div>
   <button type="button" class="btn btn-neutral btn-sm m-2" onclick={toggleScheduler}>
-    {#if $playerStatus == "Started" || $playerStatus == "Testing"}
-      <PhPause /> Stop Scheduler
-    {:else if $playerStatus == "Stopped"}
-      <PhPlay /> Start Scheduler
+    {#if isPlaying($playerStatus) === true}
+      <PhStopDutone /> Stop Scheduler
+    {:else if isPlaying($playerStatus) === false}
+      <PhPlayDuotone /> Start Scheduler
     {:else}
       <PhSpinner class="animate-spin" /> Pending
     {/if}

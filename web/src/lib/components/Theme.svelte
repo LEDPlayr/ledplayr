@@ -2,13 +2,13 @@
   import { darkMode } from "$lib/stores";
 </script>
 
-<div class="border-b border-base-content">
+<div class="border-base-content border-b">
   <div class="dropdown">
     <div role="button" tabindex="0" class="btn btn-ghost m-1">
       <div>Theme</div>
     </div>
 
-    <ul class="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
+    <ul class="menu dropdown-content rounded-box bg-base-100 z-[1] w-52 p-2 shadow">
       <li>
         <input
           type="radio"

@@ -4,16 +4,8 @@ use anyhow::{anyhow, Context, Result};
 
 use dotenvy::dotenv;
 use ledplayr::{
-    built_info,
-    config::Config,
-    db,
-    error::AppError,
-    fpp,
-    models::{PlayerState, PlayerStatus},
-    player,
-    state::State,
-    storage,
-    web::router,
+    built_info, button, config::Config, db, error::AppError, fpp, models::PlayerStatus, player,
+    state::State, storage, web::router,
 };
 use parking_lot::Mutex;
 use tokio::sync::mpsc;
@@ -91,33 +83,36 @@ async fn main() -> Result<()> {
     let multicast_enabled = cfg.multicast.unwrap_or(true);
     let tracker = TaskTracker::new();
     let cancel = CancellationToken::new();
-    let (player_ctrl, player_state) = mpsc::channel(1);
+    let (player_ctrl_tx, player_ctrl_rx) = mpsc::channel(1);
+    let (next_state_tx, next_state_rx) = mpsc::channel(1);
 
     let mut auto_start = true;
     if let Some(scheduler_config) = &cfg.scheduler {
         auto_start = scheduler_config.auto_start.unwrap_or(true);
     }
-    if auto_start {
-        if let Err(e) = player_ctrl.send(PlayerState::Start).await {
-            tracing::error!("Could not start scheduler: {e}");
-        }
-    }
 
     let state = Arc::new(Mutex::new(State {
         cfg,
         db_conn,
-        player_ctrl,
-        player_status: PlayerStatus::Stop,
+        player_ctrl: player_ctrl_tx,
+        player_status: PlayerStatus::Stopped,
     }));
 
     if multicast_enabled {
         tracker.spawn(fpp::listen(cancel.clone()));
     }
+    tracker.spawn(button::listen(state.clone(), cancel.clone()));
     tracker.spawn(router::run_server(state.clone(), cancel.clone()));
+    tracker.spawn(player::controller(
+        cancel.clone(),
+        player_ctrl_rx,
+        next_state_tx,
+        auto_start,
+    ));
     tracker.spawn(player::start_scheduler(
         state.clone(),
         cancel.clone(),
-        player_state,
+        next_state_rx,
     ));
 
     let ctrl_c = async {

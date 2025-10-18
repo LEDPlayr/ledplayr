@@ -9,6 +9,261 @@
     "version": "0.4.3"
   },
   "paths": {
+    "/api/button": {
+      "post": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "New button",
+        "description": "Create a new button",
+        "operationId": "new_button",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewButton"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The button was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete button supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/button/{button}": {
+      "get": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Get a button",
+        "description": "Get a single button",
+        "operationId": "get_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested button",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Button"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown button",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Update a button",
+        "description": "Update the given button",
+        "operationId": "update_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewButton"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The requested button was updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incomplete button supplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "Delete a button",
+        "description": "Delete the given button",
+        "operationId": "del_button",
+        "parameters": [
+          {
+            "name": "button",
+            "in": "path",
+            "description": "The ID of the button",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested button was deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The button wasn't found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buttons": {
+      "get": {
+        "tags": [
+          "Buttons"
+        ],
+        "summary": "List all buttons",
+        "description": "List all remote buttons",
+        "operationId": "list_buttons",
+        "responses": {
+          "200": {
+            "description": "List of buttons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Button"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/channel/output/universeOutputs": {
       "get": {
         "tags": [
@@ -577,6 +832,140 @@
         "responses": {
           "200": {
             "description": "Models uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Get the player status",
+        "operationId": "get_status",
+        "responses": {
+          "200": {
+            "description": "Status of the scheduler",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/schedule": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Start the player scheduling",
+        "operationId": "start_scheduler",
+        "responses": {
+          "200": {
+            "description": "Player started ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/stop": {
+      "get": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Stop the player",
+        "operationId": "stop",
+        "responses": {
+          "200": {
+            "description": "Player stopped ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/player/test": {
+      "post": {
+        "tags": [
+          "Player"
+        ],
+        "summary": "Run LED test patterns",
+        "operationId": "run_test",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestSpec"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tests started ok",
             "content": {
               "application/json": {
                 "schema": {
@@ -1356,99 +1745,6 @@
         }
       }
     },
-    "/api/scheduler": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Get the scheduler status",
-        "operationId": "get_scheduler_status",
-        "responses": {
-          "200": {
-            "description": "Status of the scheduler",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SchedulerStatus"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/scheduler/start": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Start the scheduler",
-        "operationId": "start_scheduler",
-        "responses": {
-          "200": {
-            "description": "Scheduler started ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/scheduler/stop": {
-      "get": {
-        "tags": [
-          "Scheduler"
-        ],
-        "summary": "Stop the scheduler",
-        "operationId": "stop_scheduler",
-        "responses": {
-          "200": {
-            "description": "Scheduler stopped ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/schedules": {
       "get": {
         "tags": [
@@ -1689,54 +1985,13 @@
         }
       }
     },
-    "/api/test/run": {
-      "post": {
-        "tags": [
-          "Testing"
-        ],
-        "summary": "Run LED test patterns",
-        "operationId": "run_test",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TestSpec"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Tests started ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Something went wrong",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Status"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/test/sequence": {
+    "/api/test_pattern": {
       "post": {
         "tags": [
           "Testing"
         ],
         "summary": "Get the pattern of LED colors for the given test",
-        "operationId": "get_test_sequence",
+        "operationId": "get_test_pattern",
         "parameters": [
           {
             "name": "length",
@@ -1905,9 +2160,66 @@
   },
   "components": {
     "schemas": {
+      "Action": {
+        "type": "string",
+        "enum": [
+          "no_action",
+          "schedule",
+          "playlist",
+          "sequence",
+          "stop"
+        ]
+      },
       "BinaryFile": {
         "type": "string",
         "format": "binary"
+      },
+      "Button": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "error",
+          "battery",
+          "input",
+          "last",
+          "now",
+          "action",
+          "action_target"
+        ],
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/Action"
+          },
+          "action_target": {
+            "type": "string"
+          },
+          "battery": {
+            "type": "number",
+            "format": "float"
+          },
+          "error": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "input": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "now": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
       },
       "ChannelOutput": {
         "type": "object",
@@ -2192,6 +2504,58 @@
           }
         }
       },
+      "NewButton": {
+        "type": "object",
+        "required": [
+          "status",
+          "error",
+          "battery",
+          "input",
+          "last"
+        ],
+        "properties": {
+          "action": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Action"
+              }
+            ]
+          },
+          "action_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "battery": {
+            "type": "number",
+            "format": "float"
+          },
+          "error": {
+            "type": "string"
+          },
+          "input": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "now": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
       "NewMesh": {
         "type": "object",
         "required": [
@@ -2355,16 +2719,38 @@
           {
             "type": "string",
             "enum": [
-              "start"
+              "schedule"
             ]
           },
           {
             "type": "object",
             "required": [
-              "testing"
+              "playlist"
             ],
             "properties": {
-              "testing": {
+              "playlist": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "sequence"
+            ],
+            "properties": {
+              "sequence": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "test"
+            ],
+            "properties": {
+              "test": {
                 "$ref": "#/components/schemas/TestSpec"
               }
             }
@@ -2380,9 +2766,11 @@
       "PlayerStatus": {
         "type": "string",
         "enum": [
-          "start",
+          "scheduler",
+          "playlist",
+          "sequence",
           "testing",
-          "stop"
+          "stopped"
         ]
       },
       "Playlist": {
@@ -2662,17 +3050,6 @@
           "wednesday": {
             "type": "boolean",
             "example": true
-          }
-        }
-      },
-      "SchedulerStatus": {
-        "type": "object",
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "status": {
-            "$ref": "#/components/schemas/PlayerStatus"
           }
         }
       },

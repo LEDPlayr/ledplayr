@@ -1,11 +1,13 @@
 <script lang="ts">
   import type { Color, Mesh, Model, Scene, Sequence } from "$lib/client";
 
-  import PhArrowsIn from "virtual:icons/ph/arrows-in";
-  import PhArrowsOut from "virtual:icons/ph/arrows-out";
-  import PhPause from "virtual:icons/ph/pause";
-  import PhPlay from "virtual:icons/ph/play";
-  import PhTestTube from "virtual:icons/ph/test-tube";
+  import PhArrowsIn from "~icons/ph/arrows-in";
+  import PhArrowsOut from "~icons/ph/arrows-out";
+  import PhFloppyDiskDuotone from "~icons/ph/floppy-disk-duotone";
+  import PhFolderOpenDuotone from "~icons/ph/folder-open-duotone";
+  import PhPlayDuotone from "~icons/ph/play-duotone";
+  import PhStopDutone from "~icons/ph/stop-duotone";
+  import PhTestTubeDuotone from "~icons/ph/test-tube-duotone";
 
   import { Canvas } from "@threlte/core";
   import { AnimationFrames } from "runed";
@@ -18,13 +20,13 @@
     listScenes,
     runTest,
     startScheduler,
-    stopScheduler,
+    stop,
     updateScene,
   } from "$lib/client";
   import TestModel from "$lib/components/test/TestModel.svelte";
   import VirtualDisplay from "$lib/components/VirtualDisplay.svelte";
   import { patterns, playerStatus } from "$lib/stores";
-  import { notify, rotate, updateStatus } from "$lib/utils";
+  import { isPlaying, notify, rotate, updateStatus } from "$lib/utils";
 
   const gray: Color = { r: 25, g: 25, b: 25 };
 
@@ -162,8 +164,8 @@
     await updateStatus();
   };
 
-  const stop = async () => {
-    const { error } = await stopScheduler();
+  const stopPlayer = async () => {
+    const { error } = await stop();
     if (error) {
       notify(`${error}`, "error");
     }
@@ -229,35 +231,29 @@
     <div>
       <h2 class="text-lg">Test Control</h2>
 
-      <p class="w-full text-center">Status: {$playerStatus}</p>
+      <p class="w-full text-center">Status: <span class="capitalize">{$playerStatus}</span></p>
 
       <div class="m-4 flex flex-row flex-wrap place-content-center gap-4">
-        <button class="btn" onclick={stop} disabled={$playerStatus == "Stopped"}>
-          <PhPause />Stop
+        <button class="btn" onclick={stopPlayer} disabled={isPlaying($playerStatus) === false}>
+          <PhStopDutone />Stop
         </button>
-        <button
-          class="btn"
-          onclick={startTest}
-          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
-          <PhTestTube />Start Test
+        <button class="btn" onclick={startTest}>
+          <PhTestTubeDuotone />Start Test
         </button>
-        <button
-          class="btn"
-          onclick={start}
-          disabled={$playerStatus == "Started" || $playerStatus == "Testing"}>
-          <PhPlay />Start Scheduler
+        <button class="btn" onclick={start}>
+          <PhPlayDuotone />Start Scheduler
         </button>
       </div>
 
-      <label class="label cursor-pointer">
-        <span class="label-text">Preview Animation?</span>
+      <label class="label">
+        Preview Animation?
         <input type="checkbox" bind:checked={preview} class="toggle" />
       </label>
 
       <h2 class="mb-4 text-lg">Configure Models</h2>
 
       <label class="label grid cursor-pointer grid-cols-5">
-        <span>Step {step}ms</span>
+        Step {step}ms
         <input
           type="range"
           min="10"
@@ -269,24 +265,26 @@
 
       <div class="p-4">
         <div class="mt-4 flex flex-col gap-2">
-          {#each Object.keys(models) as m}
+          {#each Object.keys(models) as m (m)}
             <TestModel model={models[m][0]} bind:sequence={models[m][1]} />
           {/each}
         </div>
       </div>
     </div>
 
-    <div class="mt-4 md:col-span-2">
+    <div class="mt-4 flex flex-col gap-4 md:col-span-2">
       <div
         bind:this={fsWrapper}
-        class="h-[32rem] bg-base-200"
+        class="bg-base-200 h-[32rem]"
         class:rounded-xl={!isFs}
         class:border={!isFs}>
         <Canvas toneMapping={THREE.NoToneMapping}>
           <VirtualDisplay {colors} {light} {meshes} bind:this={scene} />
         </Canvas>
 
-        <button class="btn btn-ghost relative bottom-12" onclick={toggleFullscreen}>
+        <button
+          class="btn btn-ghost btn-circle relative bottom-11 left-1"
+          onclick={toggleFullscreen}>
           {#if isFs}
             <PhArrowsIn />
           {:else}
@@ -297,36 +295,42 @@
 
       <label class="label grid cursor-pointer grid-cols-5">
         Ambient Light ({light * 10}%)
-        <input type="range" min="0" max="10" bind:value={light} step="0.5" class="range" />
+        <input
+          type="range"
+          min="0"
+          max="10"
+          bind:value={light}
+          step="0.5"
+          class="range col-span-4" />
       </label>
 
       <div class="grid-cols-2 gap-2 lg:grid">
         <div class="grid gap-2">
-          <label class="form-control w-full max-w-xl">
-            <div class="label">
-              <span class="label-text">Name of scene to save</span>
-            </div>
+          <label class="input input-bordered w-full max-w-xl">
+            <span class="label">Name of scene to save</span>
 
-            <input type="text" class="input input-bordered" bind:value={sceneName} />
+            <input type="text" bind:value={sceneName} />
           </label>
 
-          <button class="btn" disabled={sceneName == ""} onclick={saveCamera}>Save</button>
+          <button class="btn" disabled={sceneName == ""} onclick={saveCamera}>
+            <PhFloppyDiskDuotone />
+            Save
+          </button>
         </div>
 
         <div class="grid gap-2">
-          <label class="form-control w-full max-w-xl">
-            <div class="label">
-              <span class="label-text">Select a scene</span>
-            </div>
+          <label class="select select-bordered w-full max-w-xl">
+            <span class="label">Select a scene</span>
 
-            <select bind:value={selectedScene} class="select select-bordered">
-              {#each scenes as s}
+            <select bind:value={selectedScene}>
+              {#each scenes as s (s.name)}
                 <option value={s}>{s.name}</option>
               {/each}
             </select>
           </label>
 
           <button class="btn" disabled={!selectedScene} onclick={restoreCamera}>
+            <PhFolderOpenDuotone />
             Restore
           </button>
         </div>

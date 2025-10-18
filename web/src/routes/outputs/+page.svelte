@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { Channels, Universe } from "$lib/client";
 
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
-  import PhBackspace from "virtual:icons/ph/backspace";
-  import PhFloppyDisk from "virtual:icons/ph/floppy-disk";
-  import PhNotePencil from "virtual:icons/ph/note-pencil";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
+  import PhBackspaceDuotone from "~icons/ph/backspace-duotone";
+  import PhFloppyDiskDuotone from "~icons/ph/floppy-disk-duotone";
+  import PhNotePencilDuotone from "~icons/ph/note-pencil-duotone";
 
   import { onMount } from "svelte";
 
   import { getOutputs, uploadOutputs } from "$lib/client";
   import Delete from "$lib/components/Delete.svelte";
-  import { notify } from "$lib/utils";
+  import { entries, notify } from "$lib/utils";
 
   let emptyOutput: Universe = {
     id: 1,
@@ -25,7 +25,7 @@
     type: 4,
   };
   let outputToAdd: Universe = $state({ ...emptyOutput });
-  let outputs: Map<number, Universe> = $state(new Map());
+  let outputs: Record<number, Universe> = $state({});
 
   onMount(async () => {
     await loadOutputs();
@@ -34,17 +34,15 @@
   const loadOutputs = async () => {
     const { data, error } = await getOutputs();
     if (data) {
-      outputs = new Map(
+      outputs = Object.fromEntries(
         data.channelOutputs[0].universes
           .sort((a, b) => {
             return a.id - b.id;
           })
-          .map((u) => {
-            return [u.id, u];
-          }),
+          .map((u) => [u.id, u]),
       );
     } else {
-      outputs = new Map();
+      outputs = {};
     }
     if (error) {
       notify(`${error.error}`, "error");
@@ -60,7 +58,7 @@
           enabled: true,
           timeout: 1000,
           channelCount: -1,
-          universes: outputs.values().toArray(),
+          universes: Object.values(outputs),
         },
       ],
     };
@@ -72,7 +70,7 @@
   };
 
   const addOrUpdateOutput = async () => {
-    outputs.set(outputToAdd.id, outputToAdd);
+    outputs[outputToAdd.id] = outputToAdd;
     await saveOutputs();
   };
 
@@ -85,7 +83,7 @@
   };
 
   const removeOutput = async (i: number) => {
-    outputs.delete(i);
+    delete outputs[i];
     await saveOutputs();
   };
 </script>
@@ -99,74 +97,47 @@
 
   <div class="divider"></div>
 
-  <h2 class="text-xl">Create / Update Outputs</h2>
+  <fieldset class="fieldset max-w-xl gap-2">
+    <legend class="fieldset-legend text-xl">Create / Update Outputs</legend>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">ID:</span>
-    </div>
-    <input
-      type="number"
-      bind:value={outputToAdd.id}
-      class="input input-bordered w-full max-w-xl" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">ID:</span>
+      <input type="number" bind:value={outputToAdd.id} />
+    </label>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Description:</span>
-    </div>
-    <input
-      type="text"
-      bind:value={outputToAdd.description}
-      class="input input-bordered w-full max-w-xl"
-      placeholder="Description" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Description:</span>
+      <input type="text" bind:value={outputToAdd.description} placeholder="Description" />
+    </label>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Active?</span>
+    <label class="label">
+      Active?
       <input type="checkbox" bind:checked={outputToAdd.active} class="toggle" />
     </label>
-  </div>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Description:</span>
-    </div>
-    <input
-      type="text"
-      bind:value={outputToAdd.address}
-      class="input input-bordered w-full max-w-xl"
-      placeholder="127.0.0.1" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Description:</span>
+      <input type="text" bind:value={outputToAdd.address} placeholder="127.0.0.1" />
+    </label>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Start Channel:</span>
-    </div>
-    <input
-      type="number"
-      bind:value={outputToAdd.startChannel}
-      class="input input-bordered w-full max-w-xl" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Start Channel:</span>
+      <input type="number" bind:value={outputToAdd.startChannel} />
+    </label>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Channel Count:</span>
-    </div>
-    <input
-      type="number"
-      bind:value={outputToAdd.channelCount}
-      class="input input-bordered w-full max-w-xl" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Channel Count:</span>
+      <input type="number" bind:value={outputToAdd.channelCount} />
+    </label>
+  </fieldset>
 
   <div class="my-3 grid w-full max-w-xl grid-cols-2 gap-4">
     <button onclick={addOrUpdateOutput} class="btn btn-primary">
-      <PhFloppyDisk />
-      {outputs.has(outputToAdd.id) ? "Update" : "Add"} Output
+      <PhFloppyDiskDuotone />
+      {outputToAdd.id in outputs ? "Update" : "Add"} Output
     </button>
     <button onclick={clearOutput} class="btn btn-neutral">
-      <PhBackspace /> Clear Outputs
+      <PhBackspaceDuotone /> Clear Outputs
     </button>
   </div>
 
@@ -178,7 +149,7 @@
     <PhArrowsClockwise /> Refresh Outputs
   </button>
 
-  {#if outputs.size > 0}
+  {#if Object.keys(outputs).length > 0}
     <table class="table">
       <thead class="hidden sm:table-header-group">
         <tr>
@@ -193,7 +164,7 @@
         </tr>
       </thead>
       <tbody class="grid grid-cols-1 gap-2 sm:table-row-group">
-        {#each outputs as [id, row] (id)}
+        {#each entries(outputs) as [id, row] (id)}
           <tr class="hover card mb-4 flex flex-col border sm:table-row sm:border-none">
             <td class="flex flex-row sm:table-cell">
               <span class="flex-grow font-semibold sm:hidden">ID:</span>
@@ -229,7 +200,7 @@
                   editOutput(row);
                 }}
                 class="btn btn-primary sm:mx-2 sm:h-8 sm:min-h-8 sm:w-8 sm:rounded-full sm:p-0 sm:text-sm">
-                <PhNotePencil />
+                <PhNotePencilDuotone />
               </button>
               <Delete
                 showText={false}

@@ -1,13 +1,14 @@
 pub mod router;
 
+mod buttons;
 mod error;
 mod files;
 mod fpp;
 mod logs;
 mod meshes;
+mod player;
 mod playlists;
 mod scenes;
-mod scheduler;
 mod schedules;
 mod sequences;
 mod testing;

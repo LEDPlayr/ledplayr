@@ -1,6 +1,23 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    use diesel::sql_types::{Integer, Text, Float, Bool};
+    use crate::db::models::ActionMapping;
+
+    buttons (id) {
+        id -> Integer,
+        status -> Text,
+        error -> Text,
+        battery -> Float,
+        input -> Bool,
+        last -> Integer,
+        now -> Integer,
+        action -> ActionMapping,
+        action_target -> Text,
+    }
+}
+
+diesel::table! {
     meshes (id) {
         id -> Integer,
         name -> Text,
@@ -99,6 +116,7 @@ diesel::joinable!(schedules -> playlists (playlist_id));
 diesel::joinable!(variables -> sequences (sequence_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    buttons,
     meshes,
     playlists,
     playlists_sequences,

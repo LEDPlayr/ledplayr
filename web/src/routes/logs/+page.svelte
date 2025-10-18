@@ -1,5 +1,5 @@
 <script lang="ts">
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
 
   import { AnsiUp } from "ansi_up";
   import { onMount, tick } from "svelte";
@@ -80,23 +80,21 @@
 
   <div class="divider"></div>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Select a log file</span>
-    </div>
+  <div class="join w-full max-w-xl">
+    <label class="select select-bordered w-full">
+      <span class="label">Log file</span>
 
-    <div class="join w-full">
-      <select bind:value={selectedLogfile} class="join-item select select-bordered flex-grow">
-        {#each logfiles as lf}
+      <select bind:value={selectedLogfile} class="join-item flex-grow">
+        {#each logfiles as lf (lf)}
           <option>{lf}</option>
         {/each}
       </select>
+    </label>
 
-      <button class="btn join-item" onclick={loadLogfiles}>
-        <PhArrowsClockwise />
-      </button>
-    </div>
-  </label>
+    <button class="btn join-item" onclick={loadLogfiles}>
+      <PhArrowsClockwise />
+    </button>
+  </div>
 
   {#if selectedLogfile}
     <p class="my-4">Refreshed at: {lastRefresh}</p>

@@ -1,3 +1,3 @@
-import "unplugin-icons/types/svelte.d.ts";
+import "unplugin-icons/types/svelte";
 
 export {};

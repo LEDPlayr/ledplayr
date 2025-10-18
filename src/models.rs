@@ -311,25 +311,24 @@ pub struct Channels {
     pub channel_outputs: Vec<ChannelOutput>,
 }
 
-#[derive(Debug, Serialize, ToSchema)]
-pub struct SchedulerStatus {
-    pub status: PlayerStatus,
-}
-
 #[derive(Debug, PartialEq, Serialize, Clone, ToSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum PlayerState {
-    Start,
-    Testing(TestSpec),
+    Schedule,
+    Playlist(String),
+    Sequence(String),
+    Test(TestSpec),
     Stop,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone, ToSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum PlayerStatus {
-    Start,
+    Scheduler,
+    Playlist,
+    Sequence,
     Testing,
-    Stop,
+    Stopped,
 }
 
 #[derive(Debug, PartialEq, Serialize, Clone, ToSchema)]

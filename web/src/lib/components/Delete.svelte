@@ -1,6 +1,6 @@
 <script lang="ts">
-  import PhQuestionMark from "virtual:icons/ph/question-mark";
-  import PhTrash from "virtual:icons/ph/trash";
+  import PhQuestionMark from "~icons/ph/question-mark";
+  import PhTrashDuotone from "~icons/ph/trash-duotone";
 
   interface Props {
     callback?: () => Promise<void>;
@@ -50,7 +50,7 @@
   {#if click == 1}
     <PhQuestionMark />
   {:else}
-    <PhTrash />
+    <PhTrashDuotone />
   {/if}
   {#if showText}
     {text}

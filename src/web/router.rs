@@ -16,8 +16,8 @@ use utoipauto::utoipauto;
 use crate::{
     state::State,
     web::{
-        files, fpp, logs, meshes, playlists, scenes, scheduler, schedules, sequences, testing,
-        upload,
+        buttons, files, fpp, logs, meshes, player, playlists, scenes, schedules, sequences,
+        testing, upload,
     },
 };
 
@@ -59,11 +59,11 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         .route("/fppxml.php", get(fpp::fpp_command))
         .route("/api/sequences", get(sequences::list_sequences))
         .route(
-            "/api/sequence/:filename",
+            "/api/sequence/{filename}",
             get(sequences::get_sequence).delete(sequences::del_sequence),
         )
         .route(
-            "/api/sequence/:filename/meta",
+            "/api/sequence/{filename}/meta",
             get(sequences::get_sequence_meta),
         )
         .route("/api/playlists", get(playlists::list_playlists))
@@ -73,7 +73,7 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         )
         .route("/api/playlist", post(playlists::new_playlist))
         .route(
-            "/api/playlist/:playlist",
+            "/api/playlist/{playlist}",
             get(playlists::get_playlist)
                 .post(playlists::new_playlist)
                 .put(playlists::update_playlist)
@@ -82,7 +82,7 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         .route("/api/schedules", get(schedules::list_schedules))
         .route("/api/schedule", post(schedules::new_schedule))
         .route(
-            "/api/schedule/:schedule",
+            "/api/schedule/{schedule}",
             get(schedules::get_schedule)
                 .put(schedules::update_schedule)
                 .delete(schedules::del_schedule),
@@ -100,17 +100,17 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
             "/api/channel/output/universeOutputs",
             get(fpp::get_outputs).post(fpp::upload_outputs),
         )
-        .route("/api/scheduler", get(scheduler::get_scheduler_status))
-        .route("/api/scheduler/start", get(scheduler::start_scheduler))
-        .route("/api/scheduler/stop", get(scheduler::stop_scheduler))
-        .route("/api/test/run", post(testing::run_test))
-        .route("/api/test/sequence", post(testing::get_test_sequence))
+        .route("/api/player", get(player::get_status))
+        .route("/api/player/schedule", get(player::start_scheduler))
+        .route("/api/player/stop", get(player::stop))
+        .route("/api/player/test", post(player::run_test))
+        .route("/api/test_pattern", post(testing::get_test_pattern))
         .route("/api/logs", get(logs::list_logs))
-        .route("/api/log/:name", get(logs::get_log))
+        .route("/api/log/{name}", get(logs::get_log))
         .route("/api/meshes", get(meshes::list_meshes))
         .route("/api/mesh", post(meshes::new_mesh))
         .route(
-            "/api/mesh/:mesh",
+            "/api/mesh/{mesh}",
             get(meshes::download_mesh)
                 .put(meshes::update_mesh)
                 .delete(meshes::del_mesh),
@@ -118,10 +118,18 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
         .route("/api/scenes", get(scenes::list_scenes))
         .route("/api/scene", post(scenes::new_scene))
         .route(
-            "/api/scenes/:scene",
+            "/api/scenes/{scene}",
             get(scenes::get_scene)
                 .put(scenes::update_scene)
                 .delete(scenes::del_scene),
+        )
+        .route("/api/buttons", get(buttons::list_buttons))
+        .route("/api/button", post(buttons::new_button))
+        .route(
+            "/api/button/{button}",
+            get(buttons::get_button)
+                .put(buttons::update_button)
+                .delete(buttons::del_button),
         )
         .fallback(files::static_handler)
         .layer(
