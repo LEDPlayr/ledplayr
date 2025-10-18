@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { NumberedPlaylist, Schedule } from "$lib/client";
 
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
-  import PhBackspace from "virtual:icons/ph/backspace";
-  import PhFloppyDisk from "virtual:icons/ph/floppy-disk";
-  import PhNotePencil from "virtual:icons/ph/note-pencil";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
+  import PhBackspaceDuotone from "~icons/ph/backspace-duotone";
+  import PhFloppyDiskDuotone from "~icons/ph/floppy-disk-duotone";
+  import PhNotePencilDuotone from "~icons/ph/note-pencil-duotone";
 
   import { onMount } from "svelte";
 
@@ -101,131 +101,99 @@
 
   <div class="divider"></div>
 
-  <h2 class="text-xl">Create / Update Schedule</h2>
+  <fieldset class="fieldset max-w-xl gap-2">
+    <legend class="fieldset-legend text-xl">Create / Update Schedule</legend>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Name:</span>
-    </div>
-    <input
-      type="text"
-      bind:value={scheduleToAdd.name}
-      class="input input-bordered w-full max-w-xl"
-      placeholder="Name" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Name:</span>
+      <input type="text" bind:value={scheduleToAdd.name} placeholder="Name" />
+    </label>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Enabled?</span>
+    <label class="label">
+      Enabled?
       <input type="checkbox" bind:checked={scheduleToAdd.enabled} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Start Date</span>
-      <input type="date" bind:value={scheduleToAdd.start_date} class="input input-bordered" />
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Start Date</span>
+      <input type="date" bind:value={scheduleToAdd.start_date} />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">End Date</span>
-      <input type="date" bind:value={scheduleToAdd.end_date} class="input input-bordered" />
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">End Date</span>
+      <input type="date" bind:value={scheduleToAdd.end_date} />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Start Time</span>
-      <input type="time" bind:value={scheduleToAdd.start_time} class="input input-bordered" />
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Start Time</span>
+      <input type="time" bind:value={scheduleToAdd.start_time} />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">End Time</span>
-      <input type="time" bind:value={scheduleToAdd.end_time} class="input input-bordered" />
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">End Time</span>
+      <input type="time" bind:value={scheduleToAdd.end_time} />
     </label>
-  </div>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Select a playlist</span>
-    </div>
+    <div class="join w-full max-w-xl">
+      <label class="select select-bordered w-full">
+        <span class="label">Select a playlist</span>
 
-    <div class="join w-full">
-      <select
-        bind:value={scheduleToAdd.playlist_id}
-        class="join-item select select-bordered flex-grow">
-        {#each playlists as p}
-          <option value={p.id}>{p.name}</option>
-        {/each}
-      </select>
+        <select bind:value={scheduleToAdd.playlist_id} class="join-item flex-grow">
+          {#each playlists as p (p.id)}
+            <option value={p.id}>{p.name}</option>
+          {/each}
+        </select>
+      </label>
 
       <button class="btn join-item" onclick={loadPlaylists}>
         <PhArrowsClockwise />
       </button>
     </div>
-  </label>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Monday</span>
+    <label class="label">
+      Monday
       <input type="checkbox" bind:checked={scheduleToAdd.monday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Tuesday</span>
+    <label class="label">
+      Tuesday
       <input type="checkbox" bind:checked={scheduleToAdd.tuesday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Wednesday</span>
+    <label class="label">
+      Wednesday
       <input type="checkbox" bind:checked={scheduleToAdd.wednesday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Thursday</span>
+    <label class="label">
+      Thursday
       <input type="checkbox" bind:checked={scheduleToAdd.thursday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Friday</span>
+    <label class="label">
+      Friday
       <input type="checkbox" bind:checked={scheduleToAdd.friday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Saturday</span>
+    <label class="label">
+      Saturday
       <input type="checkbox" bind:checked={scheduleToAdd.saturday} class="toggle" />
     </label>
-  </div>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Sunday</span>
+    <label class="label">
+      Sunday
       <input type="checkbox" bind:checked={scheduleToAdd.sunday} class="toggle" />
     </label>
-  </div>
 
-  <div class="my-3 grid w-full max-w-xl grid-cols-2 gap-4">
-    <button onclick={saveSchedule} class="btn btn-primary">
-      <PhFloppyDisk /> Save Schedule
-    </button>
-    <button onclick={clearSchedule} class="btn btn-neutral">
-      <PhBackspace /> Clear Schedule
-    </button>
-  </div>
+    <div class="my-3 grid w-full max-w-xl grid-cols-2 gap-4">
+      <button onclick={saveSchedule} class="btn btn-primary">
+        <PhFloppyDiskDuotone /> Save Schedule
+      </button>
+      <button onclick={clearSchedule} class="btn btn-neutral">
+        <PhBackspaceDuotone /> Clear Schedule
+      </button>
+    </div>
+  </fieldset>
 
   <div class="divider"></div>
 
@@ -297,7 +265,7 @@
                   editSchedule(row);
                 }}
                 class="btn btn-primary sm:mx-2 sm:h-8 sm:min-h-8 sm:w-8 sm:rounded-full sm:p-0 sm:text-sm">
-                <PhNotePencil />
+                <PhNotePencilDuotone />
               </button>
               <Delete
                 showText={false}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import polyfill from "@oddbird/css-anchor-positioning/fn";
   import { onMount } from "svelte";
 
   import { afterNavigate } from "$app/navigation";
@@ -7,7 +8,7 @@
   import Sidebar from "$lib/components/Sidebar.svelte";
   import { darkMode, sysInfo } from "$lib/stores";
 
-  import "../app.scss";
+  import "../app.css";
 
   import { systemInfo } from "$lib/client";
   import { updateStatus } from "$lib/utils";
@@ -21,6 +22,10 @@
   });
 
   onMount(() => {
+    if (!("anchorName" in document.documentElement.style)) {
+      polyfill();
+    }
+
     // Watch for change of user preferences
     if (window.matchMedia) {
       const wm = window.matchMedia("(prefers-color-scheme: dark)");

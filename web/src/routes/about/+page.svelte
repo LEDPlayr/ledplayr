@@ -1,7 +1,7 @@
 <script>
-  import PhGithubLogoBold from "virtual:icons/ph/github-logo-bold";
+  import PhGithubLogoBold from "~icons/ph/github-logo-bold";
 
-  import { base } from "$app/paths";
+  import { asset } from "$app/paths";
   import { sysInfo } from "$lib/stores";
 </script>
 
@@ -12,7 +12,7 @@
 <div class="hero min-h-screen">
   <div class="hero-content text-center">
     <div class="max-w-md">
-      <img class="m-auto my-4" src="{base}/logo.png" alt="LEDplayr Logo" />
+      <img class="m-auto my-4" src={asset("/logo.png")} alt="LEDplayr Logo" />
       <h1 class="text-5xl font-bold">LEDPlayr</h1>
       <div class="py-6">
         <p>{$sysInfo?.LocalGitVersion ?? "Version Unknown"}</p>

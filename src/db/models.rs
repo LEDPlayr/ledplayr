@@ -10,6 +10,16 @@ use utoipa::ToSchema;
 
 use crate::db::schema;
 
+#[derive(diesel_derive_enum::DbEnum, Debug, PartialEq, Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum Action {
+    NoAction,
+    Schedule,
+    Playlist,
+    Sequence,
+    Stop,
+}
+
 #[derive(Queryable, Selectable, Identifiable, PartialEq, Debug, Serialize, ToSchema)]
 #[diesel(table_name = schema::buttons)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
@@ -21,6 +31,8 @@ pub struct Button {
     pub input: bool,
     pub last: i32,
     pub now: i32,
+    pub action: Action,
+    pub action_target: String,
 }
 
 #[derive(Insertable, PartialEq, Debug, AsChangeset, Deserialize, ToSchema)]
@@ -33,6 +45,8 @@ pub struct NewButton {
     pub input: bool,
     pub last: i32,
     pub now: Option<i32>,
+    pub action: Option<Action>,
+    pub action_target: Option<String>,
 }
 
 #[derive(Queryable, Selectable, Identifiable, PartialEq, Debug, Serialize, ToSchema)]

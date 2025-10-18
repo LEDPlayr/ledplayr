@@ -2160,6 +2160,16 @@
   },
   "components": {
     "schemas": {
+      "Action": {
+        "type": "string",
+        "enum": [
+          "no_action",
+          "schedule",
+          "playlist",
+          "sequence",
+          "stop"
+        ]
+      },
       "BinaryFile": {
         "type": "string",
         "format": "binary"
@@ -2173,9 +2183,17 @@
           "battery",
           "input",
           "last",
-          "now"
+          "now",
+          "action",
+          "action_target"
         ],
         "properties": {
+          "action": {
+            "$ref": "#/components/schemas/Action"
+          },
+          "action_target": {
+            "type": "string"
+          },
           "battery": {
             "type": "number",
             "format": "float"
@@ -2496,6 +2514,22 @@
           "last"
         ],
         "properties": {
+          "action": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Action"
+              }
+            ]
+          },
+          "action_target": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "battery": {
             "type": "number",
             "format": "float"

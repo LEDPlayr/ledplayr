@@ -27,26 +27,59 @@ struct SenderConfig {
     chan: Sender<Data>,
 }
 
+pub async fn controller(
+    cancel: CancellationToken,
+    mut player_ctrl: Receiver<PlayerState>,
+    next_state: Sender<PlayerState>,
+    auto_start: bool,
+) {
+    if auto_start {
+        if let Err(e) = next_state.send(PlayerState::Schedule).await {
+            tracing::error!("Could not auto start scheduler: {e}");
+        }
+    }
+
+    loop {
+        tokio::select! {
+            _ = cancel.cancelled() => {
+                return;
+            },
+            s = player_ctrl.recv() => {
+                if let Some(s) = s {
+                    if s != PlayerState::Stop {
+                        if let Err(e) = next_state.send(PlayerState::Stop).await {
+                            tracing::error!("Could not stop scheduler: {e}");
+                        }
+                    }
+                    if let Err(e) = next_state.send(s).await {
+                        tracing::error!("Could not start scheduler: {e}");
+                    }
+                }
+            }
+        }
+    }
+}
+
 pub async fn start_scheduler(
     state: Arc<Mutex<State>>,
     cancel: CancellationToken,
-    mut player_state: Receiver<PlayerState>,
+    mut next_state: Receiver<PlayerState>,
 ) {
     loop {
         tokio::select! {
             _ = cancel.cancelled() => {
                 return;
             },
-            s = player_state.recv() => {
+            s = next_state.recv() => {
                 if let Some(s) = s {
                     match s {
                         PlayerState::Schedule => {
                             let cancel = cancel.child_token();
-                            scheduler(state.clone(), cancel.clone(), &mut player_state).await;
+                            scheduler(state.clone(), cancel.clone(), &mut next_state).await;
                         },
                         PlayerState::Test(tests) => {
                             let cancel = cancel.child_token();
-                            tester(state.clone(), cancel.clone(), &mut player_state, tests).await;
+                            tester(state.clone(), cancel.clone(), &mut next_state, tests).await;
                         },
                         _ => {}
                     }
@@ -70,39 +103,41 @@ async fn scheduler(
 
     let tracker = TaskTracker::new();
     let s = match start_senders(state.clone(), &tracker).await {
-        Ok(s) => s,
+        Ok(s) => Some(s),
         Err(e) => {
             tracing::error!("{e}");
-            return;
+            None
         }
     };
     tracker.close();
 
-    let mut interval = tokio::time::interval(time::Duration::from_secs(10));
-    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    if let Some(s) = s {
+        let mut interval = tokio::time::interval(time::Duration::from_secs(10));
+        interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
 
-    loop {
-        tokio::select! {
-            _ = cancel.cancelled() => break,
-            s = player_state.recv() => {
-                if let Some(s) = s {
-                    if s == PlayerState::Stop {
-                        cancel.cancel();
-                        break;
+        loop {
+            tokio::select! {
+                _ = cancel.cancelled() => break,
+                s = player_state.recv() => {
+                    if let Some(s) = s {
+                        if s == PlayerState::Stop {
+                            cancel.cancel();
+                            break;
+                        }
                     }
                 }
+                _ = interval.tick() => check_for_schedules(
+                    state.clone(),
+                    cancel.clone(),
+                    s.clone(),
+                    player_state
+                ).await,
             }
-            _ = interval.tick() => check_for_schedules(
-                state.clone(),
-                cancel.clone(),
-                s.clone(),
-                player_state
-            ).await,
         }
-    }
 
-    drop(s);
-    tracker.wait().await;
+        drop(s);
+        tracker.wait().await;
+    }
 
     {
         let mut state = state.lock();
@@ -271,7 +306,7 @@ async fn start_senders(state: Arc<Mutex<State>>, tracker: &TaskTracker) -> Resul
                 }
             }
             Err(e) => {
-                return Err(anyhow!("Could not start scheduler: {e}"));
+                return Err(anyhow!("Could not start senders: {e}"));
             }
         };
     }

@@ -8,7 +8,10 @@ use tokio_util::{bytes::BytesMut, codec::Decoder, sync::CancellationToken, task:
 
 use crate::{
     config::ButtonConfig,
-    db::{self, models::NewButton},
+    db::{
+        self,
+        models::{Action, NewButton},
+    },
     models::PlayerState,
     state::State,
 };
@@ -25,7 +28,7 @@ impl Decoder for LineCodec {
             let line = src.split_to(n + 1);
             return match str::from_utf8(line.as_ref()) {
                 Ok(s) => Ok(Some(s.to_string())),
-                Err(_) => Err(io::Error::new(io::ErrorKind::Other, "Invalid String")),
+                Err(_) => Err(io::Error::other("Invalid String")),
             };
         }
         Ok(None)
@@ -76,17 +79,33 @@ async fn watch(cancel: CancellationToken, state: Arc<Mutex<State>>, btn: ButtonC
     }
 }
 
-async fn update_button(id: i32, button: NewButton, state: Arc<Mutex<State>>) {
+pub async fn update_button(id: i32, button: NewButton, state: Arc<Mutex<State>>) {
     if button.input {
         let ctrl;
+        let next_state;
+
         {
-            let state = state.lock();
+            let mut state = state.lock();
             ctrl = state.player_ctrl.clone();
+
+            if let Ok(Some(btn)) = db::get_button(&mut state.db_conn, id) {
+                next_state = match btn.action {
+                    Action::Schedule => Some(PlayerState::Schedule),
+                    Action::Playlist => Some(PlayerState::Playlist(btn.action_target)),
+                    Action::Sequence => Some(PlayerState::Sequence(btn.action_target)),
+                    Action::Stop => Some(PlayerState::Stop),
+                    _ => None,
+                };
+            } else {
+                next_state = None;
+            }
         }
 
-        tracing::info!("Button {id} pressed starting scheduler");
-        if let Err(e) = ctrl.send(PlayerState::Schedule).await {
-            tracing::error!("Could not start scheduler: {e}");
+        if let Some(next_state) = next_state {
+            tracing::info!("Button {id} pressed. Sending {next_state:?} to scheduler");
+            if let Err(e) = ctrl.send(next_state).await {
+                tracing::error!("Could not send action: {e}");
+            }
         }
     }
     let mut state = state.lock();

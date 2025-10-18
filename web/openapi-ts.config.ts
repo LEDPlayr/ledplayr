@@ -1,14 +1,19 @@
-import { defaultPlugins } from "@hey-api/openapi-ts";
+import { defineConfig } from "@hey-api/openapi-ts";
 
-export default {
-  client: "@hey-api/client-fetch",
+export default defineConfig({
   input: "../openapi.json",
-  output: "src/lib/client",
+  output: {
+    clean: true,
+    lint: "eslint",
+    format: "prettier",
+    path: "src/lib/client",
+  },
   plugins: [
-    ...defaultPlugins,
+    "@hey-api/client-fetch",
+    "@hey-api/sdk",
     {
       enums: "javascript",
       name: "@hey-api/typescript",
     },
   ],
-};
+});

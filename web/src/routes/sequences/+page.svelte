@@ -2,11 +2,11 @@
   import type { Component } from "svelte";
   import type { SequenceMeta } from "$lib/client";
 
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
-  import PhCheck from "virtual:icons/ph/check";
-  import PhClockCountdown from "virtual:icons/ph/clock-countdown";
-  import PhUploadSimple from "virtual:icons/ph/upload-simple";
-  import PhWarning from "virtual:icons/ph/warning";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
+  import PhCheckFatDuotone from "~icons/ph/check-fat-duotone";
+  import PhClockCountdownDuotone from "~icons/ph/clock-countdown-duotone";
+  import PhUploadSimple from "~icons/ph/upload-simple";
+  import PhWarningDuotone from "~icons/ph/warning-duotone";
 
   import prettyBytes from "pretty-bytes";
   import { onMount } from "svelte";
@@ -45,7 +45,7 @@
 
     uploads = [];
     for (const f of fileInput.files) {
-      uploads.push({ icon: PhClockCountdown, file: f, status: "Awaiting upload..." });
+      uploads.push({ icon: PhClockCountdownDuotone, file: f, status: "Awaiting upload..." });
     }
   };
 
@@ -61,11 +61,11 @@
         },
       });
       if (data) {
-        u.icon = PhCheck;
+        u.icon = PhCheckFatDuotone;
         u.status = "Successful";
       }
       if (error) {
-        u.icon = PhWarning;
+        u.icon = PhWarningDuotone;
         u.status = error.error || "Unknown error";
       }
     }
@@ -107,25 +107,20 @@
 
   <form onsubmit={uploadFiles}>
     <div class="grid-cols-2 gap-4 lg:grid">
-      <div>
-        <label class="form-control w-full max-w-xl">
-          <div class="label">
-            <span class="label-text">Pick a file</span>
-          </div>
-          <input
-            onchange={uploadsChanged}
-            type="file"
-            accept=".fseq"
-            multiple
-            class="file-input file-input-bordered w-full max-w-xl" />
-        </label>
+      <div class="fieldset w-full max-w-xl">
+        <input
+          onchange={uploadsChanged}
+          type="file"
+          accept=".fseq"
+          multiple
+          class="file-input file-input-bordered w-full" />
       </div>
 
       <div>
         {#if uploads.length > 0}
           <h3 class="mt-4 text-lg lg:mt-0">To Upload</h3>
           <ul class="menu">
-            {#each uploads as upload}
+            {#each uploads as upload (upload.file.name)}
               <li>
                 <span>
                   <upload.icon />
@@ -135,7 +130,7 @@
             {/each}
           </ul>
 
-          <label class="form-control w-full max-w-xl py-4">
+          <label class="w-full max-w-xl py-4">
             <button type="submit" class="btn btn-ghost">
               Upload <PhUploadSimple />
             </button>
@@ -150,26 +145,24 @@
   <h2 class="text-xl">Edit Sequences</h2>
 
   <div class="grid-cols-2 gap-4 lg:grid">
-    <label class="form-control w-full max-w-xl">
-      <div class="label">
-        <span class="label-text">Select a sequence to edit</span>
-      </div>
+    <div class="join w-full max-w-xl">
+      <label class="select select-bordered w-full">
+        <span class="label">Sequence</span>
 
-      <div class="join w-full">
         <select
           onchange={selectSequence}
           bind:value={selectedSequenceName}
-          class="join-item select select-bordered flex-grow">
-          {#each sequences as seq}
+          class="join-item flex-grow">
+          {#each sequences as seq (seq)}
             <option>{seq}</option>
           {/each}
         </select>
+      </label>
 
-        <button class="btn join-item" onclick={loadSequences}>
-          <PhArrowsClockwise />
-        </button>
-      </div>
-    </label>
+      <button class="btn join-item" onclick={loadSequences}>
+        <PhArrowsClockwise />
+      </button>
+    </div>
     {#if selectedSequence}
       <div>
         <h3 class="mt-4 text-lg lg:mt-0">Sequence Info.</h3>
@@ -180,7 +173,7 @@
             <tr><th>Channel Count</th><td>{selectedSequence.ChannelCount}</td></tr>
             <tr><th>Number of Frames</th><td>{selectedSequence.NumFrames}</td></tr>
             <tr><th>Step Time (ms)</th><td>{selectedSequence.StepTime}</td></tr>
-            {#each Object.entries(selectedSequence.variableHeaders) as [k, v]}
+            {#each Object.entries(selectedSequence.variableHeaders) as [k, v] (k)}
               <tr><th>Variable {k}</th><td>{v}</td></tr>
             {/each}
           </tbody>

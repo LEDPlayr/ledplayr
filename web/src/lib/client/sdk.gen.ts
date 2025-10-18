@@ -1,260 +1,320 @@
-import type { OptionsLegacyParser } from "@hey-api/client-fetch";
+import type { Client, Options as Options2, TDataShape } from "./client";
 import type {
   DelButtonData,
-  DelButtonError,
-  DelButtonResponse,
+  DelButtonErrors,
+  DelButtonResponses,
   DelMeshData,
-  DelMeshError,
-  DelMeshResponse,
+  DelMeshErrors,
+  DelMeshResponses,
   DelPlaylistData,
-  DelPlaylistError,
-  DelPlaylistResponse,
+  DelPlaylistErrors,
+  DelPlaylistResponses,
   DelSceneData,
-  DelSceneError,
-  DelSceneResponse,
+  DelSceneErrors,
+  DelSceneResponses,
   DelScheduleData,
-  DelScheduleError,
-  DelScheduleResponse,
+  DelScheduleErrors,
+  DelScheduleResponses,
   DelSequenceData,
-  DelSequenceError,
-  DelSequenceResponse,
+  DelSequenceErrors,
+  DelSequenceResponses,
   DownloadMeshData,
-  DownloadMeshError,
-  DownloadMeshResponse,
+  DownloadMeshErrors,
+  DownloadMeshResponses,
   FileUploadData,
-  FileUploadError,
-  FileUploadResponse,
+  FileUploadErrors,
+  FileUploadResponses,
   FppCommandData,
-  FppCommandError,
-  FppCommandResponse,
+  FppCommandErrors,
+  FppCommandResponses,
   GetButtonData,
-  GetButtonError,
-  GetButtonResponse,
-  GetDisplayError,
-  GetDisplayResponse,
+  GetButtonErrors,
+  GetButtonResponses,
+  GetDisplayData,
+  GetDisplayErrors,
+  GetDisplayResponses,
   GetLogData,
-  GetLogError,
-  GetLogResponse,
-  GetOutputsError,
-  GetOutputsResponse,
+  GetLogErrors,
+  GetLogResponses,
+  GetOutputsData,
+  GetOutputsErrors,
+  GetOutputsResponses,
   GetPlaylistData,
-  GetPlaylistError,
-  GetPlaylistResponse,
+  GetPlaylistErrors,
+  GetPlaylistResponses,
   GetSceneData,
-  GetSceneError,
-  GetSceneResponse,
+  GetSceneErrors,
+  GetSceneResponses,
   GetScheduleData,
-  GetScheduleError,
-  GetScheduleResponse,
+  GetScheduleErrors,
+  GetScheduleResponses,
   GetSequenceData,
-  GetSequenceError,
+  GetSequenceErrors,
   GetSequenceMetaData,
-  GetSequenceMetaError,
-  GetSequenceMetaResponse,
-  GetSequenceResponse,
-  GetStatusError,
-  GetStatusResponse,
+  GetSequenceMetaErrors,
+  GetSequenceMetaResponses,
+  GetSequenceResponses,
+  GetStatusData,
+  GetStatusErrors,
+  GetStatusResponses,
   GetTestPatternData,
-  GetTestPatternError,
-  GetTestPatternResponse,
-  ListButtonsError,
-  ListButtonsResponse,
-  ListLogsError,
-  ListLogsResponse,
-  ListMeshesError,
-  ListMeshesResponse,
-  ListModelsError,
-  ListModelsResponse,
-  ListPlaylistsError,
-  ListPlaylistsNumberedError,
-  ListPlaylistsNumberedResponse,
-  ListPlaylistsResponse,
-  ListScenesError,
-  ListScenesResponse,
-  ListSchedulesError,
-  ListSchedulesResponse,
-  ListSequencesError,
-  ListSequencesResponse,
+  GetTestPatternErrors,
+  GetTestPatternResponses,
+  ListButtonsData,
+  ListButtonsErrors,
+  ListButtonsResponses,
+  ListLogsData,
+  ListLogsErrors,
+  ListLogsResponses,
+  ListMeshesData,
+  ListMeshesErrors,
+  ListMeshesResponses,
+  ListModelsData,
+  ListModelsErrors,
+  ListModelsResponses,
+  ListPlaylistsData,
+  ListPlaylistsErrors,
+  ListPlaylistsNumberedData,
+  ListPlaylistsNumberedErrors,
+  ListPlaylistsNumberedResponses,
+  ListPlaylistsResponses,
+  ListScenesData,
+  ListScenesErrors,
+  ListScenesResponses,
+  ListSchedulesData,
+  ListSchedulesErrors,
+  ListSchedulesResponses,
+  ListSequencesData,
+  ListSequencesErrors,
+  ListSequencesResponses,
   NewButtonData,
-  NewButtonError,
-  NewButtonResponse,
+  NewButtonErrors,
+  NewButtonResponses,
   NewMeshData,
-  NewMeshError,
-  NewMeshResponse,
+  NewMeshErrors,
+  NewMeshResponses,
   NewPlaylistData,
-  NewPlaylistError,
-  NewPlaylistResponse,
+  NewPlaylistErrors,
+  NewPlaylistResponses,
   NewSceneData,
-  NewSceneError,
-  NewSceneResponse,
+  NewSceneErrors,
+  NewSceneResponses,
   NewScheduleData,
-  NewScheduleError,
-  NewScheduleResponse,
+  NewScheduleErrors,
+  NewScheduleResponses,
   RunTestData,
-  RunTestError,
-  RunTestResponse,
-  StartSchedulerError,
-  StartSchedulerResponse,
-  StopError,
-  StopResponse,
-  SystemInfoError,
-  SystemInfoResponse,
+  RunTestErrors,
+  RunTestResponses,
+  StartSchedulerData,
+  StartSchedulerErrors,
+  StartSchedulerResponses,
+  StopData,
+  StopErrors,
+  StopResponses,
+  SystemInfoData,
+  SystemInfoResponses,
   UpdateButtonData,
-  UpdateButtonError,
-  UpdateButtonResponse,
+  UpdateButtonErrors,
+  UpdateButtonResponses,
   UpdateMeshData,
-  UpdateMeshError,
-  UpdateMeshResponse,
+  UpdateMeshErrors,
+  UpdateMeshResponses,
   UpdatePlaylistData,
-  UpdatePlaylistError,
-  UpdatePlaylistResponse,
+  UpdatePlaylistErrors,
+  UpdatePlaylistResponses,
   UpdateSceneData,
-  UpdateSceneError,
-  UpdateSceneResponse,
+  UpdateSceneErrors,
+  UpdateSceneResponses,
   UpdateScheduleData,
-  UpdateScheduleError,
-  UpdateScheduleResponse,
+  UpdateScheduleErrors,
+  UpdateScheduleResponses,
   UploadDisplayData,
-  UploadDisplayError,
-  UploadDisplayResponse,
+  UploadDisplayErrors,
+  UploadDisplayResponses,
   UploadModelsData,
-  UploadModelsError,
-  UploadModelsResponse,
+  UploadModelsErrors,
+  UploadModelsResponses,
   UploadOutputsData,
-  UploadOutputsError,
-  UploadOutputsResponse,
+  UploadOutputsErrors,
+  UploadOutputsResponses,
 } from "./types.gen";
 
-import { createClient, createConfig, formDataBodySerializer } from "@hey-api/client-fetch";
+import { formDataBodySerializer } from "./client";
+import { client } from "./client.gen";
 
 // This file is auto-generated by @hey-api/openapi-ts
 
-export const client = createClient(createConfig());
+export type Options<
+  TData extends TDataShape = TDataShape,
+  ThrowOnError extends boolean = boolean,
+> = Options2<TData, ThrowOnError> & {
+  /**
+   * You can provide a client instance returned by `createClient()` instead of
+   * individual options. This might be also useful if you want to implement a
+   * custom client.
+   */
+  client?: Client;
+  /**
+   * You can pass arbitrary values through the `meta` object. This can be
+   * used to access values that aren't defined as part of the SDK function.
+   */
+  meta?: Record<string, unknown>;
+};
 
 /**
  * New button
+ *
  * Create a new button
  */
 export const newButton = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<NewButtonData, ThrowOnError>,
+  options: Options<NewButtonData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<NewButtonResponse, NewButtonError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).post<NewButtonResponses, NewButtonErrors, ThrowOnError>({
     url: "/api/button",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+};
+
+/**
+ * Delete a button
+ *
+ * Delete the given button
+ */
+export const delButton = <ThrowOnError extends boolean = false>(
+  options: Options<DelButtonData, ThrowOnError>,
+) => {
+  return (options.client ?? client).delete<DelButtonResponses, DelButtonErrors, ThrowOnError>({
+    url: "/api/button/{button}",
+    ...options,
   });
 };
 
 /**
  * Get a button
+ *
  * Get a single button
  */
 export const getButton = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetButtonData, ThrowOnError>,
+  options: Options<GetButtonData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetButtonResponse, GetButtonError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<GetButtonResponses, GetButtonErrors, ThrowOnError>({
     url: "/api/button/{button}",
+    ...options,
   });
 };
 
 /**
  * Update a button
+ *
  * Update the given button
  */
 export const updateButton = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UpdateButtonData, ThrowOnError>,
+  options: Options<UpdateButtonData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).put<UpdateButtonResponse, UpdateButtonError, ThrowOnError>(
-    {
-      ...options,
-      url: "/api/button/{button}",
-    },
-  );
-};
-
-/**
- * Delete a button
- * Delete the given button
- */
-export const delButton = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelButtonData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).delete<DelButtonResponse, DelButtonError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).put<
+    UpdateButtonResponses,
+    UpdateButtonErrors,
+    ThrowOnError
+  >({
     url: "/api/button/{button}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * List all buttons
+ *
  * List all remote buttons
  */
 export const listButtons = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListButtonsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<ListButtonsResponse, ListButtonsError, ThrowOnError>({
-    ...options,
-    url: "/api/buttons",
-  });
+  return (options?.client ?? client).get<ListButtonsResponses, ListButtonsErrors, ThrowOnError>(
+    {
+      url: "/api/buttons",
+      ...options,
+    },
+  );
 };
 
 /**
  * Retrieve outputs.json
+ *
  * Download the outputs in JSON format
  */
 export const getOutputs = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<GetOutputsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetOutputsResponse, GetOutputsError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<GetOutputsResponses, GetOutputsErrors, ThrowOnError>({
     url: "/api/channel/output/universeOutputs",
+    ...options,
   });
 };
 
 /**
  * Upload outputs.json
+ *
  * Upload the outputs in JSON format
  */
 export const uploadOutputs = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UploadOutputsData, ThrowOnError>,
+  options: Options<UploadOutputsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<
-    UploadOutputsResponse,
-    UploadOutputsError,
+  return (options.client ?? client).post<
+    UploadOutputsResponses,
+    UploadOutputsErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/channel/output/universeOutputs",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * Retrieve VirtualDisplayMap
+ *
  * Download the VirtualDisplayMap
  */
 export const getDisplay = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<GetDisplayData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetDisplayResponse, GetDisplayError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<GetDisplayResponses, GetDisplayErrors, ThrowOnError>({
     url: "/api/configfile/virtualdisplaymap",
+    ...options,
   });
 };
 
 /**
  * Upload VirtualDisplayMap
+ *
  * Upload the VirtualDisplayMap
  */
 export const uploadDisplay = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UploadDisplayData, ThrowOnError>,
+  options: Options<UploadDisplayData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<
-    UploadDisplayResponse,
-    UploadDisplayError,
+  return (options.client ?? client).post<
+    UploadDisplayResponses,
+    UploadDisplayErrors,
     ThrowOnError
   >({
-    ...options,
+    bodySerializer: null,
     url: "/api/configfile/virtualdisplaymap",
+    ...options,
+    headers: {
+      "Content-Type": "application/octet-stream",
+      ...options.headers,
+    },
   });
 };
 
@@ -262,11 +322,11 @@ export const uploadDisplay = <ThrowOnError extends boolean = false>(
  * Get a specific log
  */
 export const getLog = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetLogData, ThrowOnError>,
+  options: Options<GetLogData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetLogResponse, GetLogError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<GetLogResponses, GetLogErrors, ThrowOnError>({
     url: "/api/log/{name}",
+    ...options,
   });
 };
 
@@ -274,108 +334,129 @@ export const getLog = <ThrowOnError extends boolean = false>(
  * Get log filenames
  */
 export const listLogs = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListLogsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<ListLogsResponse, ListLogsError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<ListLogsResponses, ListLogsErrors, ThrowOnError>({
     url: "/api/logs",
+    ...options,
   });
 };
 
 /**
  * New mesh
+ *
  * Create a new mesh
  */
 export const newMesh = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<NewMeshData, ThrowOnError>,
+  options: Options<NewMeshData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<NewMeshResponse, NewMeshError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).post<NewMeshResponses, NewMeshErrors, ThrowOnError>({
     url: "/api/mesh",
-  });
-};
-
-/**
- * Get a 3D mesh
- * Download a 3D mesh for the virtual display
- */
-export const downloadMesh = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DownloadMeshData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<DownloadMeshResponse, DownloadMeshError, ThrowOnError>(
-    {
-      ...options,
-      url: "/api/mesh/{mesh}",
-    },
-  );
-};
-
-/**
- * Update a mesh
- * Create or update the given mesh
- */
-export const updateMesh = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UpdateMeshData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).put<UpdateMeshResponse, UpdateMeshError, ThrowOnError>({
     ...options,
-    url: "/api/mesh/{mesh}",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * Delete a mesh
+ *
  * Delete the given mesh
  */
 export const delMesh = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelMeshData, ThrowOnError>,
+  options: Options<DelMeshData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).delete<DelMeshResponse, DelMeshError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).delete<DelMeshResponses, DelMeshErrors, ThrowOnError>({
     url: "/api/mesh/{mesh}",
+    ...options,
+  });
+};
+
+/**
+ * Get a 3D mesh
+ *
+ * Download a 3D mesh for the virtual display
+ */
+export const downloadMesh = <ThrowOnError extends boolean = false>(
+  options: Options<DownloadMeshData, ThrowOnError>,
+) => {
+  return (options.client ?? client).get<
+    DownloadMeshResponses,
+    DownloadMeshErrors,
+    ThrowOnError
+  >({
+    url: "/api/mesh/{mesh}",
+    ...options,
+  });
+};
+
+/**
+ * Update a mesh
+ *
+ * Create or update the given mesh
+ */
+export const updateMesh = <ThrowOnError extends boolean = false>(
+  options: Options<UpdateMeshData, ThrowOnError>,
+) => {
+  return (options.client ?? client).put<UpdateMeshResponses, UpdateMeshErrors, ThrowOnError>({
+    url: "/api/mesh/{mesh}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * List all meshes
+ *
  * List all 3D meshes
  */
 export const listMeshes = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListMeshesData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<ListMeshesResponse, ListMeshesError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<ListMeshesResponses, ListMeshesErrors, ThrowOnError>({
     url: "/api/meshes",
+    ...options,
   });
 };
 
 /**
  * Retrieve models.json
+ *
  * Download the models in JSON format
  */
 export const listModels = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListModelsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<ListModelsResponse, ListModelsError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<ListModelsResponses, ListModelsErrors, ThrowOnError>({
     url: "/api/models",
+    ...options,
   });
 };
 
 /**
  * Upload models.json
+ *
  * Upload the models in JSON format
  */
 export const uploadModels = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UploadModelsData, ThrowOnError>,
+  options: Options<UploadModelsData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<
-    UploadModelsResponse,
-    UploadModelsError,
+  return (options.client ?? client).post<
+    UploadModelsResponses,
+    UploadModelsErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/models",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
@@ -383,11 +464,11 @@ export const uploadModels = <ThrowOnError extends boolean = false>(
  * Get the player status
  */
 export const getStatus = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<GetStatusData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetStatusResponse, GetStatusError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<GetStatusResponses, GetStatusErrors, ThrowOnError>({
     url: "/api/player",
+    ...options,
   });
 };
 
@@ -395,15 +476,15 @@ export const getStatus = <ThrowOnError extends boolean = false>(
  * Start the player scheduling
  */
 export const startScheduler = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<StartSchedulerData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    StartSchedulerResponse,
-    StartSchedulerError,
+    StartSchedulerResponses,
+    StartSchedulerErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/player/schedule",
+    ...options,
   });
 };
 
@@ -411,11 +492,11 @@ export const startScheduler = <ThrowOnError extends boolean = false>(
  * Stop the player
  */
 export const stop = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<StopData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<StopResponse, StopError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<StopResponses, StopErrors, ThrowOnError>({
     url: "/api/player/stop",
+    ...options,
   });
 };
 
@@ -423,326 +504,379 @@ export const stop = <ThrowOnError extends boolean = false>(
  * Run LED test patterns
  */
 export const runTest = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<RunTestData, ThrowOnError>,
+  options: Options<RunTestData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<RunTestResponse, RunTestError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).post<RunTestResponses, RunTestErrors, ThrowOnError>({
     url: "/api/player/test",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * New playlist
+ *
  * Create a new playlist
  */
 export const newPlaylist = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<NewPlaylistData, ThrowOnError>,
+  options: Options<NewPlaylistData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<NewPlaylistResponse, NewPlaylistError, ThrowOnError>({
+  return (options.client ?? client).post<NewPlaylistResponses, NewPlaylistErrors, ThrowOnError>(
+    {
+      url: "/api/playlist",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    },
+  );
+};
+
+/**
+ * Delete a playlist
+ *
+ * Delete the given playlist
+ */
+export const delPlaylist = <ThrowOnError extends boolean = false>(
+  options: Options<DelPlaylistData, ThrowOnError>,
+) => {
+  return (options.client ?? client).delete<
+    DelPlaylistResponses,
+    DelPlaylistErrors,
+    ThrowOnError
+  >({
+    url: "/api/playlist/{playlist}",
     ...options,
-    url: "/api/playlist",
   });
 };
 
 /**
  * Get a playlist
+ *
  * Read back a playlist
  */
 export const getPlaylist = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetPlaylistData, ThrowOnError>,
+  options: Options<GetPlaylistData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetPlaylistResponse, GetPlaylistError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<GetPlaylistResponses, GetPlaylistErrors, ThrowOnError>({
     url: "/api/playlist/{playlist}",
+    ...options,
   });
 };
 
 /**
  * Update a playlist
+ *
  * Create or update the given playlist
  */
 export const updatePlaylist = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UpdatePlaylistData, ThrowOnError>,
+  options: Options<UpdatePlaylistData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).put<
-    UpdatePlaylistResponse,
-    UpdatePlaylistError,
+  return (options.client ?? client).put<
+    UpdatePlaylistResponses,
+    UpdatePlaylistErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/playlist/{playlist}",
-  });
-};
-
-/**
- * Delete a playlist
- * Delete the given playlist
- */
-export const delPlaylist = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelPlaylistData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).delete<
-    DelPlaylistResponse,
-    DelPlaylistError,
-    ThrowOnError
-  >({
     ...options,
-    url: "/api/playlist/{playlist}",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * List playlists
+ *
  * List the name of all playlists
  */
 export const listPlaylists = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListPlaylistsData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ListPlaylistsResponse,
-    ListPlaylistsError,
+    ListPlaylistsResponses,
+    ListPlaylistsErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/playlists",
+    ...options,
   });
 };
 
 /**
  * List playlists with ID
+ *
  * List the playlists with their ID
  */
 export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListPlaylistsNumberedData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ListPlaylistsNumberedResponse,
-    ListPlaylistsNumberedError,
+    ListPlaylistsNumberedResponses,
+    ListPlaylistsNumberedErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/playlists/numbered",
+    ...options,
   });
 };
 
 /**
  * New scene
+ *
  * Create a new scene
  */
 export const newScene = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<NewSceneData, ThrowOnError>,
+  options: Options<NewSceneData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<NewSceneResponse, NewSceneError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).post<NewSceneResponses, NewSceneErrors, ThrowOnError>({
     url: "/api/scene",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * Delete a scene
+ *
  * Delete the given scene
  */
 export const delScene = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelSceneData, ThrowOnError>,
+  options: Options<DelSceneData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).delete<DelSceneResponse, DelSceneError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).delete<DelSceneResponses, DelSceneErrors, ThrowOnError>({
     url: "/api/scene/{scene}",
+    ...options,
   });
 };
 
 /**
  * List scenes
+ *
  * List all scenes
  */
 export const listScenes = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListScenesData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<ListScenesResponse, ListScenesError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<ListScenesResponses, ListScenesErrors, ThrowOnError>({
     url: "/api/scenes",
+    ...options,
   });
 };
 
 /**
  * Get a scene
+ *
  * Read a single scene
  */
 export const getScene = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetSceneData, ThrowOnError>,
+  options: Options<GetSceneData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetSceneResponse, GetSceneError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<GetSceneResponses, GetSceneErrors, ThrowOnError>({
     url: "/api/scenes/{scene}",
+    ...options,
   });
 };
 
 /**
  * Update a scene
+ *
  * Create or update the given scene
  */
 export const updateScene = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UpdateSceneData, ThrowOnError>,
+  options: Options<UpdateSceneData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).put<UpdateSceneResponse, UpdateSceneError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).put<UpdateSceneResponses, UpdateSceneErrors, ThrowOnError>({
     url: "/api/scenes/{scene}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * New schedule
+ *
  * Create a new schedule
  */
 export const newSchedule = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<NewScheduleData, ThrowOnError>,
+  options: Options<NewScheduleData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<NewScheduleResponse, NewScheduleError, ThrowOnError>({
+  return (options.client ?? client).post<NewScheduleResponses, NewScheduleErrors, ThrowOnError>(
+    {
+      url: "/api/schedule",
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    },
+  );
+};
+
+/**
+ * Delete a schedule
+ *
+ * Delete the given schedule
+ */
+export const delSchedule = <ThrowOnError extends boolean = false>(
+  options: Options<DelScheduleData, ThrowOnError>,
+) => {
+  return (options.client ?? client).delete<
+    DelScheduleResponses,
+    DelScheduleErrors,
+    ThrowOnError
+  >({
+    url: "/api/schedule/{schedule}",
     ...options,
-    url: "/api/schedule",
   });
 };
 
 /**
  * Get a schedule
+ *
  * Read back a schedule
  */
 export const getSchedule = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetScheduleData, ThrowOnError>,
+  options: Options<GetScheduleData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<GetScheduleResponse, GetScheduleError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<GetScheduleResponses, GetScheduleErrors, ThrowOnError>({
     url: "/api/schedule/{schedule}",
+    ...options,
   });
 };
 
 /**
  * Update a schedule
+ *
  * Create or update the given schedule
  */
 export const updateSchedule = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<UpdateScheduleData, ThrowOnError>,
+  options: Options<UpdateScheduleData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).put<
-    UpdateScheduleResponse,
-    UpdateScheduleError,
+  return (options.client ?? client).put<
+    UpdateScheduleResponses,
+    UpdateScheduleErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/schedule/{schedule}",
-  });
-};
-
-/**
- * Delete a schedule
- * Delete the given schedule
- */
-export const delSchedule = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelScheduleData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).delete<
-    DelScheduleResponse,
-    DelScheduleError,
-    ThrowOnError
-  >({
     ...options,
-    url: "/api/schedule/{schedule}",
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * List schedules
+ *
  * List the name of all schedules
  */
 export const listSchedules = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListSchedulesData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ListSchedulesResponse,
-    ListSchedulesError,
+    ListSchedulesResponses,
+    ListSchedulesErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/schedules",
-  });
-};
-
-/**
- * Get a sequence
- * Download a sequence file
- */
-export const getSequence = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetSequenceData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<GetSequenceResponse, GetSequenceError, ThrowOnError>({
     ...options,
-    url: "/api/sequence/{filename}",
   });
 };
 
 /**
  * Delete a sequence
+ *
  * Remove a sequence file
  */
 export const delSequence = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<DelSequenceData, ThrowOnError>,
+  options: Options<DelSequenceData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).delete<
-    DelSequenceResponse,
-    DelSequenceError,
+  return (options.client ?? client).delete<
+    DelSequenceResponses,
+    DelSequenceErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/sequence/{filename}",
+    ...options,
+  });
+};
+
+/**
+ * Get a sequence
+ *
+ * Download a sequence file
+ */
+export const getSequence = <ThrowOnError extends boolean = false>(
+  options: Options<GetSequenceData, ThrowOnError>,
+) => {
+  return (options.client ?? client).get<GetSequenceResponses, GetSequenceErrors, ThrowOnError>({
+    url: "/api/sequence/{filename}",
+    ...options,
   });
 };
 
 /**
  * Get a sequence's metadata
+ *
  * Get the metadata belonging to a sequence
  */
 export const getSequenceMeta = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetSequenceMetaData, ThrowOnError>,
+  options: Options<GetSequenceMetaData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<
-    GetSequenceMetaResponse,
-    GetSequenceMetaError,
+  return (options.client ?? client).get<
+    GetSequenceMetaResponses,
+    GetSequenceMetaErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/sequence/{filename}/meta",
+    ...options,
   });
 };
 
 /**
  * List all sequences
+ *
  * List all sequence files
  */
 export const listSequences = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<ListSequencesData, ThrowOnError>,
 ) => {
   return (options?.client ?? client).get<
-    ListSequencesResponse,
-    ListSequencesError,
+    ListSequencesResponses,
+    ListSequencesErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/sequences",
+    ...options,
   });
 };
 
 /**
  * Get system info.
+ *
  * Get the high-level system information. This endpoint is used
  * to simulate FPP and make us discoverable by other software such
  * as xLights. Some values are hard-coded to ensure compatibility.
  */
 export const systemInfo = <ThrowOnError extends boolean = false>(
-  options?: OptionsLegacyParser<unknown, ThrowOnError>,
+  options?: Options<SystemInfoData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<SystemInfoResponse, SystemInfoError, ThrowOnError>({
-    ...options,
+  return (options?.client ?? client).get<SystemInfoResponses, unknown, ThrowOnError>({
     url: "/api/system/info",
+    ...options,
   });
 };
 
@@ -750,51 +884,57 @@ export const systemInfo = <ThrowOnError extends boolean = false>(
  * Get the pattern of LED colors for the given test
  */
 export const getTestPattern = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<GetTestPatternData, ThrowOnError>,
+  options: Options<GetTestPatternData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<
-    GetTestPatternResponse,
-    GetTestPatternError,
+  return (options.client ?? client).post<
+    GetTestPatternResponses,
+    GetTestPatternErrors,
     ThrowOnError
   >({
-    ...options,
     url: "/api/test_pattern",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   });
 };
 
 /**
  * Upload a file
+ *
  * Accepts fseq sequences or media files such as
  * images and videos. The uploaded file is automatically
  * sorted into the relevant upload directory so a call to
  * `moveFile` isn't required and will be ignore.
  */
 export const fileUpload = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<FileUploadData, ThrowOnError>,
+  options: Options<FileUploadData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).post<FileUploadResponse, FileUploadError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).post<FileUploadResponses, FileUploadErrors, ThrowOnError>({
     ...formDataBodySerializer,
+    url: "/api/upload",
+    ...options,
     headers: {
       "Content-Type": null,
-      ...options?.headers,
+      ...options.headers,
     },
-    url: "/api/upload",
   });
 };
 
 /**
  * Run an FPP Command
+ *
  * This method isn't really implemented. The only command you
  * can issue is `moveFile` and all that really does is check
  * whether a file exists or not - it doesn't move it because
  * that's handled at upload time.
  */
 export const fppCommand = <ThrowOnError extends boolean = false>(
-  options: OptionsLegacyParser<FppCommandData, ThrowOnError>,
+  options: Options<FppCommandData, ThrowOnError>,
 ) => {
-  return (options?.client ?? client).get<FppCommandResponse, FppCommandError, ThrowOnError>({
-    ...options,
+  return (options.client ?? client).get<FppCommandResponses, FppCommandErrors, ThrowOnError>({
     url: "/fppxml.php",
+    ...options,
   });
 };

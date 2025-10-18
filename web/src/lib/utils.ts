@@ -60,3 +60,8 @@ export function rotate<T>(a: Array<T>, n: number): Array<T> {
   const count = -n % a.length;
   return [...a.slice(count, a.length), ...a.slice(0, count)];
 }
+
+// https://github.com/microsoft/TypeScript/issues/51572#issuecomment-1319153323
+export const entries = Object.entries as <T>(obj: T) => Array<[keyof T, T[keyof T]]>;
+export const keys = Object.keys as <T>(obj: T) => Array<keyof T>;
+export const values = Object.values as <T>(obj: T) => Array<T[keyof T]>;

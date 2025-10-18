@@ -75,7 +75,7 @@
   });
 </script>
 
-<div class="collapse collapse-arrow overflow-visible bg-base-200">
+<div class="collapse-arrow bg-base-200 collapse overflow-visible">
   <input type="checkbox" />
 
   <div class="collapse-title text-xl font-medium">
@@ -83,11 +83,10 @@
   </div>
 
   <div class="collapse-content">
-    <div class="flex flex-col">
-      <label class="label">
-        <span class="label-text">Test Mode</span>
+    <div class="flex flex-col gap-2">
+      <label class="select select-bordered">
+        <span class="label">Test Mode</span>
         <select
-          class="select-outline select"
           bind:value={sequence_type}
           onchange={() => {
             loadPattern();
@@ -101,22 +100,22 @@
       </label>
 
       {#if sequence_type == "solid" || sequence_type == "chase"}
-        <label class="label cursor-pointer">
-          Color
+        <label class="input input-bordered cursor-pointer">
+          <span class="label">Color</span>
           <input type="color" bind:value={color} />
         </label>
       {/if}
 
       {#if sequence_type == "chase"}
-        <label class="label cursor-pointer">
-          Width
+        <label class="input input-bordered cursor-pointer">
+          <span class="label">Width</span>
           <input type="number" min="1" bind:value={width} />
         </label>
       {/if}
 
       {#if sequence_type == "pattern" || sequence_type == "moving_pattern"}
-        <label class="label">
-          <span class="label-text">Pattern</span>
+        <label class="select select-bordered pt-7 pb-7">
+          <span class="label">Pattern</span>
           <PatternPicker bind:pattern onChange={loadPattern} />
         </label>
       {/if}

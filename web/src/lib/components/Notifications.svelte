@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Notification, NotificationLevel } from "$lib/types";
 
-  import PhCheckCircle from "virtual:icons/ph/check-circle";
-  import PhInfo from "virtual:icons/ph/info";
-  import PhQuestion from "virtual:icons/ph/question";
-  import PhWarningCircle from "virtual:icons/ph/warning-circle";
+  import PhCheckCircle from "~icons/ph/check-circle";
+  import PhInfo from "~icons/ph/info";
+  import PhQuestion from "~icons/ph/question";
+  import PhWarningCircle from "~icons/ph/warning-circle";
 
   import { onMount } from "svelte";
 
@@ -76,7 +76,7 @@
 </script>
 
 <div class="toast toast-center toast-bottom">
-  {#each toasts as [_d, toast]}
+  {#each toasts as [_d, toast], i (i)}
     {@const Icon = getIcon(toast.level)}
     <div role="alert" class="alert shadow-lg {getStyle(toast.level)} ">
       <Icon />

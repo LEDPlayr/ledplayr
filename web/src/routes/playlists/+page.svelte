@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Playlist } from "$lib/client";
 
-  import PhArrowFatDown from "virtual:icons/ph/arrow-fat-down";
-  import PhArrowFatUp from "virtual:icons/ph/arrow-fat-up";
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
-  import PhFloppyDisk from "virtual:icons/ph/floppy-disk";
+  import PhArrowFatDown from "~icons/ph/arrow-fat-down";
+  import PhArrowFatUp from "~icons/ph/arrow-fat-up";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
+  import PhFloppyDiskDuotone from "~icons/ph/floppy-disk-duotone";
 
   import { onMount } from "svelte";
 
@@ -170,48 +170,33 @@
 
   <div class="divider"></div>
 
-  <h2 class="text-xl">Create a New Playlist</h2>
+  <fieldset class="fieldset max-w-xl gap-2">
+    <legend class="fieldset-legend text-xl">Create a New Playlist</legend>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Name:</span>
-    </div>
-    <input
-      type="text"
-      bind:value={playlistToAdd.name}
-      class="input input-bordered w-full max-w-xl"
-      placeholder="Name" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Name:</span>
+      <input type="text" bind:value={playlistToAdd.name} placeholder="Name" />
+    </label>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Description:</span>
-    </div>
-    <input
-      type="text"
-      bind:value={playlistToAdd.desc}
-      class="input input-bordered w-full max-w-xl"
-      placeholder="Description" />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Description:</span>
+      <input type="text" bind:value={playlistToAdd.desc} placeholder="Description" />
+    </label>
 
-  <div class="form-control w-full max-w-xl">
-    <label class="label cursor-pointer">
-      <span class="label-text">Repeat forever?</span>
+    <label class="label">
+      Repeat forever?
       <input type="checkbox" bind:checked={playlistToAdd.repeat} class="toggle" />
     </label>
-  </div>
 
-  <label class="form-control w-full max-w-xl">
-    <div class="label">
-      <span class="label-text">Loop Count:</span>
-    </div>
-    <input
-      type="number"
-      disabled={playlistToAdd.repeat}
-      bind:value={playlistToAdd.loopCount}
-      class="input input-bordered w-full max-w-xl"
-      min={1} />
-  </label>
+    <label class="input input-bordered w-full max-w-xl">
+      <span class="label">Loop Count:</span>
+      <input
+        type="number"
+        disabled={playlistToAdd.repeat}
+        bind:value={playlistToAdd.loopCount}
+        min={1} />
+    </label>
+  </fieldset>
 
   <button onclick={addPlaylist} class="btn btn-neutral my-3 w-full max-w-xl">
     Create Playlist
@@ -222,26 +207,24 @@
   <h2 class="text-xl">Edit Playlists</h2>
 
   <div class="grid-cols-2 gap-4 lg:grid">
-    <label class="form-control w-full max-w-xl">
-      <div class="label">
-        <span class="label-text">Select a playlist to edit</span>
-      </div>
+    <div class="join w-full max-w-xl">
+      <label class="select select-bordered w-full">
+        <span class="label">Playlist</span>
 
-      <div class="join w-full">
         <select
           onchange={onPlaylistChange}
           bind:value={selectedPlaylistName}
-          class="join-item select select-bordered flex-grow">
-          {#each playlists as p}
+          class="join-item flex-grow">
+          {#each playlists as p (p)}
             <option>{p}</option>
           {/each}
         </select>
+      </label>
 
-        <button class="btn join-item" onclick={loadPlaylists}>
-          <PhArrowsClockwise />
-        </button>
-      </div>
-    </label>
+      <button class="btn join-item" onclick={loadPlaylists}>
+        <PhArrowsClockwise />
+      </button>
+    </div>
 
     {#if selectedPlaylist}
       <div>
@@ -304,34 +287,30 @@
           <Delete callback={deletePlaylist} />
 
           <button onclick={savePlaylist} class="btn btn-primary">
-            <PhFloppyDisk />
+            <PhFloppyDiskDuotone />
             Save Playlist
           </button>
         </div>
       </div>
 
-      <div>
-        <h3 class="mt-4 text-lg lg:mt-0">Add a sequence</h3>
+      <fieldset class="fieldset w-full max-w-xl">
+        <legend class="fieldset-legend text-lg">Add a sequence</legend>
 
-        <label class="form-control w-full max-w-xl">
-          <div class="label">
-            <span class="label-text">Select a sequences to add</span>
-          </div>
+        <div class="join w-full max-w-xl">
+          <label class="select select-bordered w-full">
+            <span class="label">Sequence</span>
 
-          <div class="join">
-            <select
-              bind:value={selectedSequenceName}
-              class="join-item select select-bordered flex-grow">
-              {#each sequences as s}
+            <select bind:value={selectedSequenceName} class="join-item flex-grow">
+              {#each sequences as s (s)}
                 <option>{s}</option>
               {/each}
             </select>
+          </label>
 
-            <button class="btn join-item" onclick={loadSequences}>
-              <PhArrowsClockwise />
-            </button>
-          </div>
-        </label>
+          <button class="btn join-item" onclick={loadSequences}>
+            <PhArrowsClockwise />
+          </button>
+        </div>
 
         <button
           onclick={addSequenceToPlaylist}
@@ -339,15 +318,15 @@
           class="btn btn-primary mt-4">
           Add to playlist
         </button>
-      </div>
+      </fieldset>
 
       <div>
         <h3 class="mt-4 text-lg lg:mt-0">List of seqeunces</h3>
 
         {#if selectedPlaylist.mainPlaylist.length > 0}
           <ul class="mt-4 flex flex-col gap-4">
-            {#each selectedPlaylist.mainPlaylist as s, i}
-              <li class="rounded-lg border border-base-300 p-4">
+            {#each selectedPlaylist.mainPlaylist as s, i (i)}
+              <li class="border-base-300 rounded-lg border p-4">
                 <div class="flex flex-col gap-2 lg:flex-row">
                   <span class="flex-grow leading-8 {s.enabled ? '' : 'text-error'}">
                     {s.sequenceName} ({s.duration}s)

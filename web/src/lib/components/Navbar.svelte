@@ -1,4 +1,8 @@
-<div class="navbar block bg-neutral text-neutral-content lg:hidden">
+<script>
+  import { resolve } from "$app/paths";
+</script>
+
+<div class="navbar bg-neutral text-neutral-content block lg:hidden">
   <div class="flex-none">
     <label for="drawer" class="btn btn-square btn-ghost lg:hidden">
       <svg
@@ -18,6 +22,6 @@
   <div class="flex-1"></div>
 
   <div class="flex-none">
-    <a class="btn btn-ghost text-xl" href="/">LEDPlayr</a>
+    <a class="btn btn-ghost text-xl" href={resolve("/")}>LEDPlayr</a>
   </div>
 </div>

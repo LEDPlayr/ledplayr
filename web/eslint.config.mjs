@@ -1,15 +1,13 @@
-import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import esLintConfigPrettier from "eslint-config-prettier";
+import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import parser from "svelte-eslint-parser";
+import ts from "typescript-eslint";
 
-const compat = new FlatCompat({
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
+/** @type {import('eslint').Linter.Config[] } */
 export default [
   {
     ignores: [
@@ -24,14 +22,15 @@ export default [
       "**/pnpm-lock.yaml",
       "**/package-lock.json",
       "**/yarn.lock",
+      "src/lib/client/**",
     ],
   },
-  ...compat.extends(
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:svelte/recommended",
-    "prettier",
-  ),
+
+  js.configs.recommended,
+  ...ts.configs.recommended,
+  ...svelte.configs.recommended,
+  esLintConfigPrettier,
+
   {
     plugins: {
       "@typescript-eslint": typescriptEslint,
@@ -67,8 +66,17 @@ export default [
       "svelte/no-at-html-tags": "warn",
     },
   },
+
   {
-    files: ["**/*.svelte"],
+    files: [
+      "**/*.svelte",
+      "*.svelte",
+      "**/*.svelte.js",
+      "*.svelte.js",
+      "**/*.svelte.ts",
+      "*.svelte.ts",
+      "src/lib/client/**",
+    ],
 
     languageOptions: {
       parser: parser,

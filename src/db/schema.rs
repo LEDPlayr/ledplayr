@@ -1,6 +1,9 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    use diesel::sql_types::{Integer, Text, Float, Bool};
+    use crate::db::models::ActionMapping;
+
     buttons (id) {
         id -> Integer,
         status -> Text,
@@ -9,6 +12,8 @@ diesel::table! {
         input -> Bool,
         last -> Integer,
         now -> Integer,
+        action -> ActionMapping,
+        action_target -> Text,
     }
 }
 

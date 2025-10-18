@@ -6,7 +6,7 @@
   import { T, useThrelte } from "@threlte/core";
   import { GLTF, OrbitControls } from "@threlte/extras";
   import { onMount } from "svelte";
-  import { BufferGeometry, Float32BufferAttribute, MOUSE } from "three";
+  import { BufferGeometry, MOUSE } from "three";
   import { OrbitControls as ThreeOrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
   import { getDisplay } from "$lib/client";
@@ -17,18 +17,18 @@
     light: number;
     meshes: Mesh[];
   }
-  let { colors, light, meshes }: Props = $props();
+  const { colors, light, meshes }: Props = $props();
   let display = $state("");
   let cam: PerspectiveCamera | undefined = $state();
   let controls: ThreeOrbitControls | undefined = $state();
   const { invalidate } = useThrelte();
 
-  let points: number[] = $derived.by(() => {
+  let points: Float32Array = $derived.by(() => {
     let ret = [];
 
     for (const line of display.split("\n")) {
       const sp = line.split(",");
-      if (line.startsWith("#") || sp.length != 6) {
+      if (line.startsWith("#") || sp.length < 6) {
         continue;
       }
 
@@ -37,27 +37,22 @@
       ret.push([x / 100, y / 100, z / 100, node]);
     }
 
-    return ret
-      .sort((a, b) => a[3] - b[3])
-      .map((a) => a.slice(0, 3))
-      .flat();
+    return new Float32Array(
+      ret
+        .sort((a, b) => a[3] - b[3])
+        .map((a) => a.slice(0, 3))
+        .flat(),
+    );
   });
 
-  let flatColors: number[] = $derived(
-    colors.map((c) => [c.r / 255, c.g / 255, c.b / 255]).flat(),
+  let flatColors: Float32Array = $derived(
+    new Float32Array(colors.map((c) => [c.r / 255, c.g / 255, c.b / 255]).flat()),
   );
-
-  const bufGeometry = $derived.by(() => {
-    const buf = new BufferGeometry();
-    buf.setAttribute("position", new Float32BufferAttribute(points, 3));
-    buf.setAttribute("color", new Float32BufferAttribute(flatColors, 3));
-    return buf;
-  });
 
   onMount(async () => {
     const { data, error } = await getDisplay();
     if (data) {
-      display = data;
+      display = data as string;
     }
     if (error) {
       notify(`${error.error}`, "error");
@@ -108,11 +103,24 @@
 <T.AmbientLight intensity={light} />
 
 <T.Points>
-  <T is={bufGeometry} />
+  <T.BufferGeometry>
+    <T.BufferAttribute
+      args={[points, 3]}
+      attach={({ parent, ref }) => {
+        (parent as BufferGeometry).setAttribute("position", ref);
+        return () => {};
+      }} />
+    <T.BufferAttribute
+      args={[flatColors, 3]}
+      attach={({ parent, ref }) => {
+        (parent as BufferGeometry).setAttribute("color", ref);
+        return () => {};
+      }} />
+  </T.BufferGeometry>
   <T.PointsMaterial size={0.5} vertexColors />
 </T.Points>
 
-{#each meshes as m}
+{#each meshes as m (m.name)}
   <GLTF
     url={`/api/mesh/${m.name}`}
     scale={[m.scale_x, m.scale_y, m.scale_z]}

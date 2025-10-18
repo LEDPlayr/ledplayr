@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  logs: false;
+}
+
+/* Weird DaisyUI quirk */
+input[type="time"] {
+  display: block;
+}

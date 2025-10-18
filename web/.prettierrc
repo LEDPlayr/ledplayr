@@ -15,7 +15,7 @@
     "<TYPES>^\\$(app|lib)/(.*)",
     "<TYPES>^[./]",
     "",
-    "^virtual:(.*)",
+    "^~icons(.*)",
     "",
     "<BUILTIN_MODULES>",
     "<THIRD_PARTY_MODULES>",

@@ -146,7 +146,7 @@ pub async fn system_info(extract::State(state): extract::State<Arc<Mutex<State>>
         platform: "Linux".to_string(),
         variant,
         mode: "player".to_string(),
-        version: "6.0".to_string(),
+        version: "7.1".to_string(),
         branch: built_info::GIT_HEAD_REF.unwrap_or("unknown").into(),
         os_release,
         kernel: release,

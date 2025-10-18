@@ -8,11 +8,12 @@ use axum::{
 use parking_lot::Mutex;
 
 use crate::{
+    button,
     db::{
         self,
         models::{Button, NewButton},
     },
-    models::{PlayerState, Status},
+    models::Status,
     state::State,
 };
 
@@ -114,25 +115,10 @@ pub async fn new_button(
 pub async fn update_button(
     extract::State(state): extract::State<Arc<Mutex<State>>>,
     extract::Path(button_id): extract::Path<i32>,
-    Json(button): Json<NewButton>,
+    Json(btn): Json<NewButton>,
 ) -> Response {
-    if button.input {
-        let ctrl;
-        {
-            let state = state.lock();
-            ctrl = state.player_ctrl.clone();
-        }
-
-        if let Err(e) = ctrl.send(PlayerState::Schedule).await {
-            tracing::error!("Could not start scheduler: {e}");
-        }
-    }
-
-    let mut state = state.lock();
-    match db::update_button(&mut state.db_conn, button_id, button) {
-        Ok(_) => APIError::Ok.into_response(),
-        Err(e) => APIError::UnexpectedError(e).into_response(),
-    }
+    button::update_button(button_id, btn, state).await;
+    APIError::Ok.into_response()
 }
 
 /// Delete a button

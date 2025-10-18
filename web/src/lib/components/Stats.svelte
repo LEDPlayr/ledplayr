@@ -1,7 +1,7 @@
 <script lang="ts">
-  import PhPause from "virtual:icons/ph/pause";
-  import PhPlay from "virtual:icons/ph/play";
-  import PhSpinner from "virtual:icons/ph/spinner";
+  import PhPlayDuotone from "~icons/ph/play-duotone";
+  import PhSpinner from "~icons/ph/spinner";
+  import PhStopDutone from "~icons/ph/stop-duotone";
 
   import { startScheduler, stop } from "$lib/client";
   import { playerStatus, sysInfo } from "$lib/stores";
@@ -41,9 +41,9 @@
   </div>
   <button type="button" class="btn btn-neutral btn-sm m-2" onclick={toggleScheduler}>
     {#if isPlaying($playerStatus) === true}
-      <PhPause /> Stop Scheduler
+      <PhStopDutone /> Stop Scheduler
     {:else if isPlaying($playerStatus) === false}
-      <PhPlay /> Start Scheduler
+      <PhPlayDuotone /> Start Scheduler
     {:else}
       <PhSpinner class="animate-spin" /> Pending
     {/if}

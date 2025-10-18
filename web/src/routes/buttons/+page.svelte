@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Button } from "$lib/client";
 
-  import PhArrowsClockwise from "virtual:icons/ph/arrows-clockwise";
+  import PhArrowsClockwise from "~icons/ph/arrows-clockwise";
 
   import { onMount } from "svelte";
 
