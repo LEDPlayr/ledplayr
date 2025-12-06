@@ -7,17 +7,34 @@ use axum::{
 };
 use chrono;
 use parking_lot::Mutex;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::state::State;
 
 use super::error::APIError;
 
-#[derive(Deserialize, utoipa::ToSchema)]
-pub struct TimezoneConfig {
-    /// ISO 8601 formatted time string
+fn get_zoneinfo_base() -> Option<String> {
+    let possible_dirs = [
+        "/usr/share/zoneinfo",
+        "/usr/share/lib/zoneinfo",
+        "/usr/lib/zoneinfo",
+        "/usr/local/etc/zoneinfo",
+        "/etc/zoneinfo",
+    ];
+
+    for dir in possible_dirs {
+        if std::path::Path::new(dir).exists() {
+            return Some(dir.to_string());
+        }
+    }
+    None
+}
+
+#[derive(Serialize, Deserialize, utoipa::ToSchema)]
+pub struct TimeAndTimezone {
+    /// Current server time in RFC3339 format
     time: String,
-    /// Timezone name (e.g., "Europe/London")
+    /// Current server timezone name (e.g., "Europe/London")
     timezone: String,
 }
 
@@ -34,14 +51,6 @@ pub struct TimezoneConfig {
     tag = "Config"
 )]
 pub async fn list_timezones(extract::State(_state): extract::State<Arc<Mutex<State>>>) -> Response {
-    let possible_dirs = [
-        "/usr/share/zoneinfo",
-        "/usr/share/lib/zoneinfo",
-        "/usr/lib/zoneinfo",
-        "/usr/local/etc/zoneinfo",
-        "/run/current-system/etc/zoneinfo",
-    ];
-
     fn collect_timezones(dir: &std::path::Path, prefix: &str, timezones: &mut Vec<String>) {
         if let Ok(entries) = std::fs::read_dir(dir) {
             for entry in entries.flatten() {
@@ -61,14 +70,12 @@ pub async fn list_timezones(extract::State(_state): extract::State<Arc<Mutex<Sta
         }
     }
 
-    for dir in possible_dirs {
-        let path = std::path::Path::new(dir);
-        if path.exists() {
-            let mut timezones = Vec::new();
-            collect_timezones(path, "", &mut timezones);
-            timezones.sort();
-            return Json(timezones).into_response();
-        }
+    if let Some(base) = get_zoneinfo_base() {
+        let path = std::path::Path::new(&base);
+        let mut timezones = Vec::new();
+        collect_timezones(path, "", &mut timezones);
+        timezones.sort();
+        return Json(timezones).into_response();
     }
 
     APIError::UnexpectedError(anyhow::anyhow!("No timezone directory found")).into_response()
@@ -80,7 +87,7 @@ pub async fn list_timezones(extract::State(_state): extract::State<Arc<Mutex<Sta
 #[utoipa::path(
     post,
     path = "/api/config/timezone",
-    request_body(content = TimezoneConfig),
+    request_body(content = TimeAndTimezone),
     responses(
         (status = 200, description = "Time and timezone set successfully", body = crate::models::Status),
         (status = 403, description = "Insufficient privileges", body = crate::models::Status),
@@ -89,7 +96,7 @@ pub async fn list_timezones(extract::State(_state): extract::State<Arc<Mutex<Sta
     ),
     tag = "Config"
 )]
-pub async fn set_timezone(Json(config): Json<TimezoneConfig>) -> Response {
+pub async fn set_timezone(Json(config): Json<TimeAndTimezone>) -> Response {
     // Check privileges
     let has_cap = caps::has_cap(
         None,
@@ -109,7 +116,11 @@ pub async fn set_timezone(Json(config): Json<TimezoneConfig>) -> Response {
     }
 
     // Validate timezone
-    let tz_path = format!("/usr/share/zoneinfo/{}", config.timezone);
+    let base = get_zoneinfo_base();
+    if base.is_none() {
+        return APIError::Forbidden("Unable to find zoneinfo".into()).into_response();
+    }
+    let tz_path = format!("{}/{}", base.unwrap(), config.timezone);
     if !std::path::Path::new(&tz_path).exists() {
         return APIError::BadRequest("Invalid timezone".into()).into_response();
     }
@@ -149,4 +160,37 @@ pub async fn set_timezone(Json(config): Json<TimezoneConfig>) -> Response {
     }
 
     APIError::Ok.into_response()
+}
+
+/// Get current server time and timezone
+///
+/// Get the server's current local time and timezone
+#[utoipa::path(
+    get,
+    path = "/api/config/timezone",
+    responses(
+        (status = 200, description = "Current time and timezone", body = TimeAndTimezone),
+        (status = 500, description = "Something went wrong", body = crate::models::Status)
+    ),
+    tag = "Config"
+)]
+pub async fn get_current_time_and_timezone() -> Response {
+    let now = chrono::Local::now();
+    let time = now.to_rfc3339();
+
+    let timezone = if let Ok(link) = std::fs::read_link("/etc/localtime") {
+        if let Some(base) = get_zoneinfo_base() {
+            if let Ok(relative) = link.strip_prefix(&base) {
+                relative.to_string_lossy().to_string()
+            } else {
+                "Unknown".to_string()
+            }
+        } else {
+            "Unknown".to_string()
+        }
+    } else {
+        "Unknown".to_string()
+    };
+
+    Json(TimeAndTimezone { time, timezone }).into_response()
 }

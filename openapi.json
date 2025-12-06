@@ -347,6 +347,36 @@
       }
     },
     "/api/config/timezone": {
+      "get": {
+        "tags": [
+          "Config"
+        ],
+        "summary": "Get current server time and timezone",
+        "description": "Get the server's current local time and timezone",
+        "operationId": "get_current_time_and_timezone",
+        "responses": {
+          "200": {
+            "description": "Current time and timezone",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentTimeAndTimezone"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something went wrong",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Config"
@@ -2412,6 +2442,23 @@
           }
         }
       },
+      "CurrentTimeAndTimezone": {
+        "type": "object",
+        "required": [
+          "time",
+          "timezone"
+        ],
+        "properties": {
+          "time": {
+            "type": "string",
+            "description": "Current server time in RFC3339 format"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Current server timezone name (e.g., \"Europe/London\")"
+          }
+        }
+      },
       "DiskUtilization": {
         "type": "object",
         "required": [
@@ -3504,7 +3551,7 @@
           },
           "timezone": {
             "type": "string",
-            "description": "Timezone name (e.g., \"America/New_York\")"
+            "description": "Timezone name (e.g., \"Europe/London\")"
           }
         }
       },

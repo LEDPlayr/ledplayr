@@ -132,7 +132,10 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
                 .delete(buttons::del_button),
         )
         .route("/api/config/timezones", get(config::list_timezones))
-        .route("/api/config/timezone", post(config::set_timezone))
+        .route(
+            "/api/config/timezone",
+            get(config::get_current_time_and_timezone).post(config::set_timezone),
+        )
         .fallback(files::static_handler)
         .layer(
             TraceLayer::new_for_http()
