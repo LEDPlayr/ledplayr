@@ -87,6 +87,9 @@ import type {
   ListSequencesData,
   ListSequencesErrors,
   ListSequencesResponses,
+  ListTimezonesData,
+  ListTimezonesErrors,
+  ListTimezonesResponses,
   NewButtonData,
   NewButtonErrors,
   NewButtonResponses,
@@ -105,6 +108,9 @@ import type {
   RunTestData,
   RunTestErrors,
   RunTestResponses,
+  SetTimezoneData,
+  SetTimezoneErrors,
+  SetTimezoneResponses,
   StartSchedulerData,
   StartSchedulerErrors,
   StartSchedulerResponses,
@@ -168,8 +174,8 @@ export type Options<
  */
 export const newButton = <ThrowOnError extends boolean = false>(
   options: Options<NewButtonData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<NewButtonResponses, NewButtonErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).post<NewButtonResponses, NewButtonErrors, ThrowOnError>({
     url: "/api/button",
     ...options,
     headers: {
@@ -177,7 +183,6 @@ export const newButton = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Delete a button
@@ -186,12 +191,11 @@ export const newButton = <ThrowOnError extends boolean = false>(
  */
 export const delButton = <ThrowOnError extends boolean = false>(
   options: Options<DelButtonData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<DelButtonResponses, DelButtonErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).delete<DelButtonResponses, DelButtonErrors, ThrowOnError>({
     url: "/api/button/{button}",
     ...options,
   });
-};
 
 /**
  * Get a button
@@ -200,12 +204,11 @@ export const delButton = <ThrowOnError extends boolean = false>(
  */
 export const getButton = <ThrowOnError extends boolean = false>(
   options: Options<GetButtonData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetButtonResponses, GetButtonErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetButtonResponses, GetButtonErrors, ThrowOnError>({
     url: "/api/button/{button}",
     ...options,
   });
-};
 
 /**
  * Update a button
@@ -214,12 +217,8 @@ export const getButton = <ThrowOnError extends boolean = false>(
  */
 export const updateButton = <ThrowOnError extends boolean = false>(
   options: Options<UpdateButtonData, ThrowOnError>,
-) => {
-  return (options.client ?? client).put<
-    UpdateButtonResponses,
-    UpdateButtonErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).put<UpdateButtonResponses, UpdateButtonErrors, ThrowOnError>({
     url: "/api/button/{button}",
     ...options,
     headers: {
@@ -227,7 +226,6 @@ export const updateButton = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * List all buttons
@@ -236,14 +234,11 @@ export const updateButton = <ThrowOnError extends boolean = false>(
  */
 export const listButtons = <ThrowOnError extends boolean = false>(
   options?: Options<ListButtonsData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<ListButtonsResponses, ListButtonsErrors, ThrowOnError>(
-    {
-      url: "/api/buttons",
-      ...options,
-    },
-  );
-};
+) =>
+  (options?.client ?? client).get<ListButtonsResponses, ListButtonsErrors, ThrowOnError>({
+    url: "/api/buttons",
+    ...options,
+  });
 
 /**
  * Retrieve outputs.json
@@ -252,12 +247,11 @@ export const listButtons = <ThrowOnError extends boolean = false>(
  */
 export const getOutputs = <ThrowOnError extends boolean = false>(
   options?: Options<GetOutputsData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<GetOutputsResponses, GetOutputsErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<GetOutputsResponses, GetOutputsErrors, ThrowOnError>({
     url: "/api/channel/output/universeOutputs",
     ...options,
   });
-};
 
 /**
  * Upload outputs.json
@@ -266,12 +260,8 @@ export const getOutputs = <ThrowOnError extends boolean = false>(
  */
 export const uploadOutputs = <ThrowOnError extends boolean = false>(
   options: Options<UploadOutputsData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<
-    UploadOutputsResponses,
-    UploadOutputsErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).post<UploadOutputsResponses, UploadOutputsErrors, ThrowOnError>({
     url: "/api/channel/output/universeOutputs",
     ...options,
     headers: {
@@ -279,7 +269,36 @@ export const uploadOutputs = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
+
+/**
+ * Set system time and timezone
+ *
+ * Set the server's system time and timezone
+ */
+export const setTimezone = <ThrowOnError extends boolean = false>(
+  options: Options<SetTimezoneData, ThrowOnError>,
+) =>
+  (options.client ?? client).post<SetTimezoneResponses, SetTimezoneErrors, ThrowOnError>({
+    url: "/api/config/timezone",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+/**
+ * List available timezones
+ *
+ * List all available timezone names
+ */
+export const listTimezones = <ThrowOnError extends boolean = false>(
+  options?: Options<ListTimezonesData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<ListTimezonesResponses, ListTimezonesErrors, ThrowOnError>({
+    url: "/api/config/timezones",
+    ...options,
+  });
 
 /**
  * Retrieve VirtualDisplayMap
@@ -288,12 +307,11 @@ export const uploadOutputs = <ThrowOnError extends boolean = false>(
  */
 export const getDisplay = <ThrowOnError extends boolean = false>(
   options?: Options<GetDisplayData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<GetDisplayResponses, GetDisplayErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<GetDisplayResponses, GetDisplayErrors, ThrowOnError>({
     url: "/api/configfile/virtualdisplaymap",
     ...options,
   });
-};
 
 /**
  * Upload VirtualDisplayMap
@@ -302,12 +320,8 @@ export const getDisplay = <ThrowOnError extends boolean = false>(
  */
 export const uploadDisplay = <ThrowOnError extends boolean = false>(
   options: Options<UploadDisplayData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<
-    UploadDisplayResponses,
-    UploadDisplayErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).post<UploadDisplayResponses, UploadDisplayErrors, ThrowOnError>({
     bodySerializer: null,
     url: "/api/configfile/virtualdisplaymap",
     ...options,
@@ -316,31 +330,28 @@ export const uploadDisplay = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Get a specific log
  */
 export const getLog = <ThrowOnError extends boolean = false>(
   options: Options<GetLogData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetLogResponses, GetLogErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetLogResponses, GetLogErrors, ThrowOnError>({
     url: "/api/log/{name}",
     ...options,
   });
-};
 
 /**
  * Get log filenames
  */
 export const listLogs = <ThrowOnError extends boolean = false>(
   options?: Options<ListLogsData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<ListLogsResponses, ListLogsErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<ListLogsResponses, ListLogsErrors, ThrowOnError>({
     url: "/api/logs",
     ...options,
   });
-};
 
 /**
  * New mesh
@@ -349,8 +360,8 @@ export const listLogs = <ThrowOnError extends boolean = false>(
  */
 export const newMesh = <ThrowOnError extends boolean = false>(
   options: Options<NewMeshData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<NewMeshResponses, NewMeshErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).post<NewMeshResponses, NewMeshErrors, ThrowOnError>({
     url: "/api/mesh",
     ...options,
     headers: {
@@ -358,7 +369,6 @@ export const newMesh = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Delete a mesh
@@ -367,12 +377,11 @@ export const newMesh = <ThrowOnError extends boolean = false>(
  */
 export const delMesh = <ThrowOnError extends boolean = false>(
   options: Options<DelMeshData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<DelMeshResponses, DelMeshErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).delete<DelMeshResponses, DelMeshErrors, ThrowOnError>({
     url: "/api/mesh/{mesh}",
     ...options,
   });
-};
 
 /**
  * Get a 3D mesh
@@ -381,16 +390,11 @@ export const delMesh = <ThrowOnError extends boolean = false>(
  */
 export const downloadMesh = <ThrowOnError extends boolean = false>(
   options: Options<DownloadMeshData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<
-    DownloadMeshResponses,
-    DownloadMeshErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).get<DownloadMeshResponses, DownloadMeshErrors, ThrowOnError>({
     url: "/api/mesh/{mesh}",
     ...options,
   });
-};
 
 /**
  * Update a mesh
@@ -399,8 +403,8 @@ export const downloadMesh = <ThrowOnError extends boolean = false>(
  */
 export const updateMesh = <ThrowOnError extends boolean = false>(
   options: Options<UpdateMeshData, ThrowOnError>,
-) => {
-  return (options.client ?? client).put<UpdateMeshResponses, UpdateMeshErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).put<UpdateMeshResponses, UpdateMeshErrors, ThrowOnError>({
     url: "/api/mesh/{mesh}",
     ...options,
     headers: {
@@ -408,7 +412,6 @@ export const updateMesh = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * List all meshes
@@ -417,12 +420,11 @@ export const updateMesh = <ThrowOnError extends boolean = false>(
  */
 export const listMeshes = <ThrowOnError extends boolean = false>(
   options?: Options<ListMeshesData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<ListMeshesResponses, ListMeshesErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<ListMeshesResponses, ListMeshesErrors, ThrowOnError>({
     url: "/api/meshes",
     ...options,
   });
-};
 
 /**
  * Retrieve models.json
@@ -431,12 +433,11 @@ export const listMeshes = <ThrowOnError extends boolean = false>(
  */
 export const listModels = <ThrowOnError extends boolean = false>(
   options?: Options<ListModelsData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<ListModelsResponses, ListModelsErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<ListModelsResponses, ListModelsErrors, ThrowOnError>({
     url: "/api/models",
     ...options,
   });
-};
 
 /**
  * Upload models.json
@@ -445,12 +446,8 @@ export const listModels = <ThrowOnError extends boolean = false>(
  */
 export const uploadModels = <ThrowOnError extends boolean = false>(
   options: Options<UploadModelsData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<
-    UploadModelsResponses,
-    UploadModelsErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).post<UploadModelsResponses, UploadModelsErrors, ThrowOnError>({
     url: "/api/models",
     ...options,
     headers: {
@@ -458,55 +455,47 @@ export const uploadModels = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Get the player status
  */
 export const getStatus = <ThrowOnError extends boolean = false>(
   options?: Options<GetStatusData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<GetStatusResponses, GetStatusErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<GetStatusResponses, GetStatusErrors, ThrowOnError>({
     url: "/api/player",
     ...options,
   });
-};
 
 /**
  * Start the player scheduling
  */
 export const startScheduler = <ThrowOnError extends boolean = false>(
   options?: Options<StartSchedulerData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    StartSchedulerResponses,
-    StartSchedulerErrors,
-    ThrowOnError
-  >({
+) =>
+  (options?.client ?? client).get<StartSchedulerResponses, StartSchedulerErrors, ThrowOnError>({
     url: "/api/player/schedule",
     ...options,
   });
-};
 
 /**
  * Stop the player
  */
 export const stop = <ThrowOnError extends boolean = false>(
   options?: Options<StopData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<StopResponses, StopErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<StopResponses, StopErrors, ThrowOnError>({
     url: "/api/player/stop",
     ...options,
   });
-};
 
 /**
  * Run LED test patterns
  */
 export const runTest = <ThrowOnError extends boolean = false>(
   options: Options<RunTestData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<RunTestResponses, RunTestErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).post<RunTestResponses, RunTestErrors, ThrowOnError>({
     url: "/api/player/test",
     ...options,
     headers: {
@@ -514,7 +503,6 @@ export const runTest = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * New playlist
@@ -523,18 +511,15 @@ export const runTest = <ThrowOnError extends boolean = false>(
  */
 export const newPlaylist = <ThrowOnError extends boolean = false>(
   options: Options<NewPlaylistData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<NewPlaylistResponses, NewPlaylistErrors, ThrowOnError>(
-    {
-      url: "/api/playlist",
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+) =>
+  (options.client ?? client).post<NewPlaylistResponses, NewPlaylistErrors, ThrowOnError>({
+    url: "/api/playlist",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
     },
-  );
-};
+  });
 
 /**
  * Delete a playlist
@@ -543,16 +528,11 @@ export const newPlaylist = <ThrowOnError extends boolean = false>(
  */
 export const delPlaylist = <ThrowOnError extends boolean = false>(
   options: Options<DelPlaylistData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<
-    DelPlaylistResponses,
-    DelPlaylistErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).delete<DelPlaylistResponses, DelPlaylistErrors, ThrowOnError>({
     url: "/api/playlist/{playlist}",
     ...options,
   });
-};
 
 /**
  * Get a playlist
@@ -561,12 +541,11 @@ export const delPlaylist = <ThrowOnError extends boolean = false>(
  */
 export const getPlaylist = <ThrowOnError extends boolean = false>(
   options: Options<GetPlaylistData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetPlaylistResponses, GetPlaylistErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetPlaylistResponses, GetPlaylistErrors, ThrowOnError>({
     url: "/api/playlist/{playlist}",
     ...options,
   });
-};
 
 /**
  * Update a playlist
@@ -575,12 +554,8 @@ export const getPlaylist = <ThrowOnError extends boolean = false>(
  */
 export const updatePlaylist = <ThrowOnError extends boolean = false>(
   options: Options<UpdatePlaylistData, ThrowOnError>,
-) => {
-  return (options.client ?? client).put<
-    UpdatePlaylistResponses,
-    UpdatePlaylistErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).put<UpdatePlaylistResponses, UpdatePlaylistErrors, ThrowOnError>({
     url: "/api/playlist/{playlist}",
     ...options,
     headers: {
@@ -588,7 +563,6 @@ export const updatePlaylist = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * List playlists
@@ -597,16 +571,11 @@ export const updatePlaylist = <ThrowOnError extends boolean = false>(
  */
 export const listPlaylists = <ThrowOnError extends boolean = false>(
   options?: Options<ListPlaylistsData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    ListPlaylistsResponses,
-    ListPlaylistsErrors,
-    ThrowOnError
-  >({
+) =>
+  (options?.client ?? client).get<ListPlaylistsResponses, ListPlaylistsErrors, ThrowOnError>({
     url: "/api/playlists",
     ...options,
   });
-};
 
 /**
  * List playlists with ID
@@ -615,16 +584,12 @@ export const listPlaylists = <ThrowOnError extends boolean = false>(
  */
 export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
   options?: Options<ListPlaylistsNumberedData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
+) =>
+  (options?.client ?? client).get<
     ListPlaylistsNumberedResponses,
     ListPlaylistsNumberedErrors,
     ThrowOnError
-  >({
-    url: "/api/playlists/numbered",
-    ...options,
-  });
-};
+  >({ url: "/api/playlists/numbered", ...options });
 
 /**
  * New scene
@@ -633,8 +598,8 @@ export const listPlaylistsNumbered = <ThrowOnError extends boolean = false>(
  */
 export const newScene = <ThrowOnError extends boolean = false>(
   options: Options<NewSceneData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<NewSceneResponses, NewSceneErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).post<NewSceneResponses, NewSceneErrors, ThrowOnError>({
     url: "/api/scene",
     ...options,
     headers: {
@@ -642,7 +607,6 @@ export const newScene = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Delete a scene
@@ -651,12 +615,11 @@ export const newScene = <ThrowOnError extends boolean = false>(
  */
 export const delScene = <ThrowOnError extends boolean = false>(
   options: Options<DelSceneData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<DelSceneResponses, DelSceneErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).delete<DelSceneResponses, DelSceneErrors, ThrowOnError>({
     url: "/api/scene/{scene}",
     ...options,
   });
-};
 
 /**
  * List scenes
@@ -665,12 +628,11 @@ export const delScene = <ThrowOnError extends boolean = false>(
  */
 export const listScenes = <ThrowOnError extends boolean = false>(
   options?: Options<ListScenesData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<ListScenesResponses, ListScenesErrors, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<ListScenesResponses, ListScenesErrors, ThrowOnError>({
     url: "/api/scenes",
     ...options,
   });
-};
 
 /**
  * Get a scene
@@ -679,12 +641,11 @@ export const listScenes = <ThrowOnError extends boolean = false>(
  */
 export const getScene = <ThrowOnError extends boolean = false>(
   options: Options<GetSceneData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetSceneResponses, GetSceneErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetSceneResponses, GetSceneErrors, ThrowOnError>({
     url: "/api/scenes/{scene}",
     ...options,
   });
-};
 
 /**
  * Update a scene
@@ -693,8 +654,8 @@ export const getScene = <ThrowOnError extends boolean = false>(
  */
 export const updateScene = <ThrowOnError extends boolean = false>(
   options: Options<UpdateSceneData, ThrowOnError>,
-) => {
-  return (options.client ?? client).put<UpdateSceneResponses, UpdateSceneErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).put<UpdateSceneResponses, UpdateSceneErrors, ThrowOnError>({
     url: "/api/scenes/{scene}",
     ...options,
     headers: {
@@ -702,7 +663,6 @@ export const updateScene = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * New schedule
@@ -711,18 +671,15 @@ export const updateScene = <ThrowOnError extends boolean = false>(
  */
 export const newSchedule = <ThrowOnError extends boolean = false>(
   options: Options<NewScheduleData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<NewScheduleResponses, NewScheduleErrors, ThrowOnError>(
-    {
-      url: "/api/schedule",
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
+) =>
+  (options.client ?? client).post<NewScheduleResponses, NewScheduleErrors, ThrowOnError>({
+    url: "/api/schedule",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
     },
-  );
-};
+  });
 
 /**
  * Delete a schedule
@@ -731,16 +688,11 @@ export const newSchedule = <ThrowOnError extends boolean = false>(
  */
 export const delSchedule = <ThrowOnError extends boolean = false>(
   options: Options<DelScheduleData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<
-    DelScheduleResponses,
-    DelScheduleErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).delete<DelScheduleResponses, DelScheduleErrors, ThrowOnError>({
     url: "/api/schedule/{schedule}",
     ...options,
   });
-};
 
 /**
  * Get a schedule
@@ -749,12 +701,11 @@ export const delSchedule = <ThrowOnError extends boolean = false>(
  */
 export const getSchedule = <ThrowOnError extends boolean = false>(
   options: Options<GetScheduleData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetScheduleResponses, GetScheduleErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetScheduleResponses, GetScheduleErrors, ThrowOnError>({
     url: "/api/schedule/{schedule}",
     ...options,
   });
-};
 
 /**
  * Update a schedule
@@ -763,12 +714,8 @@ export const getSchedule = <ThrowOnError extends boolean = false>(
  */
 export const updateSchedule = <ThrowOnError extends boolean = false>(
   options: Options<UpdateScheduleData, ThrowOnError>,
-) => {
-  return (options.client ?? client).put<
-    UpdateScheduleResponses,
-    UpdateScheduleErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).put<UpdateScheduleResponses, UpdateScheduleErrors, ThrowOnError>({
     url: "/api/schedule/{schedule}",
     ...options,
     headers: {
@@ -776,7 +723,6 @@ export const updateSchedule = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * List schedules
@@ -785,16 +731,11 @@ export const updateSchedule = <ThrowOnError extends boolean = false>(
  */
 export const listSchedules = <ThrowOnError extends boolean = false>(
   options?: Options<ListSchedulesData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    ListSchedulesResponses,
-    ListSchedulesErrors,
-    ThrowOnError
-  >({
+) =>
+  (options?.client ?? client).get<ListSchedulesResponses, ListSchedulesErrors, ThrowOnError>({
     url: "/api/schedules",
     ...options,
   });
-};
 
 /**
  * Delete a sequence
@@ -803,16 +744,11 @@ export const listSchedules = <ThrowOnError extends boolean = false>(
  */
 export const delSequence = <ThrowOnError extends boolean = false>(
   options: Options<DelSequenceData, ThrowOnError>,
-) => {
-  return (options.client ?? client).delete<
-    DelSequenceResponses,
-    DelSequenceErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).delete<DelSequenceResponses, DelSequenceErrors, ThrowOnError>({
     url: "/api/sequence/{filename}",
     ...options,
   });
-};
 
 /**
  * Get a sequence
@@ -821,12 +757,11 @@ export const delSequence = <ThrowOnError extends boolean = false>(
  */
 export const getSequence = <ThrowOnError extends boolean = false>(
   options: Options<GetSequenceData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<GetSequenceResponses, GetSequenceErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<GetSequenceResponses, GetSequenceErrors, ThrowOnError>({
     url: "/api/sequence/{filename}",
     ...options,
   });
-};
 
 /**
  * Get a sequence's metadata
@@ -835,16 +770,10 @@ export const getSequence = <ThrowOnError extends boolean = false>(
  */
 export const getSequenceMeta = <ThrowOnError extends boolean = false>(
   options: Options<GetSequenceMetaData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<
-    GetSequenceMetaResponses,
-    GetSequenceMetaErrors,
-    ThrowOnError
-  >({
-    url: "/api/sequence/{filename}/meta",
-    ...options,
-  });
-};
+) =>
+  (options.client ?? client).get<GetSequenceMetaResponses, GetSequenceMetaErrors, ThrowOnError>(
+    { url: "/api/sequence/{filename}/meta", ...options },
+  );
 
 /**
  * List all sequences
@@ -853,16 +782,11 @@ export const getSequenceMeta = <ThrowOnError extends boolean = false>(
  */
 export const listSequences = <ThrowOnError extends boolean = false>(
   options?: Options<ListSequencesData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<
-    ListSequencesResponses,
-    ListSequencesErrors,
-    ThrowOnError
-  >({
+) =>
+  (options?.client ?? client).get<ListSequencesResponses, ListSequencesErrors, ThrowOnError>({
     url: "/api/sequences",
     ...options,
   });
-};
 
 /**
  * Get system info.
@@ -873,24 +797,19 @@ export const listSequences = <ThrowOnError extends boolean = false>(
  */
 export const systemInfo = <ThrowOnError extends boolean = false>(
   options?: Options<SystemInfoData, ThrowOnError>,
-) => {
-  return (options?.client ?? client).get<SystemInfoResponses, unknown, ThrowOnError>({
+) =>
+  (options?.client ?? client).get<SystemInfoResponses, unknown, ThrowOnError>({
     url: "/api/system/info",
     ...options,
   });
-};
 
 /**
  * Get the pattern of LED colors for the given test
  */
 export const getTestPattern = <ThrowOnError extends boolean = false>(
   options: Options<GetTestPatternData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<
-    GetTestPatternResponses,
-    GetTestPatternErrors,
-    ThrowOnError
-  >({
+) =>
+  (options.client ?? client).post<GetTestPatternResponses, GetTestPatternErrors, ThrowOnError>({
     url: "/api/test_pattern",
     ...options,
     headers: {
@@ -898,7 +817,6 @@ export const getTestPattern = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Upload a file
@@ -910,8 +828,8 @@ export const getTestPattern = <ThrowOnError extends boolean = false>(
  */
 export const fileUpload = <ThrowOnError extends boolean = false>(
   options: Options<FileUploadData, ThrowOnError>,
-) => {
-  return (options.client ?? client).post<FileUploadResponses, FileUploadErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).post<FileUploadResponses, FileUploadErrors, ThrowOnError>({
     ...formDataBodySerializer,
     url: "/api/upload",
     ...options,
@@ -920,7 +838,6 @@ export const fileUpload = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
-};
 
 /**
  * Run an FPP Command
@@ -932,9 +849,8 @@ export const fileUpload = <ThrowOnError extends boolean = false>(
  */
 export const fppCommand = <ThrowOnError extends boolean = false>(
   options: Options<FppCommandData, ThrowOnError>,
-) => {
-  return (options.client ?? client).get<FppCommandResponses, FppCommandErrors, ThrowOnError>({
+) =>
+  (options.client ?? client).get<FppCommandResponses, FppCommandErrors, ThrowOnError>({
     url: "/fppxml.php",
     ...options,
   });
-};

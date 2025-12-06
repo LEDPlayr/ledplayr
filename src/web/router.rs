@@ -16,7 +16,7 @@ use utoipauto::utoipauto;
 use crate::{
     state::State,
     web::{
-        buttons, files, fpp, logs, meshes, player, playlists, scenes, schedules, sequences,
+        buttons, config, files, fpp, logs, meshes, player, playlists, scenes, schedules, sequences,
         testing, upload,
     },
 };
@@ -131,6 +131,8 @@ pub async fn run_server(state: Arc<Mutex<State>>, cancel: CancellationToken) {
                 .put(buttons::update_button)
                 .delete(buttons::del_button),
         )
+        .route("/api/config/timezones", get(config::list_timezones))
+        .route("/api/config/timezone", post(config::set_timezone))
         .fallback(files::static_handler)
         .layer(
             TraceLayer::new_for_http()
