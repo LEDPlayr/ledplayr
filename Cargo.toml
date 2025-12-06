@@ -34,6 +34,7 @@ debug = "none"
 anyhow = "1.0.95"
 axum = { version = "0.8.1", features = ["multipart"] }
 axum_typed_multipart = "0.15.1"
+caps = "0.5.5"
 byteorder = "1.5.0"
 chrono = "0.4.39"
 clap = "4.5.26"

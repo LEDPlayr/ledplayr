@@ -7,6 +7,7 @@ pub enum APIError {
     Ok,
     NotFound(String),
     BadRequest(String),
+    Forbidden(String),
     UnexpectedError(anyhow::Error),
 }
 
@@ -28,6 +29,14 @@ impl IntoResponse for APIError {
                 .into_response(),
             APIError::BadRequest(e) => (
                 StatusCode::BAD_REQUEST,
+                Json(Status {
+                    status: "error".into(),
+                    error: Some(e),
+                }),
+            )
+                .into_response(),
+            APIError::Forbidden(e) => (
+                StatusCode::FORBIDDEN,
                 Json(Status {
                     status: "error".into(),
                     error: Some(e),

@@ -1,6 +1,7 @@
 pub mod router;
 
 mod buttons;
+mod config;
 mod error;
 mod files;
 mod fpp;

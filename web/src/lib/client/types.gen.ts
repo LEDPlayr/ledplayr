@@ -409,6 +409,17 @@ export type TestSpec = {
   };
 };
 
+export type TimezoneConfig = {
+  /**
+   * ISO 8601 formatted time string
+   */
+  time: string;
+  /**
+   * Timezone name (e.g., "America/New_York")
+   */
+  timezone: string;
+};
+
 export type Universe = {
   active: boolean;
   address: string;
@@ -631,6 +642,64 @@ export type UploadOutputsResponses = {
 };
 
 export type UploadOutputsResponse = UploadOutputsResponses[keyof UploadOutputsResponses];
+
+export type SetTimezoneData = {
+  body: TimezoneConfig;
+  path?: never;
+  query?: never;
+  url: "/api/config/timezone";
+};
+
+export type SetTimezoneErrors = {
+  /**
+   * Invalid input
+   */
+  400: Status;
+  /**
+   * Insufficient privileges
+   */
+  403: Status;
+  /**
+   * Something went wrong
+   */
+  500: Status;
+};
+
+export type SetTimezoneError = SetTimezoneErrors[keyof SetTimezoneErrors];
+
+export type SetTimezoneResponses = {
+  /**
+   * Time and timezone set successfully
+   */
+  200: Status;
+};
+
+export type SetTimezoneResponse = SetTimezoneResponses[keyof SetTimezoneResponses];
+
+export type ListTimezonesData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/config/timezones";
+};
+
+export type ListTimezonesErrors = {
+  /**
+   * Something went wrong
+   */
+  500: Status;
+};
+
+export type ListTimezonesError = ListTimezonesErrors[keyof ListTimezonesErrors];
+
+export type ListTimezonesResponses = {
+  /**
+   * List of timezones
+   */
+  200: Array<string>;
+};
+
+export type ListTimezonesResponse = ListTimezonesResponses[keyof ListTimezonesResponses];
 
 export type GetDisplayData = {
   body?: never;
