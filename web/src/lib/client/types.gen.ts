@@ -52,17 +52,6 @@ export type Color = {
   r: number;
 };
 
-export type CurrentTimeAndTimezone = {
-  /**
-   * Current server time in RFC3339 format
-   */
-  time: string;
-  /**
-   * Current server timezone name (e.g., "Europe/London")
-   */
-  timezone: string;
-};
-
 export type DiskUtilization = {
   Media: FreeTotal;
   Root: FreeTotal;
@@ -420,13 +409,13 @@ export type TestSpec = {
   };
 };
 
-export type TimezoneConfig = {
+export type TimeAndTimezone = {
   /**
-   * ISO 8601 formatted time string
+   * Current server time in RFC3339 format
    */
   time: string;
   /**
-   * Timezone name (e.g., "Europe/London")
+   * Current server timezone name (e.g., "Europe/London")
    */
   timezone: string;
 };
@@ -675,14 +664,14 @@ export type GetCurrentTimeAndTimezoneResponses = {
   /**
    * Current time and timezone
    */
-  200: CurrentTimeAndTimezone;
+  200: TimeAndTimezone;
 };
 
 export type GetCurrentTimeAndTimezoneResponse =
   GetCurrentTimeAndTimezoneResponses[keyof GetCurrentTimeAndTimezoneResponses];
 
 export type SetTimezoneData = {
-  body: TimezoneConfig;
+  body: TimeAndTimezone;
   path?: never;
   query?: never;
   url: "/api/config/timezone";

@@ -360,7 +360,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CurrentTimeAndTimezone"
+                  "$ref": "#/components/schemas/TimeAndTimezone"
                 }
               }
             }
@@ -388,7 +388,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TimezoneConfig"
+                "$ref": "#/components/schemas/TimeAndTimezone"
               }
             }
           },
@@ -2442,23 +2442,6 @@
           }
         }
       },
-      "CurrentTimeAndTimezone": {
-        "type": "object",
-        "required": [
-          "time",
-          "timezone"
-        ],
-        "properties": {
-          "time": {
-            "type": "string",
-            "description": "Current server time in RFC3339 format"
-          },
-          "timezone": {
-            "type": "string",
-            "description": "Current server timezone name (e.g., \"Europe/London\")"
-          }
-        }
-      },
       "DiskUtilization": {
         "type": "object",
         "required": [
@@ -3538,7 +3521,7 @@
           }
         }
       },
-      "TimezoneConfig": {
+      "TimeAndTimezone": {
         "type": "object",
         "required": [
           "time",
@@ -3547,11 +3530,11 @@
         "properties": {
           "time": {
             "type": "string",
-            "description": "ISO 8601 formatted time string"
+            "description": "Current server time in RFC3339 format"
           },
           "timezone": {
             "type": "string",
-            "description": "Timezone name (e.g., \"Europe/London\")"
+            "description": "Current server timezone name (e.g., \"Europe/London\")"
           }
         }
       },
