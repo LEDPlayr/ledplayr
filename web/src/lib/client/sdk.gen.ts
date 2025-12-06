@@ -30,6 +30,9 @@ import type {
   GetButtonData,
   GetButtonErrors,
   GetButtonResponses,
+  GetCurrentTimeAndTimezoneData,
+  GetCurrentTimeAndTimezoneErrors,
+  GetCurrentTimeAndTimezoneResponses,
   GetDisplayData,
   GetDisplayErrors,
   GetDisplayResponses,
@@ -269,6 +272,20 @@ export const uploadOutputs = <ThrowOnError extends boolean = false>(
       ...options.headers,
     },
   });
+
+/**
+ * Get current server time and timezone
+ *
+ * Get the server's current local time and timezone
+ */
+export const getCurrentTimeAndTimezone = <ThrowOnError extends boolean = false>(
+  options?: Options<GetCurrentTimeAndTimezoneData, ThrowOnError>,
+) =>
+  (options?.client ?? client).get<
+    GetCurrentTimeAndTimezoneResponses,
+    GetCurrentTimeAndTimezoneErrors,
+    ThrowOnError
+  >({ url: "/api/config/timezone", ...options });
 
 /**
  * Set system time and timezone

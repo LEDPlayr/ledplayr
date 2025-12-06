@@ -409,13 +409,13 @@ export type TestSpec = {
   };
 };
 
-export type TimezoneConfig = {
+export type TimeAndTimezone = {
   /**
-   * ISO 8601 formatted time string
+   * Current server time in RFC3339 format
    */
   time: string;
   /**
-   * Timezone name (e.g., "America/New_York")
+   * Current server timezone name (e.g., "Europe/London")
    */
   timezone: string;
 };
@@ -643,8 +643,35 @@ export type UploadOutputsResponses = {
 
 export type UploadOutputsResponse = UploadOutputsResponses[keyof UploadOutputsResponses];
 
+export type GetCurrentTimeAndTimezoneData = {
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/api/config/timezone";
+};
+
+export type GetCurrentTimeAndTimezoneErrors = {
+  /**
+   * Something went wrong
+   */
+  500: Status;
+};
+
+export type GetCurrentTimeAndTimezoneError =
+  GetCurrentTimeAndTimezoneErrors[keyof GetCurrentTimeAndTimezoneErrors];
+
+export type GetCurrentTimeAndTimezoneResponses = {
+  /**
+   * Current time and timezone
+   */
+  200: TimeAndTimezone;
+};
+
+export type GetCurrentTimeAndTimezoneResponse =
+  GetCurrentTimeAndTimezoneResponses[keyof GetCurrentTimeAndTimezoneResponses];
+
 export type SetTimezoneData = {
-  body: TimezoneConfig;
+  body: TimeAndTimezone;
   path?: never;
   query?: never;
   url: "/api/config/timezone";
