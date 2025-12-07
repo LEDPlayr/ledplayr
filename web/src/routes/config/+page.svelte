@@ -16,7 +16,10 @@
 
   let pollInterval: ReturnType<typeof setInterval>;
 
-  async function fetchServerTime() {
+  async function updateTime() {
+    const now = new Date();
+    browserTime = now.toISOString().slice(0, 19);
+
     const { data: serverData, error: serverError } = await getCurrentTimeAndTimezone();
 
     if (serverData) {
@@ -24,19 +27,14 @@
       serverTime = t.slice(0, 19);
       serverTimezone = serverData.timezone;
     } else if (serverError) {
-      if (!serverTime) {
-        notify(`Error loading server time: ${serverError.error}`, "error");
-      }
+      notify(`Error loading server time: ${serverError.error || "Unknown error"}`, "error");
     }
-
-    const now = new Date();
-    browserTime = now.toISOString().slice(0, 19);
   }
 
   onMount(async () => {
-    updateTime();
     browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     timezone = browserTimezone;
+    await updateTime();
 
     const { data, error } = await listTimezones();
     if (data) {
@@ -45,9 +43,7 @@
       notify(`Error loading timezones: ${error.error}`, "error");
     }
 
-    await fetchServerTime();
-
-    pollInterval = setInterval(fetchServerTime, 1000);
+    pollInterval = setInterval(updateTime, 1000);
   });
 
   onDestroy(() => {
@@ -55,12 +51,6 @@
       clearInterval(pollInterval);
     }
   });
-
-  function updateTime() {
-    const now = new Date();
-    // For datetime-local format
-    time = now.toISOString().slice(0, 16);
-  }
 
   const handleSubmit = async () => {
     let isoTime = time;
