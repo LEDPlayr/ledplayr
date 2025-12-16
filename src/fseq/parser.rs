@@ -234,7 +234,7 @@ pub fn parse(fname: &str) -> Result<Box<FSeq>> {
         let mut code = [0u8; 2];
         code[0] = f.read_u8()?;
         code[1] = f.read_u8()?;
-        let code = std::str::from_utf8(&code)?;
+        let code = String::from_utf8_lossy(&code);
 
         let data_len = size - 4;
         let mut data = Vec::new();
@@ -242,7 +242,7 @@ pub fn parse(fname: &str) -> Result<Box<FSeq>> {
             data.push(f.read_u8()?);
         }
         data.pop(); // Drop the final null
-        let data = std::str::from_utf8(&data)?;
+        let data = String::from_utf8_lossy(&data);
 
         variables.push(Variable {
             code: code.to_string(),
