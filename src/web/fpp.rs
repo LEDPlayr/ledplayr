@@ -143,6 +143,7 @@ pub async fn system_info(extract::State(state): extract::State<Arc<Mutex<State>>
 
     Json(SystemInfo {
         hostname,
+        uuid: state.cfg.uuid.clone(),
         platform: "Linux".to_string(),
         variant,
         mode: "player".to_string(),

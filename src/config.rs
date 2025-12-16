@@ -34,11 +34,17 @@ pub struct Config {
     pub database_url: String,
     pub multicast: Option<bool>,
     pub storage: String,
+    #[serde(default = "default_uuid")]
+    pub uuid: String,
 
     pub web: Option<WebConfig>,
     pub log: Option<LogConfig>,
     pub scheduler: Option<SchedulerConfig>,
     pub buttons: Option<Vec<ButtonConfig>>,
+}
+
+fn default_uuid() -> String {
+    "8891cdc5-6565-4218-b583-da11a8fc85b6".into()
 }
 
 #[derive(Debug, Deserialize)]
